@@ -116,8 +116,8 @@ public class WorldSaveLoad
         else Directory.CreateDirectory(world.Name);
 
         using (StreamWriter writer = new StreamWriter(path, append: true)) {
-            writer.WriteLine("name." + world.Name);
-            writer.WriteLine("seed." + world.Seed);
+            writer.WriteLine("name: " + world.Name);
+            writer.WriteLine("seed: " + world.Seed);
         }
     }
 
@@ -128,7 +128,7 @@ public class WorldSaveLoad
         int seed = -1;
 
         using (StreamReader reader = new StreamReader(path + worldInfoFileName)) while((line = reader.ReadLine()) != null) {
-            string[] splitString = line.Split(":");
+            string[] splitString = line.Split(": ");
 
             if(line.Contains("name")) name = splitString[1];
             if(line.Contains("seed")) seed = int.Parse(splitString[1]);
