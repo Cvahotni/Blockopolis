@@ -2990,31 +2990,43 @@ MonoBehaviour:
   itemTypes:
   - id: 1
     sprite: {fileID: 21300000, guid: 64fde63abba8cb9ef8dce9fcaf31211b, type: 3}
+    brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 878e970e4105e2bc1a586057ca37bf36, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: f1bd6cd71cad3348589f74f66c55272d, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: 41ab2d015321920bcaa5dfd0b5fc2c85, type: 3}
   - id: 2
     sprite: {fileID: 21300000, guid: 2099f7dcb72b09b17bd7702663c21012, type: 3}
+    brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 878e970e4105e2bc1a586057ca37bf36, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: fde23088b24b6a11e91f33e1876e586d, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   - id: 3
     sprite: {fileID: 21300000, guid: a64eff6133cfb4fe6a3b42342785800b, type: 3}
+    brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 10193253aaa40773b99a83e62e0f71c3, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: 985181d7f407117c1b49db10a3cf93a0, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   - id: 4
     sprite: {fileID: 21300000, guid: da62d395dd3e729ec92ceff8950d7cd7, type: 3}
+    brokenSprite: {fileID: 21300000, guid: 8e8dc4a4f70587df8a1c5aee7ba68f01, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 5179c31cea4ee30d1ae2756ebb867e92, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: 53061493b5b47d8e2a382b362a852a35, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   - id: 5
     sprite: {fileID: 21300000, guid: 5285a79bc0dfb7145872d157f671e629, type: 3}
+    brokenSprite: {fileID: 21300000, guid: 7fb59c7d589a4fd01998a664259529d2, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 4b2ded9af58010fe6b77fc4bb53e781b, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: 4b06c86cb8038f0d093d75ba04f417cf, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   - id: 6
     sprite: {fileID: 21300000, guid: 77eceb9f1dfd3b76da9fa0bfc4c5d391, type: 3}
+    brokenSprite: {fileID: 21300000, guid: 8db7f5c348f2b930e9401f3c5836f801, type: 3}
+    brokenMaterial: {fileID: 2100000, guid: 6d4488a40bf566a67ad3fd4053982452, type: 2}
     droppedItemMaterial: {fileID: 2100000, guid: ec3a10cfb38b896589c66467526dac00, type: 2}
     itemForm: 0
     droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
@@ -4100,7 +4112,6 @@ MonoBehaviour:
   playerTransform: {fileID: 938378450}
   viewDistance: 16
   chunksPerSecond: 200
-  seed: 65643
   frequencies:
   - 0.0008
   - 0.001

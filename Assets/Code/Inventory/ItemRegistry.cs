@@ -23,8 +23,18 @@ public class ItemRegistry : MonoBehaviour
         throw new NullReferenceException("Material not found for item ID: " + id);
     }
 
+    public Material GetBreakMaterialForID(ushort id) {
+        foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.BrokenMaterial;
+        throw new NullReferenceException("Break material not found for item ID: " + id);
+    }
+    
     public Sprite GetSpriteForID(ushort id) {
         foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.Sprite;
+        return emptyItemSprite;
+    }
+
+    public Sprite GetBreakSpriteForID(ushort id) {
+        foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.BrokenSprite;
         return emptyItemSprite;
     }
 

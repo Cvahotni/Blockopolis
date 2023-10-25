@@ -12,6 +12,12 @@ public struct ItemType
     private Sprite sprite;
 
     [SerializeField]
+    private Sprite brokenSprite;
+
+    [SerializeField]
+    private Material brokenMaterial;
+
+    [SerializeField]
     private Material droppedItemMaterial;
 
     [SerializeField]
@@ -28,8 +34,16 @@ public struct ItemType
         get { return sprite; }
     }
 
+    public Sprite BrokenSprite {
+        get { return brokenSprite; }
+    }
+
     public Material DroppedItemMaterial {
         get { return droppedItemMaterial; }
+    }
+
+    public Material BrokenMaterial {
+        get { return brokenMaterial; }
     }
 
     public ItemForm ItemForm {

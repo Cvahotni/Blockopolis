@@ -24,8 +24,13 @@ public class PlayerBlockBreakEffect : MonoBehaviour
     public void PlayBlockBreakParticle(ushort block, Vector3 position) {
         ParticleSystem particleSystem = Instantiate(blockBreakParticle, position, blockBreakParticle.transform.rotation);
         particleSystem.transform.position = position;
+        
+        ParticleSystemRenderer particleSystemRenderer = particleSystem.gameObject.GetComponent<ParticleSystemRenderer>();
+        
+        Material crackMaterial = itemRegistry.GetBreakMaterialForID(block);
+        particleSystemRenderer.material = crackMaterial;
 
-        Sprite particleSprite = itemRegistry.GetSpriteForID(block);
+        Sprite particleSprite = itemRegistry.GetBreakSpriteForID(block);
         var shape = particleSystem.shape;
 
         shape.sprite = particleSprite;
