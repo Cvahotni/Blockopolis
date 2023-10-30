@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: Spectral Studios
-  productName: Minecraft Clone
+  companyName: SpectralMage Studios
+  productName: Blockpolis
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.12156863, g: 0.12156863, b: 0.1254902, a: 1}
@@ -156,7 +156,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.Spectral-Studios.Minecraft-Clone
+    Standalone: com.SpectralMage-Studios.Blockpolis
   buildNumber:
     Standalone: 0
     VisionOS: 0

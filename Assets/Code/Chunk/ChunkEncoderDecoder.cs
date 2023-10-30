@@ -24,10 +24,10 @@ public class ChunkEncoderDecoder
         //encodeMarker.End();
     }
 
-    public static NativeArray<ushort> Decode(NativeList<EncodedVoxelMapEntry> encodedVoxelMap) {
+    public static NativeArray<ushort> Decode(NativeList<EncodedVoxelMapEntry> encodedVoxelMap, ref ChunkBuilder chunkBuilder) {
         //decodeMarker.Begin();
 
-        NativeArray<ushort> voxelMap = ChunkBuilder.CreateNewVoxelMap();
+        NativeArray<ushort> voxelMap = chunkBuilder.CreateNewVoxelMap();
 
         var runLengthDecoderJob = new ChunkRunLengthDecoderJob() {
             decodedVoxelMap = voxelMap,

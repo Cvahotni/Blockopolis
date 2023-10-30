@@ -156,9 +156,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reach: 5
   checkIncrement: 0.05
-  playerBounds: 0.85
+  bounds: 0.1
+  playerBody: {fileID: 8657039348683602345}
   blockOutline: {fileID: 0}
   blockCrackOutline: {fileID: 0}
+  boxCheckMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &113087047448820213
 MonoBehaviour:
   m_ObjectHideFlags: 0

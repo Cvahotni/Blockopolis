@@ -6,34 +6,28 @@ using System.IO;
 public class WorldHandler
 {
     private static World currentWorld;
+
     public static World CurrentWorld { 
         get { return currentWorld; }
         set { currentWorld = value; }    
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void Start() {
-        string worldName = "test";
-
-        if(DoesWorldExist(worldName)) currentWorld = LoadWorld(worldName);
-        else currentWorld = CreateNewWorld(worldName, "test");
-
-        //Remove this later when adding UI
-    }
-
-    public static World CreateNewWorld(string name, string seed) {
+    public static void CreateNewWorld(string name, string seed) {
         Debug.Log("Creating world: " + name);
 
         int currentSeed = HashStringSeed(seed);
-        return new World(name, currentSeed);
+        currentWorld = new World(name, currentSeed);
     }
 
-    public static World LoadWorld(string name) {
+    public static void LoadWorld(string name) {
         Debug.Log("Loading world: " + name);
-        return WorldSaveLoad.LoadWorldInfo(name);
+        currentWorld = WorldSaveLoad.LoadWorldInfo(name);
     }
 
     public static void SaveCurrentWorld() {
+        Debug.Log("currentWorld: " + currentWorld);
+        Debug.Log("currentWorld Name: " + currentWorld.Name);
+
         WorldSaveLoad.SaveWorldInfo(currentWorld);
         WorldStorage.SaveRegions(currentWorld);
 
@@ -41,7 +35,12 @@ public class WorldHandler
     }
 
     public static bool DoesWorldExist(string name) {
-        return Directory.Exists(name);
+        string path = WorldStorageProperties.savesFolderName + name;
+
+        bool directoryExists = Directory.Exists(path);
+        bool worldInfoExists = File.Exists(path + Path.DirectorySeparatorChar + "info.txt");
+
+        return directoryExists && worldInfoExists;
     }
 
     private static int HashStringSeed(string seed) {

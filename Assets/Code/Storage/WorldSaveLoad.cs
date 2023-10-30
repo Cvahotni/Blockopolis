@@ -10,16 +10,15 @@ using Unity.Collections;
 
 public class WorldSaveLoad
 {
-    private static string metadataExtension = ".metadata";
-    private static string regionFolderName = "region";
-    private static string worldInfoFileName = "/info.txt";
     private static byte[] regionBytes = new byte[65536 * 16];
     private static byte[] chunkBytes = new byte[65536];
 
     public static void SaveRegion(World world, string path, WorldRegion region) {
-        string directoryCheckPath = world.Name + "/" + regionFolderName;
+        string directoryCheckPath = WorldStorageProperties.savesFolderName + Path.DirectorySeparatorChar + world.Name + Path.DirectorySeparatorChar + WorldStorageProperties.regionFolderName;
+        string worldFolderPath = WorldStorageProperties.savesFolderName + Path.DirectorySeparatorChar + world.Name;
 
-        if(!Directory.Exists(world.Name)) Directory.CreateDirectory(world.Name);
+        if(!Directory.Exists(WorldStorageProperties.savesFolderName)) Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
+        if(!Directory.Exists(worldFolderPath)) Directory.CreateDirectory(worldFolderPath);
         if(!Directory.Exists(directoryCheckPath)) Directory.CreateDirectory(directoryCheckPath);
 
         string metaDataPath = GetMetadataPath(path);
@@ -60,6 +59,8 @@ public class WorldSaveLoad
 
     public static WorldRegion LoadRegion(string path) { 
         Debug.Log("Attempting Region Load: " + path);
+        ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
+
         Dictionary<long, NativeArray<ushort>> voxelStorageMap = new Dictionary<long, NativeArray<ushort>>();
 
         string metadataPath = GetMetadataPath(path);
@@ -79,7 +80,7 @@ public class WorldSaveLoad
                 NativeList<EncodedVoxelMapEntry> encodedVoxelMapList = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
 
                 encodedVoxelMapList.AddRange(encodedVoxelMap);
-                NativeArray<ushort> voxelMap = ChunkEncoderDecoder.Decode(encodedVoxelMapList);
+                NativeArray<ushort> voxelMap = ChunkEncoderDecoder.Decode(encodedVoxelMapList, ref chunkBuilder);
 
                 voxelStorageMap.Add(key, voxelMap);
                 encodedVoxelMap.Dispose();
@@ -110,10 +111,14 @@ public class WorldSaveLoad
     }
 
     public static void SaveWorldInfo(World world) {
-        string path = world.Name + worldInfoFileName;
+        string path = WorldStorageProperties.savesFolderName + world.Name + WorldStorageProperties.worldInfoFileName;
         
         if(DoesFileExist(path)) EraseFileContents(path);
-        else Directory.CreateDirectory(world.Name);
+        
+        else {
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName + world.Name);
+        }
 
         using (StreamWriter writer = new StreamWriter(path, append: true)) {
             writer.WriteLine("name: " + world.Name);
@@ -127,7 +132,14 @@ public class WorldSaveLoad
         string name = "";
         int seed = -1;
 
-        using (StreamReader reader = new StreamReader(path + worldInfoFileName)) while((line = reader.ReadLine()) != null) {
+        string loadPath = WorldStorageProperties.savesFolderName + path + WorldStorageProperties.worldInfoFileName;
+
+        if(!DoesFileExist(WorldStorageProperties.savesFolderName)) {
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName + path);
+        }
+
+        using (StreamReader reader = new StreamReader(loadPath)) while((line = reader.ReadLine()) != null) {
             string[] splitString = line.Split(": ");
 
             if(line.Contains("name")) name = splitString[1];
@@ -142,6 +154,6 @@ public class WorldSaveLoad
     }
 
     private static string GetMetadataPath(string path) {
-        return path + metadataExtension;
+        return path + WorldStorageProperties.metadataExtension;
     }
 }

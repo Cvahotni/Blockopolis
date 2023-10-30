@@ -1,29 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
 
-public static class ChunkBuilder
+public class ChunkBuilder : MonoBehaviour
 {
-    private static readonly ProfilerMarker buildChunkNoiseMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkNoiseMap3D");
-    private static readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
-    private static readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
+    public static ChunkBuilder Instance { get; private set; }
 
-    private static ChunkObjectBuilder chunkObjectBuilder;
-    private static WorldAllocator worldAllocator;
-    private static EndlessTerrain endlessTerrain;
+    private readonly ProfilerMarker buildChunkNoiseMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkNoiseMap3D");
+    private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
+    private readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void Start() {
+    private ChunkObjectBuilder chunkObjectBuilder;
+    private WorldAllocator worldAllocator;
+    private EndlessTerrain endlessTerrain;
+
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
+    }
+
+    private void Start() {
         chunkObjectBuilder = ChunkObjectBuilder.Instance;
         worldAllocator = WorldAllocator.Instance;
         endlessTerrain = EndlessTerrain.Instance;
     }
 
-    public static void BuildChunk(long chunkCoord) {
+    public void BuildChunk(long chunkCoord) {
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
@@ -66,7 +73,7 @@ public static class ChunkBuilder
         buildData.Dispose();
     }
 
-    private static void BuildChunkNoiseMap3D(ChunkBuildData chunkBuildData) {
+    private void BuildChunkNoiseMap3D(ChunkBuildData chunkBuildData) {
         buildChunkNoiseMapMarker.Begin();
 
         var noiseMapBuildJob = new ChunkNoiseMapBuildJob() {
@@ -80,7 +87,7 @@ public static class ChunkBuilder
         buildChunkNoiseMapMarker.End();
     }
 
-    private static void BuildChunkVoxelMap(ChunkBuildData chunkBuildData) {
+    private void BuildChunkVoxelMap(ChunkBuildData chunkBuildData) {
         buildChunkVoxelMapMarker.Begin();
 
         var chunkVoxelJob = new ChunkVoxelBuilderJob() {
@@ -99,7 +106,7 @@ public static class ChunkBuilder
         buildChunkVoxelMapMarker.End();
     }
 
-    private static void BuildChunkMesh(ChunkBuildData chunkBuildData) {
+    private void BuildChunkMesh(ChunkBuildData chunkBuildData) {
         buildChunkMeshMarker.Begin();
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
@@ -116,21 +123,21 @@ public static class ChunkBuilder
         buildChunkMeshMarker.End();
     }
 
-    public static NativeArray<ushort> GetVoxelMap(long chunkCoord) {
+    public NativeArray<ushort> GetVoxelMap(long chunkCoord) {
         if(WorldStorage.DoesChunkExist(chunkCoord)) return WorldStorage.GetChunk(chunkCoord);
         else return CreateNewVoxelMap();
     }
 
-    public static void SaveChunkVoxelMap(long chunkCoord, NativeArray<ushort> voxelMap) {
+    public void SaveChunkVoxelMap(long chunkCoord, NativeArray<ushort> voxelMap) {
         if(WorldStorage.DoesChunkExist(chunkCoord)) WorldStorage.SetChunk(chunkCoord, voxelMap);
         WorldStorage.AddChunk(chunkCoord, voxelMap);
     }
 
-    public static NativeArray<ushort> CreateNewVoxelMap() {
+    public NativeArray<ushort> CreateNewVoxelMap() {
         return new NativeArray<ushort>((VoxelProperties.chunkWidth + 2) * VoxelProperties.chunkHeight * (VoxelProperties.chunkWidth + 2), Allocator.Persistent);
     }
 
-    public static NativeArray<float> CreateNewNoiseMap() {
+    public NativeArray<float> CreateNewNoiseMap() {
         return new NativeArray<float>(((VoxelProperties.chunkWidth / 2) + 2) * (VoxelProperties.chunkHeight / 2) * ((VoxelProperties.chunkWidth / 2) + 2), Allocator.Persistent);
     }
 }

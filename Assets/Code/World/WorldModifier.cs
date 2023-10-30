@@ -5,14 +5,8 @@ using Unity.Collections;
 
 public class WorldModifier
 {
-    private static WorldAllocator worldAllocator;
-
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void Start() {
-        worldAllocator = WorldAllocator.Instance;
-    }
-
     public static void ModifyBlocks(List<VoxelModification> modifications) {
+        WorldAllocator worldAllocator = WorldAllocator.Instance;
         List<long> chunksToAddToQueue = new List<long>();
 
         foreach(VoxelModification modification in modifications) {
@@ -64,10 +58,13 @@ public class WorldModifier
     }
 
     private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, ushort currentBlock) {
+        ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
+        WorldAllocator worldAllocator = WorldAllocator.Instance;
+
         if(worldAllocator.IsChunkOutsideOfWorld(chunk)) return;
         if(!WorldStorage.DoesChunkExist(chunk)) return;
 
-        NativeArray<ushort> voxelMap = ChunkBuilder.GetVoxelMap(chunk);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, relativeY, relativeZ);
         voxelMap[voxelMapIndex] = currentBlock;
@@ -115,6 +112,8 @@ public class WorldModifier
     }
 
     public static ushort GetBlockAt(int worldX, int worldY, int worldZ) {
+        WorldAllocator worldAllocator = WorldAllocator.Instance;
+
         long chunkPos = BlockPositionToChunkPos(worldX, worldZ);
         if(worldAllocator.IsChunkOutsideOfWorld(chunkPos)) return 0;
 
@@ -123,8 +122,10 @@ public class WorldModifier
         int relativeX = GetRelativeX(worldX);
         int relativeZ = GetRelativeZ(worldZ);
 
+        ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
+
         if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
-        NativeArray<ushort> voxelMap = ChunkBuilder.GetVoxelMap(chunkPos);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, worldY, relativeZ);
         if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return 0;

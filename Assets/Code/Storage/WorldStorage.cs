@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
-using System.Threading.Tasks;
+using System.IO;
 
 public static class WorldStorage
 {
@@ -85,7 +85,7 @@ public static class WorldStorage
     }
 
     private static string GetRegionPosName(World world, long regionPos) {
-        return world.Name + "/region/" + regionPos.ToString() + ".dat";
+        return WorldStorageProperties.savesFolderName + world.Name + Path.DirectorySeparatorChar + "region" + Path.DirectorySeparatorChar + regionPos.ToString() + ".dat";
     }
 
     public static void Destroy() {

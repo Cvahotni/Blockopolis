@@ -15,6 +15,7 @@ public class WorldAllocator : MonoBehaviour
 
     private ChunkObjectPool chunkObjectPool;
     private EndlessTerrain endlessTerrain;
+    private ChunkBuilder chunkBuilder;
 
     private int chunksGenerated;
     private bool cullChunksOutOfView = false;
@@ -39,6 +40,7 @@ public class WorldAllocator : MonoBehaviour
     private void Start() {
         chunkObjectPool = ChunkObjectPool.Instance;
         endlessTerrain = EndlessTerrain.Instance;
+        chunkBuilder = ChunkBuilder.Instance;
 
         currentWorld = WorldHandler.CurrentWorld;
     }
@@ -91,7 +93,7 @@ public class WorldAllocator : MonoBehaviour
             return;
         }
 
-        ChunkBuilder.BuildChunk(chunkPos);
+        chunkBuilder.BuildChunk(chunkPos);
         chunksGenerated++;
     }
 
