@@ -25,13 +25,17 @@ public class WorldHandler
     }
 
     public static void SaveCurrentWorld() {
-        Debug.Log("currentWorld: " + currentWorld);
-        Debug.Log("currentWorld Name: " + currentWorld.Name);
-
         WorldSaveLoad.SaveWorldInfo(currentWorld);
         WorldStorage.SaveRegions(currentWorld);
 
         Debug.Log("Saved world: " + currentWorld.Name);
+    }
+
+    public static void DeleteCurrentWorld() {
+        if(!IsCurrentWorldValid()) return;
+
+        Directory.Delete(WorldStorageProperties.savesFolderName + currentWorld.Name, true);
+        Debug.Log("Deleted world: " + currentWorld.Name);
     }
 
     public static bool DoesWorldExist(string name) {
@@ -41,6 +45,10 @@ public class WorldHandler
         bool worldInfoExists = File.Exists(path + Path.DirectorySeparatorChar + "info.txt");
 
         return directoryExists && worldInfoExists;
+    }
+
+    private static bool IsCurrentWorldValid() {
+        return currentWorld.Name != "";
     }
 
     private static int HashStringSeed(string seed) {

@@ -14,11 +14,13 @@ public class WorldListing : MonoBehaviour
     private bool isEditing;
 
     private MenuController menuController;
+    private EditWorldMenuController editWorldMenuController;
 
     public bool IsEditing { set { isEditing = value; }}
 
     private void Start() {
         menuController = MenuController.Instance;
+        editWorldMenuController = EditWorldMenuController.Instance;
     }
 
     public void SetName(string name) {
@@ -39,6 +41,9 @@ public class WorldListing : MonoBehaviour
     }
 
     private void EditWorld() {
+        editWorldMenuController.CurrentWorldName = currentName;
+        editWorldMenuController.UpdateEditWorldText();
+
         menuController.ToggleToEditWorld();
     }
 

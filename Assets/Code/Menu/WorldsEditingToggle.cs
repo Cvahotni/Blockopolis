@@ -5,18 +5,24 @@ using TMPro;
 
 public class WorldsEditingToggle : MonoBehaviour
 {
+    public static WorldsEditingToggle Instance { get; private set; }
+
     private List<WorldListing> listings = new List<WorldListing>();
     private bool isEditing = false;
 
     [SerializeField] private TMP_Text editButtonText;
     [SerializeField] private TMP_Text editButtonTextShadow;
 
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
+    }
+
     public void ToggleEditMode() {
         isEditing = !isEditing;
 
         PopulateWorldListings();
         UpdateWorldListings();
-        UpdateEditButtonText();
     }
 
     private void PopulateWorldListings() {
@@ -29,6 +35,8 @@ public class WorldsEditingToggle : MonoBehaviour
     }
 
     private void UpdateWorldListings() {
+        UpdateEditButtonText();
+
         foreach(WorldListing listing in listings) {
             listing.IsEditing = isEditing;
         }

@@ -10,6 +10,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject[] worldSelectionObjects;
     [SerializeField] private GameObject[] createWorldMenuObjects;
     [SerializeField] private GameObject[] editWorldMenuObjects;
+    [SerializeField] private GameObject[] deleteWorldMenuObjects;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -29,6 +30,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObjects(worldSelectionObjects, false);
         ToggleMenuObjects(createWorldMenuObjects, false);
         ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
     }
 
     public void ToggleToWorldSelection() {
@@ -36,6 +38,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObjects(worldSelectionObjects, true);
         ToggleMenuObjects(createWorldMenuObjects, false);
         ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
     }
 
     public void ToggleToCreateWorld() {
@@ -43,6 +46,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObjects(worldSelectionObjects, false);
         ToggleMenuObjects(createWorldMenuObjects, true);
         ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
     }
 
     public void ToggleToEditWorld() {
@@ -50,6 +54,15 @@ public class MenuController : MonoBehaviour
         ToggleMenuObjects(worldSelectionObjects, false);
         ToggleMenuObjects(createWorldMenuObjects, false);
         ToggleMenuObjects(editWorldMenuObjects, true);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+    }
+
+    public void ToggleToDeleteWorld() {
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, true);
     }
 
     private void ToggleMenuObjects(GameObject[] menuObjects, bool value) {

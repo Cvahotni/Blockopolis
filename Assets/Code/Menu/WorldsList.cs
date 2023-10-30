@@ -5,13 +5,22 @@ using System.IO;
 
 public class WorldsList : MonoBehaviour
 {
+    public static WorldsList Instance { get; private set; }
+
     [SerializeField] private GameObject worldListing;
 
-    private void Start() {
-        CreateWorldListings();
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
     }
 
-    private void CreateWorldListings() {
+    private void OnEnable() {
+        GenerateWorldListings();
+    }
+
+    public void GenerateWorldListings() {
+        ClearWorldListings();
+
         string currentDirectory = Directory.GetCurrentDirectory();
         string path = currentDirectory + Path.DirectorySeparatorChar + WorldStorageProperties.savesFolderSecondaryName;
         
@@ -28,6 +37,14 @@ public class WorldsList : MonoBehaviour
             WorldListing currentListing = worldListingObject.GetComponent<WorldListing>();
 
             currentListing.SetName(currentWorldName);
+        }
+    }
+
+    private void ClearWorldListings() {
+        GameObject[] listingObjects = GameObject.FindGameObjectsWithTag(MenuProperties.worldListingTag);
+
+        foreach(GameObject listingObject in listingObjects) {
+            Destroy(listingObject);
         }
     }
 }
