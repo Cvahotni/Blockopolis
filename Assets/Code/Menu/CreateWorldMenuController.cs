@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
-using System.Text.RegularExpressions;
 
 public class CreateWorldMenuController : MonoBehaviour
 {
@@ -27,14 +26,6 @@ public class CreateWorldMenuController : MonoBehaviour
     }
 
     private bool CanCreate() {
-        string worldName = nameField.text;
-        string worldSeed = seedField.text;
-
-        Regex regex = new Regex("^[a-zA-Z0-9_]+( [a-zA-Z0-9_]+)*$");
-
-        bool nameValidCharacters = regex.IsMatch(worldName);
-        bool seedValidCharacters = regex.IsMatch(worldSeed);
-
-        return nameValidCharacters && seedValidCharacters;
+        return WorldNameChecker.IsNameValid(nameField.text) && WorldNameChecker.IsSeedValid(seedField.text);
     }
 }

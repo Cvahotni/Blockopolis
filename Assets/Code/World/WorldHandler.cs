@@ -31,6 +31,19 @@ public class WorldHandler
         Debug.Log("Saved world: " + currentWorld.Name);
     }
 
+    public static void RenameCurrentWorld(string newName) {
+        if(!IsCurrentWorldValid()) return;
+
+        string currentPath = WorldStorageProperties.savesFolderName + currentWorld.Name;
+        string newPath = WorldStorageProperties.savesFolderName + newName;
+
+        currentWorld.Name = newName;
+        Directory.Move(currentPath, newPath);
+        
+        WorldSaveLoad.SaveWorldInfo(currentWorld);
+        Debug.Log("Renamed world: " + currentWorld.Name);
+    }
+
     public static void DeleteCurrentWorld() {
         if(!IsCurrentWorldValid()) return;
 
