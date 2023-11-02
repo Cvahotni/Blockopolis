@@ -25,6 +25,13 @@ public class WorldsEditingToggle : MonoBehaviour
         UpdateWorldListings();
     }
 
+    public void SetEditMode(bool value) {
+        isEditing = value;
+
+        PopulateWorldListings();
+        UpdateWorldListings();
+    }
+
     private void PopulateWorldListings() {
         listings.Clear();
         GameObject[] listingObjects = GameObject.FindGameObjectsWithTag(MenuProperties.worldListingTag);
