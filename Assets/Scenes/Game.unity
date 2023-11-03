@@ -2968,6 +2968,7 @@ GameObject:
   - component: {fileID: 976357484}
   - component: {fileID: 976357483}
   - component: {fileID: 976357485}
+  - component: {fileID: 976357486}
   m_Layer: 0
   m_Name: Item Manager
   m_TagString: Untagged
@@ -3061,6 +3062,29 @@ MonoBehaviour:
   droppedBlockPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   droppedItemPrefab: {fileID: 8845799518492459054, guid: 6927084878d09cbfea583643d950b62e, type: 3}
   randomForceAmount: 300
+--- !u!114 &976357486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976357482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 387546d01a15f85b5be7ecf9498fe185, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 866056449}
+  - {fileID: 866644213}
+  - {fileID: 1860182774}
+  - {fileID: 1378438669}
+  - {fileID: 1556810365}
+  - {fileID: 495713888}
+  - {fileID: 1681412120}
+  - {fileID: 1531498476}
+  - {fileID: 1682774049}
+  maxStackSize: 80
 --- !u!1 &991189990
 GameObject:
   m_ObjectHideFlags: 0
@@ -3457,18 +3481,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293a26b2d0a9a53a381b81a0f17a66e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slots:
-  - {fileID: 866056449}
-  - {fileID: 866644213}
-  - {fileID: 1860182774}
-  - {fileID: 1378438669}
-  - {fileID: 1556810365}
-  - {fileID: 495713888}
-  - {fileID: 1681412120}
-  - {fileID: 1531498476}
-  - {fileID: 1682774049}
   hightlight: {fileID: 125920187}
-  maxStackSize: 80
+  hotbarLength: 9
 --- !u!1 &1104728600
 GameObject:
   m_ObjectHideFlags: 0

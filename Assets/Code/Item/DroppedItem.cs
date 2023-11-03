@@ -7,7 +7,7 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private Transform itemTransform;
     [SerializeField] private ItemForm itemForm;
 
-    private Hotbar hotbar;
+    private Inventory inventory;
 
     private ItemStack itemStack;
     private DroppedItemTextureHandler droppedItemTextureHandler;
@@ -27,7 +27,7 @@ public class DroppedItem : MonoBehaviour
     }
 
     private void Start() {
-        hotbar = Hotbar.Instance;
+        inventory = Inventory.Instance;
     }
 
     private void SetReferences() {
@@ -61,7 +61,7 @@ public class DroppedItem : MonoBehaviour
         if(droppedItem.ItemStack.ID != itemStack.ID) return;
         if(droppedItem.Destroyed) return;
 
-        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount, hotbar.MaxStackSize);
+        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount, inventory.MaxStackSize);
         if(!addedToOtherItemStack) return;
     
         destroyed = true;

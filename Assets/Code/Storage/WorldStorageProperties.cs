@@ -10,4 +10,5 @@ public class WorldStorageProperties
     public static readonly string savesFolderSecondaryName = "saves";
     public static readonly string regionFolderName = "region";
     public static readonly string worldInfoFileName = Path.DirectorySeparatorChar + "info.txt";
+    public static readonly string inventoryFileName = Path.DirectorySeparatorChar + "inventory.txt";
 }

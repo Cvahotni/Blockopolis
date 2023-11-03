@@ -21,9 +21,9 @@ public class ItemSlot
         uiItemSlot.UpdateSlot(true);
     }
 
-    private void EmptySlot() {
-        empty = true;
-        uiItemSlot.UpdateSlot(false);
+    public void UpdateEmptyStatus() {
+        CheckIfEmpty();
+        uiItemSlot.UpdateSlot(empty);
     }
 
     public void CheckIfEmpty() {
@@ -34,7 +34,7 @@ public class ItemSlot
         if(stack.Amount <= 1) {
             stack.Amount = 0;
             uiItemSlot.UpdateSlot(false);
-            EmptySlot();
+            UpdateEmptyStatus();
 
             return 0;
         }
@@ -43,7 +43,7 @@ public class ItemSlot
             stack.Take(amount);
             uiItemSlot.UpdateSlot(false);
 
-            if(stack.Amount <= 0) EmptySlot();
+            if(stack.Amount <= 0) UpdateEmptyStatus();
             return stack.Amount;
         }
 

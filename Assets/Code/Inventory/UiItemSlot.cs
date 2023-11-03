@@ -23,6 +23,7 @@ public class UiItemSlot : MonoBehaviour
 
     public ItemSlot ItemSlot {
         get { return itemSlot; }
+        set { itemSlot = value; }
     }
 
     public void Link(ItemSlot itemSlot) {

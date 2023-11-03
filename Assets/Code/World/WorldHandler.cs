@@ -24,8 +24,13 @@ public class WorldHandler
         currentWorld = WorldSaveLoad.LoadWorldInfo(name);
     }
 
+    public static void LoadWorldInventory() {
+        WorldSaveLoad.LoadWorldInventory(currentWorld, Inventory.Instance);
+    }
+
     public static void SaveCurrentWorld() {
         WorldSaveLoad.SaveWorldInfo(currentWorld);
+        WorldSaveLoad.SaveWorldInventory(currentWorld, Inventory.Instance);
         WorldStorage.SaveRegions(currentWorld);
 
         Debug.Log("Saved world: " + currentWorld.Name);

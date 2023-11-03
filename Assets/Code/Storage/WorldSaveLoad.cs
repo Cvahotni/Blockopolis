@@ -111,8 +111,87 @@ public class WorldSaveLoad
     }
 
     public static void SaveWorldInfo(World world) {
-        string path = WorldStorageProperties.savesFolderName + world.Name + WorldStorageProperties.worldInfoFileName;
+        string path = CheckWorldSaveFile(world, WorldStorageProperties.worldInfoFileName);
+
+        using (StreamWriter writer = new StreamWriter(path, append: true)) {
+            writer.WriteLine("name: " + world.Name);
+            writer.WriteLine("seed: " + world.Seed);
+        }
+    }
+
+    public static void SaveWorldInventory(World world, Inventory inventory) {
+        string path = CheckWorldSaveFile(world, WorldStorageProperties.inventoryFileName);
+
+        using (StreamWriter writer = new StreamWriter(path, append: true)) {
+            for(int i = 0; i < inventory.Slots.Length; i++) {
+                UiItemSlot uiSlot = inventory.Slots[i];
+                ItemSlot itemSlot = uiSlot.ItemSlot;
+                ItemStack stack = itemSlot.Stack;
+
+                string line = GetSlotLine(i);
+
+                string idLine = line + ".id." + stack.ID;
+                string amountLine = line + ".amount." + stack.Amount;
+
+                writer.WriteLine(idLine);
+                writer.WriteLine(amountLine);
+            }
+        }
+    }
+
+    public static void LoadWorldInventory(World world, Inventory inventory) {
+        string loadPath = CheckWorldLoadFile(world.Name, WorldStorageProperties.inventoryFileName);
+        string line;
+
+        int inventorySize = inventory.Slots.Length;
         
+        bool readID = false;
+        bool readAmount = false;
+
+        ushort currentID = 0;
+        ushort currentAmount = 0;
+
+        int currentIndex = -1;
+
+        using (StreamReader reader = new StreamReader(loadPath)) while((line = reader.ReadLine()) != null) {
+            string[] splitString = line.Split(".");
+
+            int index = Int32.Parse(splitString[1]);
+            string typeData = splitString[3];
+
+            if(readID && readAmount) {
+                UiItemSlot uiSlot = inventory.Slots[currentIndex];
+                ItemSlot itemSlot = uiSlot.ItemSlot;
+
+                itemSlot.Stack = new ItemStack(currentID, currentAmount);
+                itemSlot.UpdateEmptyStatus();
+
+                uiSlot.UpdateSlot(true);
+
+                readID = false;
+                readAmount = false;
+            }
+
+            if(line.Contains("id")) {
+                currentID = UInt16.Parse(typeData);
+                readID = true;
+            }
+
+            if(line.Contains("amount")) {
+                currentAmount = UInt16.Parse(typeData);
+                readAmount = true;
+            }
+
+            currentIndex = index;
+        }
+    }
+
+    private static string GetSlotLine(int i) {
+        return "slot." + i;
+    }
+
+    private static string CheckWorldSaveFile(World world, string fileName) {
+        string path = WorldStorageProperties.savesFolderName + world.Name + fileName;
         if(DoesFileExist(path)) EraseFileContents(path);
         
         else {
@@ -120,10 +199,22 @@ public class WorldSaveLoad
             Directory.CreateDirectory(WorldStorageProperties.savesFolderName + world.Name);
         }
 
-        using (StreamWriter writer = new StreamWriter(path, append: true)) {
-            writer.WriteLine("name: " + world.Name);
-            writer.WriteLine("seed: " + world.Seed);
+        return path;
+    }
+
+    public static string CheckWorldLoadFile(string path, string fileName) {
+        string loadPath = WorldStorageProperties.savesFolderName + path + fileName;
+
+        if(!DoesFileExist(WorldStorageProperties.savesFolderName)) {
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
+            Directory.CreateDirectory(WorldStorageProperties.savesFolderName + path);
         }
+
+        if(!File.Exists(loadPath)) {
+            using (File.Create(loadPath));
+        }
+
+        return loadPath;
     }
 
     public static World LoadWorldInfo(string path) {
@@ -132,12 +223,7 @@ public class WorldSaveLoad
         string name = "";
         int seed = -1;
 
-        string loadPath = WorldStorageProperties.savesFolderName + path + WorldStorageProperties.worldInfoFileName;
-
-        if(!DoesFileExist(WorldStorageProperties.savesFolderName)) {
-            Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
-            Directory.CreateDirectory(WorldStorageProperties.savesFolderName + path);
-        }
+        string loadPath = CheckWorldLoadFile(path, WorldStorageProperties.worldInfoFileName);
 
         using (StreamReader reader = new StreamReader(loadPath)) while((line = reader.ReadLine()) != null) {
             string[] splitString = line.Split(": ");

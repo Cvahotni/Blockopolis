@@ -5,10 +5,10 @@ using UnityEngine;
 public class PlayerItemPickup : MonoBehaviour
 {
     [SerializeField] private string droppedItemTagName;
-    private Hotbar hotbar;
+    private Inventory inventory;
 
     private void Start() {
-        hotbar = Hotbar.Instance;
+        inventory = Inventory.Instance;
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -20,7 +20,7 @@ public class PlayerItemPickup : MonoBehaviour
         if(droppedItem.Destroyed) return;
         droppedItem.Destroyed = true;
 
-        hotbar.AddStack(droppedItem.ItemStack);
+        inventory.AddStack(droppedItem.ItemStack);
         Destroy(currentObject, 0.1f);
     }
 }
