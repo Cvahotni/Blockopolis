@@ -21,16 +21,16 @@ public class WorldHandler
 
     public static void LoadWorld(string name) {
         Debug.Log("Loading world: " + name);
-        currentWorld = WorldSaveLoad.LoadWorldInfo(name);
+        currentWorld = WorldInfoSaveLoad.LoadWorldInfo(name);
     }
 
     public static void LoadWorldInventory() {
-        WorldSaveLoad.LoadWorldInventory(currentWorld, Inventory.Instance);
+        WorldInventorySaveLoad.LoadWorldInventory(currentWorld, Inventory.Instance);
     }
 
     public static void SaveCurrentWorld() {
-        WorldSaveLoad.SaveWorldInfo(currentWorld);
-        WorldSaveLoad.SaveWorldInventory(currentWorld, Inventory.Instance);
+        WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
+        WorldInventorySaveLoad.SaveWorldInventory(currentWorld, Inventory.Instance);
         WorldStorage.SaveRegions(currentWorld);
 
         Debug.Log("Saved world: " + currentWorld.Name);
@@ -45,7 +45,7 @@ public class WorldHandler
         currentWorld.Name = newName;
         Directory.Move(currentPath, newPath);
         
-        WorldSaveLoad.SaveWorldInfo(currentWorld);
+        WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
         Debug.Log("Renamed world: " + currentWorld.Name);
     }
 

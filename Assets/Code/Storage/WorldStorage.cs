@@ -43,7 +43,7 @@ public static class WorldStorage
             WorldRegion regionData = regionPair.Value;
 
             string regionName = GetRegionPosName(world, regionPos);
-            WorldSaveLoad.SaveRegion(world, regionName, regionData);
+            WorldRegionSaveLoad.SaveRegion(world, regionName, regionData);
         }
     }
 
@@ -70,7 +70,7 @@ public static class WorldStorage
     }
 
     public static void LoadRegionToMap(World world, long regionPos) {
-        WorldRegion loadedRegion = WorldSaveLoad.LoadRegion(GetRegionPosName(world, regionPos));
+        WorldRegion loadedRegion = WorldRegionSaveLoad.LoadRegion(GetRegionPosName(world, regionPos));
         regionMap.Add(regionPos, loadedRegion);
 
         awaitingRegions.Remove(regionPos);
