@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: SpectralMage Studios
-  productName: Blockpolis
+  productName: Blockopolis
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.12156863, g: 0.12156863, b: 0.1254902, a: 1}
@@ -156,7 +156,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.SpectralMage-Studios.Blockpolis
+    Standalone: com.SpectralMage-Studios.Blockopolis
   buildNumber:
     Standalone: 0
     VisionOS: 0

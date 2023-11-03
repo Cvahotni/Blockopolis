@@ -9,7 +9,6 @@ public class RenameWorldMenuController : MonoBehaviour
     [SerializeField] private TMP_InputField nameField;
     [SerializeField] private Button renameButton;
     [SerializeField] private TMP_Text renameWorldText;
-    [SerializeField] private TMP_Text renameWorldTextShadow;
 
     private MenuController menuController;
 
@@ -26,9 +25,7 @@ public class RenameWorldMenuController : MonoBehaviour
 
     public void UpdateRenameWorldText() {
         string text = MenuProperties.renameWorldText.Replace("{0}", editWorldMenuController.CurrentWorldName);
-
         renameWorldText.text = text;
-        renameWorldTextShadow.text = text;
     }
 
     public void Rename() {

@@ -11,7 +11,6 @@ public class WorldsEditingToggle : MonoBehaviour
     private bool isEditing = false;
 
     [SerializeField] private TMP_Text editButtonText;
-    [SerializeField] private TMP_Text editButtonTextShadow;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -51,6 +50,5 @@ public class WorldsEditingToggle : MonoBehaviour
 
     private void UpdateEditButtonText() {
         editButtonText.text = isEditing ? MenuProperties.editButtonTextEnabled : MenuProperties.editButtonTextDisabled;
-        editButtonTextShadow.text = isEditing ? MenuProperties.editButtonTextEnabled : MenuProperties.editButtonTextDisabled;
     }
 }

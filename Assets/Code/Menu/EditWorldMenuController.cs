@@ -18,7 +18,6 @@ public class EditWorldMenuController : MonoBehaviour
     }
 
     [SerializeField] private TMP_Text editWorldText;
-    [SerializeField] private TMP_Text editWorldTextShadow;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -41,6 +40,5 @@ public class EditWorldMenuController : MonoBehaviour
 
     public void UpdateEditWorldText() {
         editWorldText.text = MenuProperties.editWorldTextPrefix + currentWorldName;
-        editWorldTextShadow.text = MenuProperties.editWorldTextPrefix + currentWorldName;
     }
 }

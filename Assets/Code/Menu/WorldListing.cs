@@ -7,7 +7,6 @@ using TMPro;
 public class WorldListing : MonoBehaviour
 {
     [SerializeField] private TMP_Text worldName;
-    [SerializeField] private TMP_Text worldNameShadow;
     [SerializeField] private GameObject editIcon;
     
     private string currentName;
@@ -25,8 +24,6 @@ public class WorldListing : MonoBehaviour
 
     public void SetName(string name) {
         worldName.text = name;
-        worldNameShadow.text = name;
-
         currentName = name;
     }
 
