@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct ItemType
+[CreateAssetMenu(fileName = "New Item Type", menuName = "Voxel Engine/Item Type")]
+public class ItemType : ScriptableObject
 {
     [SerializeField]
     private ushort id;

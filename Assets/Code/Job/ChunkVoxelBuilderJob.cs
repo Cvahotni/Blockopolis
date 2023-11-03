@@ -25,7 +25,7 @@ public struct ChunkVoxelBuilderJob : IJob
         int seaLevel = 64;
         int soilLevel = 6;
 
-        float yOffset = -21.0f;
+        float yOffset = -16.0f;
 
         for(int x = -1; x <= VoxelProperties.chunkWidth; x++) {
             for(int z = -1; z <= VoxelProperties.chunkWidth; z++) {

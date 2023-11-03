@@ -7,7 +7,6 @@ public class ItemRegistry : MonoBehaviour
 {
     public static ItemRegistry Instance { get; private set; }
 
-    [SerializeField]
     private List<ItemType> itemTypes = new List<ItemType>();
 
     [SerializeField]
@@ -16,6 +15,15 @@ public class ItemRegistry : MonoBehaviour
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
+    }
+
+    private void Start() {
+        LoadItemTypesFromFolder();
+    }
+
+    private void LoadItemTypesFromFolder() {
+        System.Object[] objects = Resources.LoadAll("Item Types");
+        foreach(System.Object currentObject in objects) itemTypes.Add((ItemType) currentObject);
     }
 
     public Material GetMaterialForID(ushort id) {
