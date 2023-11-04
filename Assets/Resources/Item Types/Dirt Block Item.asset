@@ -18,4 +18,5 @@ MonoBehaviour:
   brokenMaterial: {fileID: 2100000, guid: 878e970e4105e2bc1a586057ca37bf36, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: fde23088b24b6a11e91f33e1876e586d, type: 2}
   itemForm: 0
+  heldItemPrefab: {fileID: 7949245008419684630, guid: 81e4ac3dbfb9eb5b6abf5b719748d535, type: 3}
   droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}

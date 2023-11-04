@@ -31,6 +31,13 @@ public class ItemRegistry : MonoBehaviour
         throw new NullReferenceException("Material not found for item ID: " + id);
     }
 
+    public Material GetMaterialForIDWithCount(ushort id, ushort count) {
+        if(count == 0) return GetMaterialForID(0);
+
+        foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.DroppedItemMaterial;
+        throw new NullReferenceException("Material not found for item ID: " + id);
+    }
+
     public Material GetBreakMaterialForID(ushort id) {
         foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.BrokenMaterial;
         throw new NullReferenceException("Break material not found for item ID: " + id);
@@ -60,5 +67,15 @@ public class ItemRegistry : MonoBehaviour
         }
 
         throw new NullReferenceException("Dropped item prefab not found for item ID: " + id);
+    }
+
+    public GameObject GetItemHeldPrefabWithCount(ushort id, ushort count) {
+        if(count == 0) return GetItemHeldPrefabWithCount(0, 1);
+
+        foreach(ItemType itemType in itemTypes) {
+            if(itemType.ID == id) return itemType.HeldItemPrefab;
+        }
+
+        throw new NullReferenceException("Held item prefab not found for item ID: " + id);
     }
 }

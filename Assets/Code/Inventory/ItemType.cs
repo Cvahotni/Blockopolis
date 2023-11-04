@@ -24,6 +24,9 @@ public class ItemType : ScriptableObject
     private ItemForm itemForm;
 
     [SerializeField]
+    private GameObject heldItemPrefab;
+
+    [SerializeField]
     private GameObject droppedItemPrefab;
 
     public ushort ID {
@@ -48,6 +51,10 @@ public class ItemType : ScriptableObject
 
     public ItemForm ItemForm {
         get { return itemForm; }
+    }
+
+    public GameObject HeldItemPrefab {
+        get { return heldItemPrefab; }
     }
 
     public GameObject DroppedItemPrefab {

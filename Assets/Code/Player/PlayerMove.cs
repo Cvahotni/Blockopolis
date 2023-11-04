@@ -15,6 +15,11 @@ public class PlayerMove : MonoBehaviour
 
     private Vector3 velocity;
     private bool isGrounded;
+    private bool isWalking;
+
+    public bool IsWalking {
+        get { return isWalking; }
+    }
 
     public bool IsGrounded {
         set { isGrounded = value; }
@@ -48,6 +53,8 @@ public class PlayerMove : MonoBehaviour
     private void GetInput() {
         x = Input.GetAxis("Horizontal") * speed;
         z = Input.GetAxis("Vertical") * speed;
+        
+        isWalking = x != 0.0f || z != 0.0f && isGrounded;
     }
 
     private void MoveVelocity() {

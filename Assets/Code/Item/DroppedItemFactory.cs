@@ -22,7 +22,7 @@ public class DroppedItemFactory : MonoBehaviour
         itemRegistry = ItemRegistry.Instance;
     }
 
-    public void DropItem(Vector3 position, ushort id, int amount) {
+    public void DropItem(Vector3 position, ushort id, ushort amount) {
         GameObject droppedItemObject = GetDroppedPrefab(position, id);
         
         DroppedItem droppedItem = droppedItemObject.GetComponent<DroppedItem>();

@@ -9,6 +9,8 @@ public class ItemSlot
 
     private bool empty;
 
+    public bool Empty { get { return empty; }}
+
     public ItemSlot(UiItemSlot uiItemSlot) {
         this.uiItemSlot = uiItemSlot;
     }

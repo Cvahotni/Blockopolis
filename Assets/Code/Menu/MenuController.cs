@@ -5,7 +5,7 @@ using UnityEngine;
 public class MenuController : MonoBehaviour
 {
     public static MenuController Instance { get; private set; }
-    
+
     [SerializeField] private GameObject mainMenuObject;
     [SerializeField] private GameObject worldSelectionObject;
     [SerializeField] private GameObject createWorldMenuObject;
@@ -53,7 +53,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(renameWorldMenuObject, false);
     }
 
-    public void ToggleToEditWorld() {
+    public void ToggleToEditWorld(string name) {
         ToggleMenuObject(mainMenuObject, false);
         ToggleMenuObject(worldSelectionObject, false);
         ToggleMenuObject(createWorldMenuObject, false);

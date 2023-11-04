@@ -23,6 +23,7 @@ public class Hotbar : MonoBehaviour
 
     private PlayerBuild playerBuild;
     private ItemRegistry itemRegistry;
+    private PlayerHand playerHand;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -37,8 +38,15 @@ public class Hotbar : MonoBehaviour
     private void Update() {
         if(!hotbarEnabled) return;
         
-        if(playerBuild == null && hotbarEnabled) {
+        if(playerBuild == null) {
             playerBuild = PlayerBuild.Instance;
+            return;
+        }
+
+        if(playerHand == null) {
+            playerHand = PlayerHand.Instance;
+            UpdateHeldItem();
+
             return;
         }
 
@@ -56,6 +64,17 @@ public class Hotbar : MonoBehaviour
 
         if(slotIndex > hotbarLength - 1) slotIndex = 0;
         if(slotIndex < 0) slotIndex = hotbarLength - 1;
+
+        UpdateHeldItem();
+    }
+
+    private void UpdateHeldItem() {
+        ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
+
+        ushort id = currentSlot.Stack.ID;
+        ushort count = (ushort) currentSlot.Stack.Amount;
+
+        playerHand.SwitchHeldItem(id, count);
     }
 
     private void UpdateHighlightPosition() {
@@ -78,5 +97,11 @@ public class Hotbar : MonoBehaviour
 
     public void TakeFromCurrentSlot() {
         inventory.Slots[slotIndex].ItemSlot.Take(1);
+        RefreshHeldSlot();
+    }
+
+    public void RefreshHeldSlot() {
+        ItemSlot itemSlot = inventory.Slots[slotIndex].ItemSlot;
+        playerHand.SwitchHeldItem(itemSlot.Stack.ID, (ushort) itemSlot.Stack.Amount);
     }
 }

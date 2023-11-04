@@ -16,6 +16,7 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: 9e7a12e6d4323e1e6a0b7d98362b70ad, type: 3}
   brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
   brokenMaterial: {fileID: 2100000, guid: fde23088b24b6a11e91f33e1876e586d, type: 2}
-  droppedItemMaterial: {fileID: 2100000, guid: f1bd6cd71cad3348589f74f66c55272d, type: 2}
+  droppedItemMaterial: {fileID: 2100000, guid: 8b32a726feee3fe7caba0d44584c1524, type: 2}
   itemForm: 0
+  heldItemPrefab: {fileID: 2021011214142289611, guid: c1d9d46491e86b316aac418268dccf2a, type: 3}
   droppedItemPrefab: {fileID: 8740044613620937322, guid: 41ab2d015321920bcaa5dfd0b5fc2c85, type: 3}

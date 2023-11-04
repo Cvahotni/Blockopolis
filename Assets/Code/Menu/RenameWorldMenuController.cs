@@ -4,18 +4,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[RequireComponent(typeof(EditWorldMenuController))]
 public class RenameWorldMenuController : MonoBehaviour
 {
+    public static RenameWorldMenuController Instance { get; private set; }
+
     [SerializeField] private TMP_InputField nameField;
     [SerializeField] private Button renameButton;
     [SerializeField] private TMP_Text renameWorldText;
 
-    private MenuController menuController;
-
     private EditWorldMenuController editWorldMenuController;
 
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
+    }
+
     private void Start() {
-        menuController = MenuController.Instance;
         editWorldMenuController = EditWorldMenuController.Instance;
     }
 
@@ -36,6 +41,5 @@ public class RenameWorldMenuController : MonoBehaviour
         WorldHandler.RenameCurrentWorld(nameField.text);
 
         editWorldMenuController.CurrentWorldName = nameField.text;
-        menuController.ToggleToWorldSelection();
     }
 }

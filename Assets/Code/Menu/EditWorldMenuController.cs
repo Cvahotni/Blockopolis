@@ -7,9 +7,6 @@ public class EditWorldMenuController : MonoBehaviour
 {
     public static EditWorldMenuController Instance { get; private set; }
 
-    private MenuController menuController;
-    private WorldsEditingToggle worldsEditingToggle;
-
     private string currentWorldName = "";
 
     public string CurrentWorldName { 
@@ -18,27 +15,28 @@ public class EditWorldMenuController : MonoBehaviour
     }
 
     [SerializeField] private TMP_Text editWorldText;
+    [SerializeField] private TMP_Text deleteWorldText;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
     }
 
-    private void Start() {
-        menuController = MenuController.Instance;
-        worldsEditingToggle = WorldsEditingToggle.Instance;
-    }
-
-    public void Delete() {
-        if(currentWorldName == "") return;
-
+    public void DeleteCurrentWorld() {
         WorldHandler.LoadWorld(currentWorldName);
         WorldHandler.DeleteCurrentWorld();
-
-        menuController.ToggleToWorldSelection();
     }
 
-    public void UpdateEditWorldText() {
+    public void UpdateEditWorldText(string name) {
         editWorldText.text = MenuProperties.editWorldTextPrefix + currentWorldName;
+    }
+
+    public void UpdateDeleteWorldText(string name) {
+        string text = MenuProperties.deleteWorldText.Replace("{0}", currentWorldName);
+        deleteWorldText.text = text;
+    }
+
+    public void SetCurrentWorldName(string name) {
+        currentWorldName = name;
     }
 }
