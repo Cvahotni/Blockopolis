@@ -47,6 +47,7 @@ public class MenuEventSystem : MonoBehaviour
         editEvent.AddListener(menuController.ToggleToEditWorld);
         editEvent.AddListener(editWorldMenuController.UpdateEditWorldText);
         editEvent.AddListener(editWorldMenuController.UpdateDeleteWorldText);
+        editEvent.AddListener(renameWorldMenuController.UpdateRenameWorldText);
     }
 
     private void AddEditEnterListeners() {

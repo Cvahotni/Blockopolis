@@ -28,7 +28,7 @@ public class RenameWorldMenuController : MonoBehaviour
         renameButton.interactable = WorldNameChecker.IsNameValid(nameField.text);
     }
 
-    public void UpdateRenameWorldText() {
+    public void UpdateRenameWorldText(string name) {
         string text = MenuProperties.renameWorldText.Replace("{0}", editWorldMenuController.CurrentWorldName);
         renameWorldText.text = text;
     }
