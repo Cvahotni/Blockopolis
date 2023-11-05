@@ -13,3 +13,7 @@ if you have any questions add me on discord (spectralmage12).
 - Open it with Unity 2022.3.9f
 - Open the Package Maneger window
 - Install the packages: Burst, Collections, Mathematics, Universal RP, and Text Mesh Pro
+
+# Something went wrong?
+If something went wrong, like the world not loading after exporting,
+try going to Assets > Reimport All (and then restarting Unity)
