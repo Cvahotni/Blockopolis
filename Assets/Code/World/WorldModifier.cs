@@ -59,9 +59,8 @@ public class WorldModifier
 
     private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, ushort currentBlock) {
         ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
-        WorldAllocator worldAllocator = WorldAllocator.Instance;
 
-        if(worldAllocator.IsChunkOutsideOfWorld(chunk)) return;
+        if(WorldAllocator.IsChunkOutsideOfWorld(chunk)) return;
         if(!WorldStorage.DoesChunkExist(chunk)) return;
 
         NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk);
@@ -112,10 +111,8 @@ public class WorldModifier
     }
 
     public static ushort GetBlockAt(int worldX, int worldY, int worldZ) {
-        WorldAllocator worldAllocator = WorldAllocator.Instance;
-
         long chunkPos = BlockPositionToChunkPos(worldX, worldZ);
-        if(worldAllocator.IsChunkOutsideOfWorld(chunkPos)) return 0;
+        if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return 0;
 
         if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
 

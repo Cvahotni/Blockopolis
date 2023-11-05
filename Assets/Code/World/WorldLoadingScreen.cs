@@ -5,28 +5,30 @@ using UnityEngine.UI;
 
 public class WorldLoadingScreen : MonoBehaviour
 {
+    public static WorldLoadingScreen Instance { get; private set; }
+
     [SerializeField] private GameObject loadingScreen;
     [SerializeField] private GameObject playerObject;
     [SerializeField] private Camera backupCamera;
     [SerializeField] private Slider progressBar;
 
-    private EndlessTerrain endlessTerrain;
-    private WorldAllocator worldAllocator;
-    private Hotbar hotbar;
+    private WorldEventSystem worldEventSystem;
 
     private bool screenEnabled = true;
-    private int amountOfChunksInViewDistance;
+    private int amountOfChunksInViewDistance = 65536;
+    private int chunksGenerated;
 
     public bool ScreenEnabled {
         get { return screenEnabled; }
     }
+    
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
+    }
 
     private void Start() {
-        endlessTerrain = EndlessTerrain.Instance;
-        worldAllocator = WorldAllocator.Instance;
-        hotbar = Hotbar.Instance;
-
-        amountOfChunksInViewDistance = endlessTerrain.GetAmountOfChunksInViewDistance();
+        worldEventSystem = WorldEventSystem.Instance;
     }
 
     private void Update() {
@@ -46,21 +48,20 @@ public class WorldLoadingScreen : MonoBehaviour
         
         if(progressBar.value >= 1.0f) {
             screenEnabled = false;
-
-            UpdateWorldAllocator();
-            UpdateHotbar();
+            worldEventSystem.InvokeCullChunksChange(!screenEnabled);
         }
     }
 
-    private void UpdateWorldAllocator() {
-        worldAllocator.CullChunksOutOfView = !screenEnabled;
+    private float GetProgressAmount() {
+        return (float) chunksGenerated / amountOfChunksInViewDistance;
     }
 
-    private void UpdateHotbar() {
-        hotbar.HotbarEnabled = !screenEnabled;
-    }    
+    public void UpdateChunksGenerated(int amount) {
+        chunksGenerated = amount;
+    }
 
-    private float GetProgressAmount() {
-        return (float) worldAllocator.ChunksGenerated / amountOfChunksInViewDistance;
+    public void UpdateAmountOfChunksInViewDistance(int amount) {
+        Debug.Log("Amount changed!");
+        amountOfChunksInViewDistance = amount;
     }
 }

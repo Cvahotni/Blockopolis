@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-[RequireComponent(typeof(WorldAllocator))]
+[RequireComponent(typeof(WorldEventSystem))]
 public class EndlessTerrain : MonoBehaviour
 {
     public static EndlessTerrain Instance { get; private set; }
 
-    private WorldAllocator worldAllocator;
+    private WorldEventSystem worldEventSystem;
 
     public Transform playerTransform;
     private List<long> addedChunks = new List<long>();
@@ -39,10 +39,12 @@ public class EndlessTerrain : MonoBehaviour
     }
 
     private void Start() {
-        worldAllocator = WorldAllocator.Instance;
+        worldEventSystem = WorldEventSystem.Instance;
         shortWait = new WaitForSeconds(1.0f / chunksPerSecond);
 
         MovePlayerToSpawn();
+
+        worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(GetAmountOfChunksInViewDistance());
         BuildInitialChunks();
     }
 
@@ -74,11 +76,7 @@ public class EndlessTerrain : MonoBehaviour
     private void RemoveOutOfRangeChunks() {
         for(int i = addedChunks.Count - 1; i >= 0; i--) {
             long chunk = addedChunks[i];
-            
-            if(IsChunkOutOfRange(chunk)) {
-                bool removalResult = worldAllocator.RemoveChunkFromScene(chunk);
-                if(removalResult) RemoveChunk(chunk);
-            }
+            if(IsChunkOutOfRange(chunk)) worldEventSystem.InvokeChunkRemove(chunk);
         }
     }
 
@@ -87,19 +85,17 @@ public class EndlessTerrain : MonoBehaviour
             for(int z = -viewDistance + originZ; z < viewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
 
-                if(worldAllocator.IsChunkOutsideOfWorld(coord)) continue;
+                if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
                 if(IsChunkInWorld(coord)) continue;
                 if(IsChunkOutOfRange(coord)) continue;
 
-                worldAllocator.AddChunkToQueue(coord);
-                addedChunks.Add(coord);
-
                 yield return shortWait;
+                worldEventSystem.InvokeChunkAdd(coord);
             }
         }
     }
 
-    public int GetAmountOfChunksInViewDistance() {
+    private int GetAmountOfChunksInViewDistance() {
         int originX = GetPlayerChunkX();
         int originZ = GetPlayerChunkZ();
 
@@ -109,7 +105,7 @@ public class EndlessTerrain : MonoBehaviour
             for(int z = -viewDistance + originZ; z < viewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
 
-                if(worldAllocator.IsChunkOutsideOfWorld(coord)) continue;
+                if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
                 if(IsChunkOutOfRange(coord)) continue;
 
                 chunkCount++;
@@ -119,8 +115,16 @@ public class EndlessTerrain : MonoBehaviour
         return chunkCount;
     }
 
+    public void AddChunkToAddedChunks(long coord) {
+        addedChunks.Add(coord);
+    }
+
     private bool IsChunkInWorld(long coord) {
         return addedChunks.Contains(coord);
+    }
+
+    public void RemoveChunk(BuiltChunkData data) {
+        RemoveChunk(data.coord);
     }
 
     public void RemoveChunk(long coord) {

@@ -4,8 +4,9 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 
+[RequireComponent(typeof(WorldEventSystem))]
 [RequireComponent(typeof(EndlessTerrain))]
-[RequireComponent(typeof(ChunkObjectPool))]
+
 public class WorldAllocator : MonoBehaviour
 {
     public static WorldAllocator Instance { get; private set; }
@@ -13,18 +14,14 @@ public class WorldAllocator : MonoBehaviour
     private Queue<long> chunkQueue = new Queue<long>();
     private Queue<long> immidiateChunkQueue = new Queue<long>();
 
-    private ChunkObjectPool chunkObjectPool;
+    private WorldEventSystem worldEventSystem;
+
     private EndlessTerrain endlessTerrain;
-    private ChunkBuilder chunkBuilder;
 
     private int chunksGenerated;
     private bool cullChunksOutOfView = false;
 
     private World currentWorld;
-
-    public bool CullChunksOutOfView {
-        set { cullChunksOutOfView = value; }
-    }
 
     [SerializeField] private Camera playerCamera;
 
@@ -38,9 +35,8 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void Start() {
-        chunkObjectPool = ChunkObjectPool.Instance;
+        worldEventSystem = WorldEventSystem.Instance;
         endlessTerrain = EndlessTerrain.Instance;
-        chunkBuilder = ChunkBuilder.Instance;
 
         currentWorld = WorldHandler.CurrentWorld;
     }
@@ -58,14 +54,6 @@ public class WorldAllocator : MonoBehaviour
 
     public void AddImmidiateChunkToQueue(long coord) {
         immidiateChunkQueue.Enqueue(coord);
-    }
-
-    public bool RemoveChunkFromScene(long coord) {
-        GameObject gameObject = GameObject.Find("" + coord);
-        if(gameObject == null) return false;
-
-        chunkObjectPool.ReturnToPool(gameObject);
-        return true;
     }
 
     private void BuildNextChunk(ref Queue<long> queue) {
@@ -93,12 +81,18 @@ public class WorldAllocator : MonoBehaviour
             return;
         }
 
-        chunkBuilder.BuildChunk(chunkPos);
+        worldEventSystem.InvokeChunkBuild(chunkPos);
+
         chunksGenerated++;
+        worldEventSystem.InvokeChunksGeneratedChange(chunksGenerated);
     }
 
-    public bool IsChunkOutsideOfWorld(long coord) {
+    public static bool IsChunkOutsideOfWorld(long coord) {
         return coord == int.MaxValue;
+    }
+
+    public void UpdateCullChunksOutOfView(bool value) {
+        cullChunksOutOfView = value;
     }
 
     private bool IsChunkInFrustum(long coord) {

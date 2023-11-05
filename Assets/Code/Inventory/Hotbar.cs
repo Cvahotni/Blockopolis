@@ -95,6 +95,10 @@ public class Hotbar : MonoBehaviour
         playerBuild.TargetBlock = id;
     }
 
+    public void SetStatus(bool status) {
+        hotbarEnabled = status;
+    }
+
     public void TakeFromCurrentSlot() {
         inventory.Slots[slotIndex].ItemSlot.Take(1);
         RefreshHeldSlot();

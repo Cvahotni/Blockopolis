@@ -15,8 +15,7 @@ public class ChunkBuilder : MonoBehaviour
     private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
     private readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
 
-    private ChunkObjectBuilder chunkObjectBuilder;
-    private WorldAllocator worldAllocator;
+    private WorldEventSystem worldEventSystem;
     private EndlessTerrain endlessTerrain;
 
     private void Awake() {
@@ -25,8 +24,7 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     private void Start() {
-        chunkObjectBuilder = ChunkObjectBuilder.Instance;
-        worldAllocator = WorldAllocator.Instance;
+        worldEventSystem = WorldEventSystem.Instance;
         endlessTerrain = EndlessTerrain.Instance;
     }
 
@@ -67,7 +65,7 @@ public class ChunkBuilder : MonoBehaviour
         }
 
         BuildChunkMesh(buildData);
-        chunkObjectBuilder.BuildChunkObject(vertices, indices, chunkPos[0]);
+        worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(vertices, indices, chunkPos[0]));
 
         SaveChunkVoxelMap(chunkCoord, voxelMap);
         buildData.Dispose();

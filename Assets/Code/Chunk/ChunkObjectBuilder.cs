@@ -43,34 +43,32 @@ public class ChunkObjectBuilder : MonoBehaviour
         groundLayer = LayerMask.NameToLayer("Ground");
     }
 
-    public void BuildChunkObject(NativeList<ChunkVertex> vertices, NativeList<uint> indices, long coord) {
-        worldAllocator.RemoveChunkFromScene(coord);
-        
+    public void BuildChunkObject(BuiltChunkData builtChunkData) {
         GameObject chunkGameObject = chunkObjectPool.GetFromPool();
         chunkGameObject.SetActive(true);    
 
-        int chunkPositionX = ChunkPositionHelper.GetChunkPosWX(coord);
-        int chunkPositionZ = ChunkPositionHelper.GetChunkPosWZ(coord);
+        int chunkPositionX = ChunkPositionHelper.GetChunkPosWX(builtChunkData.coord);
+        int chunkPositionZ = ChunkPositionHelper.GetChunkPosWZ(builtChunkData.coord);
 
-        chunkGameObject.name = coord.ToString();    
+        chunkGameObject.name = builtChunkData.coord.ToString();    
         chunkGameObject.transform.position = new Vector3(chunkPositionX, 0.0f, chunkPositionZ);
 
         MeshFilter meshFilter = chunkGameObject.GetComponent<MeshFilter>();
         meshFilter.mesh.Clear();
 
-        meshFilter.mesh.SetVertexBufferParams(vertices.Length,
+        meshFilter.mesh.SetVertexBufferParams(builtChunkData.vertices.Length,
             positionDescriptor,
             normalDescriptor,
             texCoordDescriptor
         );
 
         meshFilter.mesh.MarkDynamic();
-        meshFilter.mesh.SetIndexBufferParams(indices.Length, IndexFormat.UInt32);
+        meshFilter.mesh.SetIndexBufferParams(builtChunkData.indices.Length, IndexFormat.UInt32);
 
-        meshFilter.mesh.SetVertexBufferData<ChunkVertex>(vertices, 0, 0, vertices.Length, 0, MeshUpdateFlags.DontValidateIndices);
-        meshFilter.mesh.SetIndexBufferData<uint>(indices, 0, 0, indices.Length, MeshUpdateFlags.DontValidateIndices);
+        meshFilter.mesh.SetVertexBufferData<ChunkVertex>(builtChunkData.vertices, 0, 0, builtChunkData.vertices.Length, 0, MeshUpdateFlags.DontValidateIndices);
+        meshFilter.mesh.SetIndexBufferData<uint>(builtChunkData.indices, 0, 0, builtChunkData.indices.Length, MeshUpdateFlags.DontValidateIndices);
 
-        meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, indices.Length));
+        meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, builtChunkData.indices.Length));
         meshFilter.mesh.RecalculateBounds();
 
         MeshRenderer meshRenderer = chunkGameObject.GetComponent<MeshRenderer>();

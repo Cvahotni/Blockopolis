@@ -32,6 +32,15 @@ public class ChunkObjectPool : MonoBehaviour
         return gameObject;
     }
 
+    public void ReturnToPool(BuiltChunkData data) {
+        ReturnToPool(data.coord);
+    }
+
+    public void ReturnToPool(long coord) {
+        GameObject gameObject = GameObject.Find("" + coord);
+        ReturnToPool(gameObject);
+    }
+
     public void ReturnToPool(GameObject gameObject) {
         if(gameObject == null) return;
 
