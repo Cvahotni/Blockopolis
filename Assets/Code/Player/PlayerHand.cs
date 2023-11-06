@@ -14,6 +14,7 @@ public class PlayerHand : MonoBehaviour
     private ItemRegistry itemRegistry;
 
     private int currentHotbarSlot;
+    private float currentAnimatorTime;
     
     public int CurrentHotbatSlot { set { currentHotbarSlot = value; }}
 
@@ -37,6 +38,9 @@ public class PlayerHand : MonoBehaviour
     }
 
     public void SwitchHeldItem(ushort id, ushort count) {
+        handObjectAnimator = handObject.GetComponent<Animator>();
+        currentAnimatorTime = GetAnimatorTime(0);
+        
         Destroy(handObject);
         GameObject prefab = itemRegistry.GetItemHeldPrefabWithCount(id, count);
 
@@ -47,5 +51,13 @@ public class PlayerHand : MonoBehaviour
         meshRenderer.sharedMaterial = heldItemMaterial;
 
         handObjectAnimator = handObject.GetComponent<Animator>();
+        handObjectAnimator.Update(currentAnimatorTime);
+    }
+
+    private float GetAnimatorTime(int index) {
+        AnimatorStateInfo animationState = handObjectAnimator.GetCurrentAnimatorStateInfo(index);
+		AnimatorClipInfo[] animatorClip = handObjectAnimator.GetCurrentAnimatorClipInfo(index);
+		
+        return animatorClip[index].clip.length * animationState.normalizedTime;
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[DefaultExecutionOrder(500)]
 public class WorldEventSystem : MonoBehaviour
 {
     public static WorldEventSystem Instance { get; private set; }
@@ -104,7 +105,6 @@ public class WorldEventSystem : MonoBehaviour
     }
 
     public void InvokeAmountOfChunksInViewDistanceChange(int amount) {
-        Debug.Log("Invoked!");
         amountOfChunksInViewDistanceChangeEvent.Invoke(amount);
     }
 }
