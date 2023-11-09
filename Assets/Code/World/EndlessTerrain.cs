@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting;
 
-[RequireComponent(typeof(WorldEventSystem))]
 public class EndlessTerrain : MonoBehaviour
 {
     public static EndlessTerrain Instance { get; private set; }

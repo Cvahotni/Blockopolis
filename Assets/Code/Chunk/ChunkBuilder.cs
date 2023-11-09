@@ -7,7 +7,6 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
 
-[RequireComponent(typeof(WorldEventSystem))]
 [RequireComponent(typeof(EndlessTerrain))]
 public class ChunkBuilder : MonoBehaviour
 {

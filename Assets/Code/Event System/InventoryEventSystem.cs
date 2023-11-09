@@ -6,7 +6,21 @@ using UnityEngine.Events;
 [DefaultExecutionOrder(200)]
 public class InventoryEventSystem : MonoBehaviour
 {
-    public static InventoryEventSystem Instance { get; private set; }
+    public static InventoryEventSystem Instance {
+        get {
+            if(_instance == null) {
+                Debug.LogError("The InventoryEventSystem must be present in the scene at all times.");
+            }
+
+            return _instance;
+        }
+
+        set {
+            _instance = value;
+        }
+    }
+
+    private static InventoryEventSystem _instance;
 
     private PlayerBuild playerBuild;
     private PlayerHand playerHand;

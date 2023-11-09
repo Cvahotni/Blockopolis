@@ -4,9 +4,25 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [DefaultExecutionOrder(500)]
+[RequireComponent(typeof(PlayerEventSystem))]
+[RequireComponent(typeof(InventoryEventSystem))]
 public class WorldEventSystem : MonoBehaviour
 {
-    public static WorldEventSystem Instance { get; private set; }
+    public static WorldEventSystem Instance {
+        get {
+            if(_instance == null) {
+                Debug.LogError("The WorldEventSystem must be present in the scene at all times.");
+            }
+
+            return _instance;
+        }
+
+        set {
+            _instance = value;
+        }
+    }
+
+    private static WorldEventSystem _instance;
 
     private EndlessTerrain endlessTerrain;
     private WorldAllocator worldAllocator;

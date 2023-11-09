@@ -6,7 +6,22 @@ using UnityEngine.Events;
 [DefaultExecutionOrder(300)]
 public class PlayerEventSystem : MonoBehaviour
 {
-    public static PlayerEventSystem Instance { get; private set; }
+    public static PlayerEventSystem Instance {
+        get {
+            if(_instance == null) {
+                Debug.LogError("The PlayerEventSystem must be present in the scene at all times.");
+            }
+
+            return _instance;
+        }
+
+        set {
+            _instance = value;
+        }
+    }
+
+    private static PlayerEventSystem _instance;
+
     private PlayerBlockBreakEffect playerBlockBreakEffect;
     private DroppedItemFactory droppedItemFactory;
     private PlayerMove playerMove;

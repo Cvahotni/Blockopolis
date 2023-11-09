@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 
-[RequireComponent(typeof(WorldEventSystem))]
 [RequireComponent(typeof(EndlessTerrain))]
 
 public class WorldAllocator : MonoBehaviour
