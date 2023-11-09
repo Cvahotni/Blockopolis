@@ -9,7 +9,7 @@ public class DroppedItemFactory : MonoBehaviour
     [SerializeField] private GameObject droppedBlockPrefab;
     [SerializeField] private GameObject droppedItemPrefab;
 
-    [SerializeField] private float randomForceAmount = 1.0f;
+    [SerializeField] private float randomForceAmount = 0.1f;
 
     private ItemRegistry itemRegistry;
 
@@ -22,7 +22,16 @@ public class DroppedItemFactory : MonoBehaviour
         itemRegistry = ItemRegistry.Instance;
     }
 
+    public void DropItemFromBlock(BlockBreakData data) {
+        DropItem(new Vector3(data.x, data.y, data.z), data.block, data.amount);
+    }
+
     public void DropItem(Vector3 position, ushort id, ushort amount) {
+        if(itemRegistry == null) {
+            Debug.LogError("The ItemRegistry script must be present in the scene in order to drop an item.");
+            return;
+        }
+
         GameObject droppedItemObject = GetDroppedPrefab(position, id);
         
         DroppedItem droppedItem = droppedItemObject.GetComponent<DroppedItem>();

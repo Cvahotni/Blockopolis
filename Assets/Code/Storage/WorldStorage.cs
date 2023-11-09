@@ -71,8 +71,8 @@ public static class WorldStorage
 
     public static void LoadRegionToMap(World world, long regionPos) {
         WorldRegion loadedRegion = WorldRegionSaveLoad.LoadRegion(GetRegionPosName(world, regionPos));
-        regionMap.Add(regionPos, loadedRegion);
 
+        regionMap.Add(regionPos, loadedRegion);
         awaitingRegions.Remove(regionPos);
     }
 

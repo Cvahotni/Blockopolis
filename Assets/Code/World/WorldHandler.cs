@@ -25,14 +25,30 @@ public class WorldHandler
     }
 
     public static void LoadWorldInventory() {
-        WorldInventorySaveLoad.LoadWorldInventory(currentWorld, Inventory.Instance);
+        Inventory inventory = Inventory.Instance;
+
+        if(inventory == null) {
+            Debug.Log("Can't find a valid inventory, consider adding one to the scene.");
+            return;
+        }
+
+        WorldInventorySaveLoad.LoadWorldInventory(currentWorld, inventory);
     }
 
     public static void SaveCurrentWorld() {
-        WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
-        WorldInventorySaveLoad.SaveWorldInventory(currentWorld, Inventory.Instance);
-        WorldStorage.SaveRegions(currentWorld);
+        Inventory inventory = Inventory.Instance;
 
+        WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
+        
+        if(inventory != null) {
+            WorldInventorySaveLoad.SaveWorldInventory(currentWorld, inventory);
+        }
+
+        else {
+            Debug.Log("Can't find a valid inventory, consider adding one to the scene. The inventory will not be saved because of this.");
+        }
+
+        WorldStorage.SaveRegions(currentWorld);
         Debug.Log("Saved world: " + currentWorld.Name);
     }
 

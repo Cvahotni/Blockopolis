@@ -5,24 +5,24 @@ using UnityEngine;
 public struct ItemStack
 {
     private ushort id;
-    private int amount;
+    private ushort amount;
 
     public ushort ID {
         get { return id; }
         set { ID = value; }
     }
 
-    public int Amount {
+    public ushort Amount {
         get { return amount; }
         set { amount = value; }
     }
 
-    public ItemStack(ushort id, int amount) {
+    public ItemStack(ushort id, ushort amount) {
         this.id = id;
         this.amount = amount;
     }
 
-    public bool Add(int count, int maxStackSize) {
+    public bool Add(ushort count, int maxStackSize) {
         int totalAmount = amount + count;
         if(totalAmount > maxStackSize) return false;
 
@@ -30,7 +30,7 @@ public struct ItemStack
         return true;
     }
 
-    public void Take(int count) {
+    public void Take(ushort count) {
         amount -= count;
     }
 }

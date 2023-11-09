@@ -214,8 +214,7 @@ GameObject:
   - component: {fileID: 4350910742271192101}
   - component: {fileID: 2071041588231671643}
   - component: {fileID: 5742956146823562977}
-  - component: {fileID: 5346704314813263759}
-  - component: {fileID: 2470768854312382393}
+  - component: {fileID: -493409961424751727}
   m_Layer: 7
   m_Name: Dropped Item
   m_TagString: DroppedItem
@@ -350,23 +349,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.4, y: 0.4, z: 0.4}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!111 &5346704314813263759
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8845799518492459054}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 47d6d9d3928d3290090ab133aaf7bc59, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 47d6d9d3928d3290090ab133aaf7bc59, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
---- !u!95 &2470768854312382393
+--- !u!95 &-493409961424751727
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -376,7 +359,7 @@ Animator:
   m_GameObject: {fileID: 8845799518492459054}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: fc788c73f08a4188b9cc4333f54316dc, type: 2}
+  m_Controller: {fileID: 9100000, guid: e3b0088dc0c292078960a32b7b115deb, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

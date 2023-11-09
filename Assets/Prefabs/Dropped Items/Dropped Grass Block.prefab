@@ -98,8 +98,7 @@ GameObject:
   - component: {fileID: 467851803621880881}
   - component: {fileID: 6549035246214005241}
   - component: {fileID: 514564975521825500}
-  - component: {fileID: 1480937219920444084}
-  - component: {fileID: 5546371758761958617}
+  - component: {fileID: -5523275528732459830}
   m_Layer: 7
   m_Name: Dropped Grass Block
   m_TagString: DroppedItem
@@ -196,7 +195,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -234,7 +233,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!95 &1480937219920444084
+--- !u!95 &-5523275528732459830
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -255,19 +254,3 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!111 &5546371758761958617
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8740044613620937322}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 0}
-  m_Animations:
-  - {fileID: 7400000, guid: 9e1c67a4f00b828e2a9eba77c959996e, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0

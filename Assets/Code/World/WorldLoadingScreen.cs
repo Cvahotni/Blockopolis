@@ -13,10 +13,13 @@ public class WorldLoadingScreen : MonoBehaviour
     [SerializeField] private Slider progressBar;
 
     private WorldEventSystem worldEventSystem;
+    private PlayerEventSystem playerEventSystem;
 
     private bool screenEnabled = true;
     private int amountOfChunksInViewDistance = 65536;
     private int chunksGenerated;
+
+    private bool playerTeleportedToSpawn = false;
 
     public bool ScreenEnabled {
         get { return screenEnabled; }
@@ -29,11 +32,13 @@ public class WorldLoadingScreen : MonoBehaviour
 
     private void Start() {
         worldEventSystem = WorldEventSystem.Instance;
+        playerEventSystem = PlayerEventSystem.Instance;
     }
 
     private void Update() {
         UpdateProgressBar();
         UpdateObjectsStatus();
+        UpdatePlayerSpawnStatus();
     }
 
     private void UpdateObjectsStatus() {
@@ -41,6 +46,13 @@ public class WorldLoadingScreen : MonoBehaviour
         backupCamera.gameObject.SetActive(screenEnabled);
 
         playerObject.SetActive(!screenEnabled);
+    }
+
+    private void UpdatePlayerSpawnStatus() {
+        if(playerTeleportedToSpawn || screenEnabled) return;
+        
+        playerEventSystem.InvokePlayerSpawn();
+        playerTeleportedToSpawn = true;
     }
 
     private void UpdateProgressBar() {

@@ -21,16 +21,23 @@ public class PlayerBlockBreakEffect : MonoBehaviour
         itemRegistry = ItemRegistry.Instance;
     }
 
-    public void PlayBlockBreakParticle(ushort block, Vector3 position) {
+    public void PlayBlockBreakParticle(BlockBreakData data) {
+        if(itemRegistry == null) {
+            Debug.LogError("The ItemRegistry script must be present in order to play a block break particle.");
+            return;
+        }
+
+        Vector3 position = new Vector3(data.x, data.y, data.z);
+
         ParticleSystem particleSystem = Instantiate(blockBreakParticle, position, blockBreakParticle.transform.rotation);
         particleSystem.transform.position = position;
         
         ParticleSystemRenderer particleSystemRenderer = particleSystem.gameObject.GetComponent<ParticleSystemRenderer>();
         
-        Material crackMaterial = itemRegistry.GetBreakMaterialForID(block);
+        Material crackMaterial = itemRegistry.GetBreakMaterialForID(data.block);
         particleSystemRenderer.material = crackMaterial;
 
-        Sprite particleSprite = itemRegistry.GetBreakSpriteForID(block);
+        Sprite particleSprite = itemRegistry.GetBreakSpriteForID(data.block);
         var shape = particleSystem.shape;
 
         shape.sprite = particleSprite;

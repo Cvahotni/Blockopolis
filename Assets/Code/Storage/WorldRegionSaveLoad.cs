@@ -54,6 +54,11 @@ public class WorldRegionSaveLoad
         Debug.Log("Attempting Region Load: " + path);
         ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
 
+        if(chunkBuilder == null) {
+            Debug.LogError("The ChunkBuilder script must be present to load a region. " + path + " will not be loaded.");
+            return new WorldRegion();
+        }
+
         Dictionary<long, NativeArray<ushort>> voxelStorageMap = new Dictionary<long, NativeArray<ushort>>();
 
         string metadataPath = GetMetadataPath(path);

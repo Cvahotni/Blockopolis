@@ -5,8 +5,6 @@ using UnityEngine.Rendering;
 using Unity.Collections;
 
 [RequireComponent(typeof(ChunkObjectPool))]
-[RequireComponent(typeof(WorldAllocator))]
-[RequireComponent(typeof(EndlessTerrain))]
 public class ChunkObjectBuilder : MonoBehaviour
 {
     private VertexAttributeDescriptor positionDescriptor = new VertexAttributeDescriptor(VertexAttribute.Position);
@@ -15,9 +13,7 @@ public class ChunkObjectBuilder : MonoBehaviour
 
     public static ChunkObjectBuilder Instance { get; private set; }
 
-    private WorldAllocator worldAllocator;
     private ChunkObjectPool chunkObjectPool;
-    private EndlessTerrain endlessTerrain;
     
     [SerializeField]
     private Material terrainMaterial;
@@ -33,9 +29,7 @@ public class ChunkObjectBuilder : MonoBehaviour
     }
 
     private void Start() {
-        worldAllocator = WorldAllocator.Instance;
         chunkObjectPool = ChunkObjectPool.Instance;
-
         SetLayer();
     }
 

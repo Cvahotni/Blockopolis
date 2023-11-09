@@ -7,8 +7,6 @@ public class DroppedItem : MonoBehaviour
     [SerializeField] private Transform itemTransform;
     [SerializeField] private ItemForm itemForm;
 
-    private Inventory inventory;
-
     private ItemStack itemStack;
     private DroppedItemTextureHandler droppedItemTextureHandler;
 
@@ -26,10 +24,6 @@ public class DroppedItem : MonoBehaviour
         set { destroyed = value; }
     }
 
-    private void Start() {
-        inventory = Inventory.Instance;
-    }
-
     private void SetReferences() {
         gameObject.tag = tagName;
         gameObject.layer = LayerMask.NameToLayer(layerName);
@@ -37,16 +31,21 @@ public class DroppedItem : MonoBehaviour
         droppedItemTextureHandler = gameObject.GetComponent<DroppedItemTextureHandler>();
     }
 
-    public void SetItem(ItemRegistry itemRegistry, ushort id, int amount) {
-        itemStack = new ItemStack(id, amount);
-
+    public void SetItem(ItemRegistry itemRegistry, ushort id, ushort amount) {
         SetReferences();
+
+        if(droppedItemTextureHandler == null) {
+            Debug.LogError("The Dropped Item prefab is missing a DroppedItemTextureHandler!");
+            return;
+        }
+
+        itemStack = new ItemStack(id, amount);
         Material material = itemRegistry.GetMaterialForID(id);
 
         droppedItemTextureHandler.SetMaterials(material);
     }
 
-    public bool Add(int amount, int maxStackSize) {
+    public bool Add(ushort amount, int maxStackSize) {
         return itemStack.Add(amount, maxStackSize);
     }
 
@@ -58,10 +57,15 @@ public class DroppedItem : MonoBehaviour
 
         DroppedItem droppedItem = otherGameObject.GetComponent<DroppedItem>();
 
+        if(droppedItem == null) {
+            Debug.LogError("The other GameObject is missing a DroppedItem!");
+            return;
+        }
+
         if(droppedItem.ItemStack.ID != itemStack.ID) return;
         if(droppedItem.Destroyed) return;
 
-        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount, inventory.MaxStackSize);
+        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount, InventoryProperties.maxStackSize);
         if(!addedToOtherItemStack) return;
     
         destroyed = true;

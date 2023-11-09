@@ -2360,7 +2360,6 @@ MonoBehaviour:
   - {fileID: 1681412120}
   - {fileID: 1531498476}
   - {fileID: 1682774049}
-  maxStackSize: 80
 --- !u!1 &991273418
 GameObject:
   m_ObjectHideFlags: 0
@@ -3021,6 +3020,8 @@ GameObject:
   - component: {fileID: 1258926991}
   - component: {fileID: 1258926992}
   - component: {fileID: 1258926993}
+  - component: {fileID: 1258926994}
+  - component: {fileID: 1258926995}
   m_Layer: 0
   m_Name: Voxel Manager
   m_TagString: Untagged
@@ -3132,6 +3133,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f7994852284d43c57bce04fd638e032a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1258926994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258926985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b71de8b761bc8b529a3f17cf172e9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1258926995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258926985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc983013abd3dd3a18c176d465af2dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!20 &1309493249 stripped
@@ -5789,7 +5814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1827230553309892923, guid: 35c580695bb1634de95ca9499a87b71c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

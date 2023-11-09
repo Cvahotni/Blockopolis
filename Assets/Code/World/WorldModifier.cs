@@ -59,6 +59,11 @@ public class WorldModifier
 
     private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, ushort currentBlock) {
         ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
+        
+        if(chunkBuilder == null) {
+            Debug.LogError("The ChunkBuilder script must be present in the scene to use ModifyChunkVoxelMap");
+            return;
+        }
 
         if(WorldAllocator.IsChunkOutsideOfWorld(chunk)) return;
         if(!WorldStorage.DoesChunkExist(chunk)) return;
@@ -120,6 +125,11 @@ public class WorldModifier
         int relativeZ = GetRelativeZ(worldZ);
 
         ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
+
+        if(chunkBuilder == null) {
+            Debug.LogError("The ChunkBuilder script must be present in the scene to use GetBlockAt");
+            return 0;
+        }
 
         if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
         NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos);

@@ -6,12 +6,10 @@ public class PlayerItemPickup : MonoBehaviour
 {
     [SerializeField] private string droppedItemTagName;
 
-    private Inventory inventory;
-    private Hotbar hotbar;
+    private InventoryEventSystem inventoryEventSystem;
 
     private void Start() {
-        inventory = Inventory.Instance;
-        hotbar = Hotbar.Instance;
+        inventoryEventSystem = InventoryEventSystem.Instance;
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -23,9 +21,7 @@ public class PlayerItemPickup : MonoBehaviour
         if(droppedItem.Destroyed) return;
         droppedItem.Destroyed = true;
 
-        inventory.AddStack(droppedItem.ItemStack);
-        hotbar.RefreshHeldSlot();
-
+        inventoryEventSystem.InvokeItemPickup(droppedItem.ItemStack);
         Destroy(currentObject, 0.1f);
     }
 }

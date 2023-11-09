@@ -9,14 +9,14 @@ public class PlayerGroundCheck : MonoBehaviour
     [SerializeField] private float checkDistance = 1.0f;
     [SerializeField] private LayerMask groundLayerMask;
 
-    private PlayerMove playerMove;
+    private PlayerEventSystem playerEventSystem;
 
     private void Start() {
-        playerMove = PlayerMove.Instance;
+        playerEventSystem = PlayerEventSystem.Instance;
     }
 
     private void FixedUpdate() {
-        playerMove.IsGrounded = IsGroundedViaRaycast();
+        playerEventSystem.InvokeGroundCheck(IsGroundedViaRaycast());
         DrawDebugRays();
     }
 

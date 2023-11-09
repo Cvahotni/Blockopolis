@@ -32,7 +32,7 @@ public class ItemSlot
         empty = stack.Amount <= 0 || stack.ID == 0;
     }
 
-    public int Take(int amount) {
+    public int Take(ushort amount) {
         if(stack.Amount <= 1) {
             stack.Amount = 0;
             uiItemSlot.UpdateSlot(false);
@@ -52,12 +52,12 @@ public class ItemSlot
         return stack.Amount;
     }
 
-    public int Give(int amount, int maxSize) {
-        int totalAmount = stack.Amount + amount;
+    public ushort Give(ushort amount, int maxSize) {
+        ushort totalAmount = (ushort) (stack.Amount + amount);
 
         if(totalAmount > maxSize) {
-            stack.Amount = maxSize;
-            return Mathf.Abs(maxSize - totalAmount);
+            stack.Amount = (ushort) maxSize;
+            return (ushort) Mathf.Abs(maxSize - totalAmount);
         }
 
         stack.Amount += amount;

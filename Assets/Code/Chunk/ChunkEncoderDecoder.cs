@@ -11,7 +11,7 @@ public class ChunkEncoderDecoder
     private static readonly ProfilerMarker decodeMarker = new ProfilerMarker("ChunkEncoderDecoder.Decode");
 
     public static void Encode(NativeArray<ushort> voxelMap, NativeList<EncodedVoxelMapEntry> encodedVoxelMap) {
-        //encodeMarker.Begin();
+        encodeMarker.Begin();
 
         var runLengthEncoderJob = new ChunkRunLengthEncoderJob() {
             voxelMap = voxelMap,
@@ -21,11 +21,11 @@ public class ChunkEncoderDecoder
         JobHandle runLengthEncoderJobHandle = runLengthEncoderJob.Schedule();
         runLengthEncoderJobHandle.Complete();
 
-        //encodeMarker.End();
+        encodeMarker.End();
     }
 
     public static NativeArray<ushort> Decode(NativeList<EncodedVoxelMapEntry> encodedVoxelMap, ref ChunkBuilder chunkBuilder) {
-        //decodeMarker.Begin();
+        decodeMarker.Begin();
 
         NativeArray<ushort> voxelMap = chunkBuilder.CreateNewVoxelMap();
 
@@ -39,7 +39,7 @@ public class ChunkEncoderDecoder
 
         encodedVoxelMap.Dispose();
 
-        //decodeMarker.End();
+        decodeMarker.End();
         return voxelMap;
     }
 }

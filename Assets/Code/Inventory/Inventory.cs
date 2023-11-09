@@ -7,14 +7,9 @@ public class Inventory : MonoBehaviour
     public static Inventory Instance { get; private set; }
 
     [SerializeField] private UiItemSlot[] slots;
-    [SerializeField] private int maxStackSize = 5;
 
     public UiItemSlot[] Slots {
         get { return slots; }
-    }
-
-    public int MaxStackSize {
-        get { return maxStackSize; }
     }
 
     private void Awake() {
@@ -39,7 +34,7 @@ public class Inventory : MonoBehaviour
     }
 
     public void AddStack(ItemStack stack) {
-        int leftOverStackSize = stack.Amount;
+        ushort leftOverStackSize = stack.Amount;
 
         for(int i = 0; i < slots.Length; i++) {
             UiItemSlot uiItemSlot = slots[i];
@@ -49,7 +44,7 @@ public class Inventory : MonoBehaviour
             if(currentStack.ID != stack.ID && currentStack.Amount > 0) continue;
             if(currentStack.Amount <= 0) SetStack(i, new ItemStack(stack.ID, 0));
 
-            leftOverStackSize = itemSlot.Give(leftOverStackSize, maxStackSize);
+            leftOverStackSize = itemSlot.Give(leftOverStackSize, InventoryProperties.maxStackSize);
 
             if(leftOverStackSize != 0) {
                 slots[i].UpdateSlot(true);

@@ -21,10 +21,6 @@ public class PlayerMove : MonoBehaviour
         get { return isWalking; }
     }
 
-    public bool IsGrounded {
-        set { isGrounded = value; }
-    }
-
     private float x;
     private float z;
 
@@ -32,11 +28,7 @@ public class PlayerMove : MonoBehaviour
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
     }
-
-    private void Start() {
-        TeleportToSpawn();
-    }
-
+    
     private void Update() {
         GetInput();
 
@@ -46,7 +38,11 @@ public class PlayerMove : MonoBehaviour
         HandleJumpVelocity();
     }
 
-    private void TeleportToSpawn() {
+    public void UpdateIsGrounded(bool value) {
+        isGrounded = value;
+    }
+
+    public void TeleportToSpawn() {
         playerContainerTransform.position = WorldSpawner.GetPlayerSpawnLocation();
     }
 

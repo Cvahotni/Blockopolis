@@ -26,16 +26,10 @@ public class PlayerBuild : MonoBehaviour
 
     private bool isMining = false;
 
-    private Hotbar hotbar;
-    private PlayerBlockBreakEffect playerBlockBreakEffect;
-    private DroppedItemFactory droppedItemFactory;
+    private PlayerEventSystem playerEventSystem;
 
     private ushort targetRaycastBlock;
     private ushort targetBlock;
-
-    public ushort TargetBlock {
-        set { targetBlock = value; }
-    }
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -43,9 +37,7 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void Start() {
-        hotbar = Hotbar.Instance;
-        playerBlockBreakEffect = PlayerBlockBreakEffect.Instance;
-        droppedItemFactory = DroppedItemFactory.Instance;
+        playerEventSystem = PlayerEventSystem.Instance;
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
@@ -104,6 +96,14 @@ public class PlayerBuild : MonoBehaviour
         return 1.0f / type.hardness;
     }
 
+    public void ModifyTargetBlock(ItemStack stack) {
+        ModifyTargetBlock(stack.ID);
+    }
+
+    public void ModifyTargetBlock(ushort id) {
+        targetBlock = id;
+    }
+
     private void DestroyTargetBlock() {
         if(!CanModifyAt(targetPos)) return;
         ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
@@ -113,9 +113,12 @@ public class PlayerBuild : MonoBehaviour
         });
 
         Vector3 blockBreakParticlePosition = GetOffsetTargetPos();
+        
+        BlockBreakData blockBreakData = new BlockBreakData(
+            blockBreakParticlePosition.x, blockBreakParticlePosition.y, blockBreakParticlePosition.z,
+            block, 1);
 
-        droppedItemFactory.DropItem(blockBreakParticlePosition, block, 1);
-        playerBlockBreakEffect.PlayBlockBreakParticle(block, blockBreakParticlePosition);
+        playerEventSystem.InvokeBlockBreak(blockBreakData);
     }
 
     private void PlaceTargetBlock() {
@@ -126,7 +129,7 @@ public class PlayerBuild : MonoBehaviour
             new VoxelModification(highlightPos, targetBlock)
         });
 
-        hotbar.TakeFromCurrentSlot();
+        playerEventSystem.InvokeBlockPlace();
     }
 
     private void RaycastIntoWorld() {

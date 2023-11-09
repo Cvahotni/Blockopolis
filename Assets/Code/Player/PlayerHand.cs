@@ -33,19 +33,26 @@ public class PlayerHand : MonoBehaviour
     }
 
     private void UpdateAnimator() {
+        if(playerMove == null) return;
         if(handObjectAnimator == null) return;
+
         handObjectAnimator.enabled = playerMove.IsWalking;
     }
 
-    public void SwitchHeldItem(ushort id, ushort count) {
+    public void SwitchHeldItem(ItemStack stack) {
+        if(itemRegistry == null) {
+            Debug.LogError("The ItemRegistry script must be present in order to switch the held item.");
+            return;
+        }
+
         handObjectAnimator = handObject.GetComponent<Animator>();
         currentAnimatorTime = GetAnimatorTime(0);
         
         Destroy(handObject);
-        GameObject prefab = itemRegistry.GetItemHeldPrefabWithCount(id, count);
+        GameObject prefab = itemRegistry.GetItemHeldPrefabWithCount(stack.ID, stack.Amount);
 
         handObject = Instantiate(prefab, this.transform, false);
-        Material heldItemMaterial = itemRegistry.GetMaterialForIDWithCount(id, count);
+        Material heldItemMaterial = itemRegistry.GetMaterialForIDWithCount(stack.ID, stack.Amount);
 
         MeshRenderer meshRenderer = handObject.GetComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = heldItemMaterial;
@@ -57,7 +64,8 @@ public class PlayerHand : MonoBehaviour
     private float GetAnimatorTime(int index) {
         AnimatorStateInfo animationState = handObjectAnimator.GetCurrentAnimatorStateInfo(index);
 		AnimatorClipInfo[] animatorClip = handObjectAnimator.GetCurrentAnimatorClipInfo(index);
-		
+
+        if(animatorClip.Length <= 0) return 0.0f;
         return animatorClip[index].clip.length * animationState.normalizedTime;
     }
 }

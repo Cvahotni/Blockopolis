@@ -12,8 +12,6 @@ public class Hotbar : MonoBehaviour
 
     private bool hotbarEnabled = false;
 
-    private Inventory inventory;
-
     public bool HotbarEnabled {
         get { return hotbarEnabled; }
         set { hotbarEnabled = value; }
@@ -21,9 +19,9 @@ public class Hotbar : MonoBehaviour
 
     private int slotIndex = 0;
 
-    private PlayerBuild playerBuild;
+    private InventoryEventSystem inventoryEventSystem;
+    private Inventory inventory;
     private ItemRegistry itemRegistry;
-    private PlayerHand playerHand;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -31,24 +29,13 @@ public class Hotbar : MonoBehaviour
     }
 
     private void Start() {
+        inventoryEventSystem = InventoryEventSystem.Instance;
         inventory = Inventory.Instance;
         itemRegistry = ItemRegistry.Instance;
     }
 
     private void Update() {
         if(!hotbarEnabled) return;
-        
-        if(playerBuild == null) {
-            playerBuild = PlayerBuild.Instance;
-            return;
-        }
-
-        if(playerHand == null) {
-            playerHand = PlayerHand.Instance;
-            UpdateHeldItem();
-
-            return;
-        }
 
         UpdateSlotIndex();
         UpdateHighlightPosition();
@@ -68,31 +55,51 @@ public class Hotbar : MonoBehaviour
         UpdateHeldItem();
     }
 
-    private void UpdateHeldItem() {
+    public void UpdateHeldItem(ItemStack stack) {
+        UpdateHeldItem();
+    }
+
+    public void UpdateHeldItem() {
+        if(inventory == null) {
+            Debug.LogError("The Inventory script must be present in the scene in order to update the held item.");
+            return;
+        }
+
         ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
 
         ushort id = currentSlot.Stack.ID;
         ushort count = (ushort) currentSlot.Stack.Amount;
 
-        playerHand.SwitchHeldItem(id, count);
+        inventoryEventSystem.InvokeModifyHeldSlot(currentSlot.Stack);
     }
 
     private void UpdateHighlightPosition() {
+        if(inventory == null) return;
         hightlight.position = inventory.Slots[slotIndex].SlotIcon.transform.position;
     }
 
     private void UpdatePlayerTargetBlock() {
+        if(itemRegistry == null) {
+            Debug.LogError("The ItemRegistry script must be present in the scene in order to update the target block.");
+            return;
+        }
+
+        if(inventory == null) {
+            Debug.LogError("The Inventory script must be present in the scene in order to update the target block.");
+            return;
+        }
+
         ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
 
         if(!currentSlot.HasItem) {
-            playerBuild.TargetBlock = 0;
+            inventoryEventSystem.InvokeTargetSlotUpdate(0);
             return;
         }
 
         ushort id = currentSlot.Stack.ID;
 
         if(!itemRegistry.IsItemForm(id, ItemForm.BlockItem)) return;
-        playerBuild.TargetBlock = id;
+        inventoryEventSystem.InvokeTargetSlotUpdate(id);
     }
 
     public void SetStatus(bool status) {
@@ -100,12 +107,17 @@ public class Hotbar : MonoBehaviour
     }
 
     public void TakeFromCurrentSlot() {
+        if(inventory == null) {
+            Debug.LogError("The Inventory script must be present in the scene in order to take from the current slot.");
+            return;
+        }
+
         inventory.Slots[slotIndex].ItemSlot.Take(1);
         RefreshHeldSlot();
     }
 
     public void RefreshHeldSlot() {
         ItemSlot itemSlot = inventory.Slots[slotIndex].ItemSlot;
-        playerHand.SwitchHeldItem(itemSlot.Stack.ID, (ushort) itemSlot.Stack.Amount);
+        inventoryEventSystem.InvokeModifyHeldSlot(itemSlot.Stack);
     }
 }
