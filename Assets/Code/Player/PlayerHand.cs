@@ -15,6 +15,11 @@ public class PlayerHand : MonoBehaviour
 
     private int currentHotbarSlot;
     private float currentAnimatorTime;
+
+    private string itemBobName = "itembob";
+    private string blockBobName = "blockbob";
+
+    private WaitForSeconds shortTime = new WaitForSeconds(0.128f);
     
     public int CurrentHotbatSlot { set { currentHotbarSlot = value; }}
 
@@ -36,19 +41,38 @@ public class PlayerHand : MonoBehaviour
         if(playerMove == null) return;
         if(handObjectAnimator == null) return;
 
-        handObjectAnimator.enabled = playerMove.IsWalking;
+        handObjectAnimator.SetBool("isWalking", playerMove.IsWalking);
     }
 
-    public void SwitchHeldItem(ItemStack stack) {
+    public void SwitchHeldItem(SwitchedItemStack stack) {
+        handObjectAnimator = handObject.GetComponent<Animator>();
+
+        handObjectAnimator.SetBool("isSwitchingUp", false);
+        handObjectAnimator.SetBool("isSwitchingDown", true);
+
+        handObjectAnimator.SetLayerWeight(1, 0.975f);
+        StartCoroutine(SwitchHeldItemCoroutine(stack));
+    }
+
+    public IEnumerator SwitchHeldItemCoroutine(SwitchedItemStack switchedStack) {
+        yield return shortTime;
+        ItemStack stack = switchedStack.itemStack;
+
         if(itemRegistry == null) {
             Debug.LogError("The ItemRegistry script must be present in order to switch the held item.");
-            return;
+            yield return null;
         }
 
+        float animatorSpeed = 1.0f / (Mathf.Abs(switchedStack.switchTime) * 20f);
+
         handObjectAnimator = handObject.GetComponent<Animator>();
-        currentAnimatorTime = GetAnimatorTime(0);
-        
+        handObjectAnimator.speed = animatorSpeed;
+
+        SetCurrentAnimatorTime();
+
+        handObjectAnimator.SetBool("isSwitchingDown", false);
         Destroy(handObject);
+
         GameObject prefab = itemRegistry.GetItemHeldPrefabWithCount(stack.ID, stack.Amount);
 
         handObject = Instantiate(prefab, this.transform, false);
@@ -57,15 +81,28 @@ public class PlayerHand : MonoBehaviour
         MeshRenderer meshRenderer = handObject.GetComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = heldItemMaterial;
 
+        bool isBlock = itemRegistry.IsItemForm(stack.ID, ItemForm.BlockItem);
+
         handObjectAnimator = handObject.GetComponent<Animator>();
         handObjectAnimator.Update(currentAnimatorTime);
+
+        handObjectAnimator.SetBool("isSwitchingUp", true);
+        StartCoroutine(SwitchHeldItemHandReset());
+
+        yield return null;
     }
 
-    private float GetAnimatorTime(int index) {
-        AnimatorStateInfo animationState = handObjectAnimator.GetCurrentAnimatorStateInfo(index);
-		AnimatorClipInfo[] animatorClip = handObjectAnimator.GetCurrentAnimatorClipInfo(index);
+    private IEnumerator SwitchHeldItemHandReset() {
+        yield return shortTime;
+        
+        handObjectAnimator.SetBool("isSwitchingUp", false);
+        handObjectAnimator.SetBool("isSwitchingDown", false);
+    
+        handObjectAnimator.SetLayerWeight(1, 1);
+    }
 
-        if(animatorClip.Length <= 0) return 0.0f;
-        return animatorClip[index].clip.length * animationState.normalizedTime;
+    private void SetCurrentAnimatorTime() {
+        AnimatorStateInfo animatorState = handObjectAnimator.GetCurrentAnimatorStateInfo(1);
+        currentAnimatorTime = animatorState.normalizedTime;
     }
 }

@@ -34,7 +34,7 @@ public class PlayerEventSystem : MonoBehaviour
     private UnityEvent playerSpawnEvent = new UnityEvent();
 
     private void Awake() {
-        if(Instance != null && Instance != this) Destroy(this);
+        if(_instance != null && _instance != this) Destroy(this);
         else Instance = this;
     }
 

@@ -46,20 +46,34 @@ public class Hotbar : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if(scroll == 0) return;
 
+        ItemSlot previousSlot = inventory.Slots[slotIndex].ItemSlot;
+
         if(scroll > 0) slotIndex--;
         else slotIndex++;
 
         if(slotIndex > hotbarLength - 1) slotIndex = 0;
         if(slotIndex < 0) slotIndex = hotbarLength - 1;
 
-        UpdateHeldItem();
+        ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
+        if(!CheckIfSlotsAreSimilar(previousSlot, currentSlot)) UpdateHeldItem(scroll);
     }
 
     public void UpdateHeldItem(ItemStack stack) {
-        UpdateHeldItem();
+        UpdateHeldItem(1.0f / 20f);
     }
 
     public void UpdateHeldItem() {
+        UpdateHeldItem(1.0f / 20f);
+    }
+
+    private bool CheckIfSlotsAreSimilar(ItemSlot firstSlot, ItemSlot secondSlot) {
+        ItemStack firstStack = firstSlot.Stack;
+        ItemStack secondStack = secondSlot.Stack;
+
+        return firstStack.ID == secondStack.ID;
+    }
+
+    public void UpdateHeldItem(float switchTime) {
         if(inventory == null) {
             Debug.LogError("The Inventory script must be present in the scene in order to update the held item.");
             return;
@@ -67,10 +81,8 @@ public class Hotbar : MonoBehaviour
 
         ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
 
-        ushort id = currentSlot.Stack.ID;
-        ushort count = (ushort) currentSlot.Stack.Amount;
-
-        inventoryEventSystem.InvokeModifyHeldSlot(currentSlot.Stack);
+        SwitchedItemStack switchedItemStack = new SwitchedItemStack(currentSlot.Stack, switchTime);
+        inventoryEventSystem.InvokeModifyHeldSlot(switchedItemStack);
     }
 
     private void UpdateHighlightPosition() {
@@ -118,6 +130,6 @@ public class Hotbar : MonoBehaviour
 
     public void RefreshHeldSlot() {
         ItemSlot itemSlot = inventory.Slots[slotIndex].ItemSlot;
-        inventoryEventSystem.InvokeModifyHeldSlot(itemSlot.Stack);
+        inventoryEventSystem.InvokeModifyHeldSlot(new SwitchedItemStack(itemSlot.Stack, 0.0f));
     }
 }

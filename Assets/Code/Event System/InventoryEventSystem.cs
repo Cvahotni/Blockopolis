@@ -28,11 +28,11 @@ public class InventoryEventSystem : MonoBehaviour
     private Hotbar hotbar;
 
     private UnityEvent<ushort> targetSlotUpdateEvent = new UnityEvent<ushort>();
-    private UnityEvent<ItemStack> modifyHeldSlotEvent = new UnityEvent<ItemStack>();
+    private UnityEvent<SwitchedItemStack> modifyHeldSlotEvent = new UnityEvent<SwitchedItemStack>();
     private UnityEvent<ItemStack> itemPickupEvent = new UnityEvent<ItemStack>();
 
     private void Awake() {
-        if(Instance != null && Instance != this) Destroy(this);
+        if(_instance != null && _instance != this) Destroy(this);
         else Instance = this;
     }
 
@@ -65,7 +65,7 @@ public class InventoryEventSystem : MonoBehaviour
         targetSlotUpdateEvent.Invoke(id);
     }
 
-    public void InvokeModifyHeldSlot(ItemStack stack) {
+    public void InvokeModifyHeldSlot(SwitchedItemStack stack) {
         modifyHeldSlotEvent.Invoke(stack);
     }
 
