@@ -73,8 +73,6 @@ public class PlayerBuild : MonoBehaviour
 
             blockCrackAnimator.Play("blockcrack");
             playerEventSystem.InvokeBlockBreakStart();
-
-            Debug.Log("Playing!");
         }
 
         currentBlockBreakProgress += Time.deltaTime * GetBlockBreakSpeed();

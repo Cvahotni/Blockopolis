@@ -75,7 +75,6 @@ public class PlayerEventSystem : MonoBehaviour
 
     private void AddBlockBreakListeners() {
         blockBreakEvent.AddListener(playerHand.ResetLayers);
-        blockBreakEvent.AddListener(playerHand.SwingHeldItem);
         blockBreakEvent.AddListener(playerBlockBreakEffect.PlayBlockBreakParticle);
         blockBreakEvent.AddListener(droppedItemFactory.DropItemFromBlock);
     }

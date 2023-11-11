@@ -70,7 +70,7 @@ public class Hotbar : MonoBehaviour
         ItemStack firstStack = firstSlot.Stack;
         ItemStack secondStack = secondSlot.Stack;
 
-        return firstStack.ID == secondStack.ID;
+        return firstStack.ID == secondStack.ID || (firstStack.Amount == 0 && secondStack.Amount == 0);
     }
 
     public void UpdateHeldItem(float switchTime) {
