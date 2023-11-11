@@ -29,6 +29,9 @@ public class PlayerEventSystem : MonoBehaviour
     private Hotbar hotbar;
 
     private UnityEvent<bool> groundCheckEvent = new UnityEvent<bool>();
+
+    private UnityEvent blockBreakStartEvent = new UnityEvent();
+    private UnityEvent blockBreakEndEvent = new UnityEvent();
     private UnityEvent<BlockBreakData> blockBreakEvent = new UnityEvent<BlockBreakData>();
     private UnityEvent blockPlaceEvent = new UnityEvent();
     private UnityEvent playerSpawnEvent = new UnityEvent();
@@ -51,6 +54,8 @@ public class PlayerEventSystem : MonoBehaviour
         }
 
         AddGroundCheckListeners();
+        AddBlockBreakStartListeners();
+        AddBlockBreakEndListeners();
         AddBlockBreakListeners();
         AddBlockPlaceListeners();
         AddPlayerSpawnListeners();
@@ -60,7 +65,17 @@ public class PlayerEventSystem : MonoBehaviour
         groundCheckEvent.AddListener(playerMove.UpdateIsGrounded);
     }
 
+    private void AddBlockBreakStartListeners() {
+        blockBreakStartEvent.AddListener(playerHand.SwingHeldItemRepeating);
+    }
+
+    private void AddBlockBreakEndListeners() {
+        blockBreakEndEvent.AddListener(playerHand.ResetHandSwing);
+    }
+
     private void AddBlockBreakListeners() {
+        blockBreakEvent.AddListener(playerHand.ResetLayers);
+        blockBreakEvent.AddListener(playerHand.SwingHeldItem);
         blockBreakEvent.AddListener(playerBlockBreakEffect.PlayBlockBreakParticle);
         blockBreakEvent.AddListener(droppedItemFactory.DropItemFromBlock);
     }
@@ -76,6 +91,14 @@ public class PlayerEventSystem : MonoBehaviour
 
     public void InvokeGroundCheck(bool value) {
         groundCheckEvent.Invoke(value);
+    }
+
+    public void InvokeBlockBreakStart() {
+        blockBreakStartEvent.Invoke();
+    }
+
+    public void InvokeBlockBreakEnd() {
+        blockBreakEndEvent.Invoke();
     }
 
     public void InvokeBlockBreak(BlockBreakData data) {

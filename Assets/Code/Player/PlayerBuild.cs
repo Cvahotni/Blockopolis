@@ -56,7 +56,7 @@ public class PlayerBuild : MonoBehaviour
         isMining = Input.GetButton("Click");
 
         if(isMining) MineCurrentBlock();
-        else ResetMiningProgress();
+        else ResetMiningProgress(true);
 
         if(Input.GetButtonDown("Click2")) PlaceTargetBlock();
     }
@@ -72,6 +72,9 @@ public class PlayerBuild : MonoBehaviour
             blockCrackAnimator.Update(0.0f);
 
             blockCrackAnimator.Play("blockcrack");
+            playerEventSystem.InvokeBlockBreakStart();
+
+            Debug.Log("Playing!");
         }
 
         currentBlockBreakProgress += Time.deltaTime * GetBlockBreakSpeed();
@@ -82,9 +85,11 @@ public class PlayerBuild : MonoBehaviour
         }
     }
 
-    private void ResetMiningProgress() {
+    private void ResetMiningProgress(bool endAnimation) {
         currentBlockBreakProgress = 0.0f;
         blockCrackAnimator.enabled = false;
+
+        if(endAnimation) playerEventSystem.InvokeBlockBreakEnd();
     }
 
     private void AdjustBlockCrackAnimatorSpeed() {
@@ -199,7 +204,7 @@ public class PlayerBuild : MonoBehaviour
         blockCrackOutline.SetActive(CanModifyAt(targetPos) && isMining);
         blockCrackOutline.transform.position = blockOutlinePosition;
 
-        if(previousTargetPos != targetPos) ResetMiningProgress();
+        if(previousTargetPos != targetPos) ResetMiningProgress(false);
     }
 
     private Vector3 GetOffsetTargetPos() {

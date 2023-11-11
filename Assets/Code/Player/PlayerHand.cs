@@ -20,6 +20,7 @@ public class PlayerHand : MonoBehaviour
     private string blockBobName = "blockbob";
 
     private WaitForSeconds shortTime = new WaitForSeconds(0.128f);
+    private WaitForSeconds swingTime = new WaitForSeconds(0.161f);
     
     public int CurrentHotbatSlot { set { currentHotbarSlot = value; }}
 
@@ -45,13 +46,30 @@ public class PlayerHand : MonoBehaviour
     }
 
     public void SwitchHeldItem(SwitchedItemStack stack) {
-        handObjectAnimator = handObject.GetComponent<Animator>();
+        AssignAnimator();
 
         handObjectAnimator.SetBool("isSwitchingUp", false);
         handObjectAnimator.SetBool("isSwitchingDown", true);
 
         handObjectAnimator.SetLayerWeight(1, 0.975f);
         StartCoroutine(SwitchHeldItemCoroutine(stack));
+    }
+
+    public void SwingHeldItem(BlockBreakData data) {
+        AssignAnimator();
+        handObjectAnimator.SetBool("isSwinging", true);
+
+        ActivateSwingLayer();
+        StartCoroutine(SwingItemHandReset());
+    }
+
+    public void SwingHeldItemRepeating() {
+        AssignAnimator();
+
+        handObjectAnimator.SetBool("isSwinging", false);
+        handObjectAnimator.SetBool("isSwingingRepeat", true);
+
+        ActivateSwingLayer();
     }
 
     public IEnumerator SwitchHeldItemCoroutine(SwitchedItemStack switchedStack) {
@@ -65,7 +83,7 @@ public class PlayerHand : MonoBehaviour
 
         float animatorSpeed = 1.0f / (Mathf.Abs(switchedStack.switchTime) * 20f);
 
-        handObjectAnimator = handObject.GetComponent<Animator>();
+        AssignAnimator();
         handObjectAnimator.speed = animatorSpeed;
 
         SetCurrentAnimatorTime();
@@ -83,12 +101,12 @@ public class PlayerHand : MonoBehaviour
 
         bool isBlock = itemRegistry.IsItemForm(stack.ID, ItemForm.BlockItem);
 
-        handObjectAnimator = handObject.GetComponent<Animator>();
+        AssignAnimator();
+
         handObjectAnimator.Update(currentAnimatorTime);
-
         handObjectAnimator.SetBool("isSwitchingUp", true);
-        StartCoroutine(SwitchHeldItemHandReset());
 
+        StartCoroutine(SwitchHeldItemHandReset());
         yield return null;
     }
 
@@ -98,7 +116,43 @@ public class PlayerHand : MonoBehaviour
         handObjectAnimator.SetBool("isSwitchingUp", false);
         handObjectAnimator.SetBool("isSwitchingDown", false);
     
+        ResetLayers();
+    }
+
+    private IEnumerator SwingItemHandReset() {
+        yield return swingTime;
+        ResetHandSwing();
+    }
+
+    public void ResetLayers(BlockBreakData data) {
+        ResetLayers();
+    }
+
+    public void ResetHandSwing() {
+        AssignAnimator();
+
+        handObjectAnimator.SetBool("isSwinging", false);
+        handObjectAnimator.SetBool("isSwingingRepeat", false);
+
+        ResetLayers();
+    }
+
+    public void ResetLayers() {
         handObjectAnimator.SetLayerWeight(1, 1);
+        handObjectAnimator.SetLayerWeight(2, 0.8f);
+    }
+
+    private void ActivateSwingLayer() {
+        handObjectAnimator.SetLayerWeight(2, 1f);
+        handObjectAnimator.SetLayerWeight(1, 0.995f);
+    }
+
+    private void AssignAnimator() {
+        handObjectAnimator = handObject.GetComponent<Animator>();
+
+        if(handObjectAnimator == null) {
+            Debug.LogError("The hand object must have an animator attatched to it.");
+        }
     }
 
     private void SetCurrentAnimatorTime() {
