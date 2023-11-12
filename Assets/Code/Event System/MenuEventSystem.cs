@@ -39,7 +39,7 @@ public class MenuEventSystem : MonoBehaviour
     private void AddDeleteListeners() {
         deleteEvent.AddListener(editWorldMenuController.DeleteCurrentWorld);
         deleteEvent.AddListener(menuController.ToggleToWorldSelection);
-        deleteEvent.AddListener(worldsEditingToggle.ToggleEditMode);
+        deleteEvent.AddListener(worldsEditingToggle.DisableEditMode);
     }
 
     private void AddEditListeners() {
@@ -57,12 +57,12 @@ public class MenuEventSystem : MonoBehaviour
     private void AddRenameListeners() {
         renameEvent.AddListener(renameWorldMenuController.Rename);
         renameEvent.AddListener(menuController.ToggleToWorldSelection);
-        renameEvent.AddListener(worldsEditingToggle.ToggleEditMode);
+        renameEvent.AddListener(worldsEditingToggle.DisableEditMode);
     }
 
     private void AddBackListeners() {
         backEvent.AddListener(menuController.ToggleToWorldSelection);
-        backEvent.AddListener(worldsEditingToggle.ToggleEditMode);
+        backEvent.AddListener(worldsEditingToggle.DisableEditMode);
     }
 
     public void InvokeEdit(string name) {

@@ -30,6 +30,7 @@ public class InventoryEventSystem : MonoBehaviour
     private UnityEvent<ushort> targetSlotUpdateEvent = new UnityEvent<ushort>();
     private UnityEvent<SwitchedItemStack> modifyHeldSlotEvent = new UnityEvent<SwitchedItemStack>();
     private UnityEvent<ItemStack> itemPickupEvent = new UnityEvent<ItemStack>();
+    private UnityEvent<ItemSlotIndex> hotbarUpdateEvent = new UnityEvent<ItemSlotIndex>();
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -45,6 +46,7 @@ public class InventoryEventSystem : MonoBehaviour
         AddTargetSlotUpdateListeners();
         AddModifyHeldSlotListeners();
         AddItemPickupListeners();
+        AddHotbarUpdateListeners();
     }
 
     private void AddTargetSlotUpdateListeners() {
@@ -57,8 +59,11 @@ public class InventoryEventSystem : MonoBehaviour
 
     private void AddItemPickupListeners() {
         itemPickupEvent.AddListener(inventory.AddStack);
-        itemPickupEvent.AddListener(hotbar.UpdateHeldItem);
         itemPickupEvent.AddListener(playerBuild.ModifyTargetBlock);
+    }
+
+    private void AddHotbarUpdateListeners() {
+        hotbarUpdateEvent.AddListener(hotbar.UpdateHeldItem);
     }
 
     public void InvokeTargetSlotUpdate(ushort id) {
@@ -71,5 +76,9 @@ public class InventoryEventSystem : MonoBehaviour
 
     public void InvokeItemPickup(ItemStack stack) {
         itemPickupEvent.Invoke(stack);
+    }
+
+    public void InvokeHotbarUpdate(ItemSlotIndex data) {
+        hotbarUpdateEvent.Invoke(data);
     }
 }

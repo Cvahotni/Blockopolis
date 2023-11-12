@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Hotbar : MonoBehaviour
 {
@@ -22,6 +23,14 @@ public class Hotbar : MonoBehaviour
     private InventoryEventSystem inventoryEventSystem;
     private Inventory inventory;
     private ItemRegistry itemRegistry;
+
+    private ItemSlot CurrentSlot {
+        get { return GetSlot(slotIndex); }
+    }
+
+    private Image CurrentSlotIcon {
+        get { return GetSlotIcon(slotIndex); }
+    }
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -46,7 +55,7 @@ public class Hotbar : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if(scroll == 0) return;
 
-        ItemSlot previousSlot = inventory.Slots[slotIndex].ItemSlot;
+        ItemSlot previousSlot = GetSlot(slotIndex);
 
         if(scroll > 0) slotIndex--;
         else slotIndex++;
@@ -54,40 +63,57 @@ public class Hotbar : MonoBehaviour
         if(slotIndex > hotbarLength - 1) slotIndex = 0;
         if(slotIndex < 0) slotIndex = hotbarLength - 1;
 
-        ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
+        ItemSlot currentSlot = GetSlot(slotIndex);
         if(!CheckIfSlotsAreSimilar(previousSlot, currentSlot)) UpdateHeldItem(scroll);
     }
 
     public void UpdateHeldItem(ItemStack stack) {
-        UpdateHeldItem(1.0f / 20f);
+        UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, stack.Amount));
     }
 
     public void UpdateHeldItem() {
-        UpdateHeldItem(1.0f / 20f);
+        UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, 0));
+    }
+
+    public void UpdateHeldItem(float scroll) {
+        UpdateHeldItem(scroll, new ItemSlotIndex(slotIndex, 0));
+    }
+
+    public void UpdateHeldItem(ItemSlotIndex data) {
+        UpdateHeldItem(1.0f / 20f, data);
     }
 
     private bool CheckIfSlotsAreSimilar(ItemSlot firstSlot, ItemSlot secondSlot) {
         ItemStack firstStack = firstSlot.Stack;
         ItemStack secondStack = secondSlot.Stack;
 
+        return CheckIfStacksAreSimilar(firstStack, secondStack);
+    }
+
+    private bool CheckIfStacksAreSimilar(ItemStack firstStack, ItemStack secondStack) {
         return firstStack.ID == secondStack.ID || (firstStack.Amount == 0 && secondStack.Amount == 0);
     }
 
-    public void UpdateHeldItem(float switchTime) {
+    public void UpdateHeldItem(float switchTime, ItemSlotIndex data) {
         if(inventory == null) {
             Debug.LogError("The Inventory script must be present in the scene in order to update the held item.");
             return;
         }
 
-        ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
+        ItemSlot currentSlot = GetCurrentSlot();
 
-        SwitchedItemStack switchedItemStack = new SwitchedItemStack(currentSlot.Stack, switchTime);
+        Debug.Log("Modified index: " + data.slotIndex + ", Current Index: " + slotIndex);
+
+        if(data.slotIndex != slotIndex) return;
+        if(data.amount != 0) return;
+
+        SwitchedItemStack switchedItemStack = new SwitchedItemStack(currentSlot.Stack, switchTime, slotIndex);
         inventoryEventSystem.InvokeModifyHeldSlot(switchedItemStack);
     }
 
     private void UpdateHighlightPosition() {
         if(inventory == null) return;
-        hightlight.position = inventory.Slots[slotIndex].SlotIcon.transform.position;
+        hightlight.position = GetCurrentSlotIcon().transform.position;
     }
 
     private void UpdatePlayerTargetBlock() {
@@ -101,7 +127,7 @@ public class Hotbar : MonoBehaviour
             return;
         }
 
-        ItemSlot currentSlot = inventory.Slots[slotIndex].ItemSlot;
+        ItemSlot currentSlot = GetCurrentSlot();
 
         if(!currentSlot.HasItem) {
             inventoryEventSystem.InvokeTargetSlotUpdate(0);
@@ -124,12 +150,28 @@ public class Hotbar : MonoBehaviour
             return;
         }
 
-        inventory.Slots[slotIndex].ItemSlot.Take(1);
+        GetCurrentSlot().Take(1);
         RefreshHeldSlot();
     }
 
     public void RefreshHeldSlot() {
-        ItemSlot itemSlot = inventory.Slots[slotIndex].ItemSlot;
-        inventoryEventSystem.InvokeModifyHeldSlot(new SwitchedItemStack(itemSlot.Stack, 0.0f));
+        ItemSlot itemSlot = GetCurrentSlot();
+        inventoryEventSystem.InvokeModifyHeldSlot(new SwitchedItemStack(itemSlot.Stack, 0.0f, slotIndex));
+    }
+
+    private ItemSlot GetCurrentSlot() {
+        return GetSlot(slotIndex);
+    }
+
+    private Image GetCurrentSlotIcon() {
+        return GetSlotIcon(slotIndex);
+    }
+
+    private ItemSlot GetSlot(int index) {
+        return inventory.Slots[index].ItemSlot;
+    } 
+
+    private Image GetSlotIcon(int index) {
+        return inventory.Slots[index].SlotIcon;
     }
 }

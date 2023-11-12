@@ -9,7 +9,7 @@ public class GarbageCollectionManager : MonoBehaviour
     private float timeSinceLastGC;
 
     private void Start() {
-        #if !UNITY_EDITOR
+        #if !UNITY_EDITOR && !UNITY_WEBGL
         GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;
         #endif
     }

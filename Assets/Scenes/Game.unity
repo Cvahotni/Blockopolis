@@ -3067,7 +3067,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 49181542}
-  viewDistance: 16
+  viewDistance: 10
   chunksPerSecond: 200
   frequencies:
   - 0.0008

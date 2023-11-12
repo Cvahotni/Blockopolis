@@ -16,9 +16,6 @@ public class PlayerHand : MonoBehaviour
     private int currentHotbarSlot;
     private float currentAnimatorTime;
 
-    private string itemBobName = "itembob";
-    private string blockBobName = "blockbob";
-
     private WaitForSeconds shortTime = new WaitForSeconds(0.128f);
     private WaitForSeconds swingTime = new WaitForSeconds(0.161f);
     
@@ -99,8 +96,6 @@ public class PlayerHand : MonoBehaviour
         MeshRenderer meshRenderer = handObject.GetComponent<MeshRenderer>();
         meshRenderer.sharedMaterial = heldItemMaterial;
 
-        bool isBlock = itemRegistry.IsItemForm(stack.ID, ItemForm.BlockItem);
-
         AssignAnimator();
 
         handObjectAnimator.Update(currentAnimatorTime);
@@ -138,7 +133,7 @@ public class PlayerHand : MonoBehaviour
     }
 
     public void ResetLayers() {
-        handObjectAnimator.SetLayerWeight(1, 1);
+        handObjectAnimator.SetLayerWeight(1, 1f);
         handObjectAnimator.SetLayerWeight(2, 0.8f);
     }
 

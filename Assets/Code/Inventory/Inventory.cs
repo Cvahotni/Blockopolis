@@ -6,6 +6,8 @@ public class Inventory : MonoBehaviour
 {
     public static Inventory Instance { get; private set; }
 
+    private InventoryEventSystem inventoryEventSystem;
+
     [SerializeField] private UiItemSlot[] slots;
 
     public UiItemSlot[] Slots {
@@ -19,6 +21,8 @@ public class Inventory : MonoBehaviour
 
     private void Start() {
         InitItemSlots();
+        inventoryEventSystem = InventoryEventSystem.Instance;
+
         WorldHandler.LoadWorldInventory();
     }
 
@@ -41,6 +45,8 @@ public class Inventory : MonoBehaviour
             ItemSlot itemSlot = uiItemSlot.ItemSlot;
             ItemStack currentStack = itemSlot.Stack;
 
+            int stackAmount = currentStack.Amount;
+
             if(currentStack.ID != stack.ID && currentStack.Amount > 0) continue;
             if(currentStack.Amount <= 0) SetStack(i, new ItemStack(stack.ID, 0));
 
@@ -50,6 +56,9 @@ public class Inventory : MonoBehaviour
                 slots[i].UpdateSlot(true);
                 continue;
             }
+
+            ItemSlotIndex itemSlotIndex = new ItemSlotIndex(i, stackAmount);
+            inventoryEventSystem.InvokeHotbarUpdate(itemSlotIndex);
 
             slots[i].UpdateSlot(true);
             break;

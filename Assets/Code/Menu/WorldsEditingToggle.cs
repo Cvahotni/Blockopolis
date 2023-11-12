@@ -24,7 +24,11 @@ public class WorldsEditingToggle : MonoBehaviour
         UpdateWorldListings();
     }
 
-    public void SetEditMode(bool value) {
+    public void DisableEditMode() {
+        SetEditMode(false);
+    }
+
+    private void SetEditMode(bool value) {
         isEditing = value;
 
         PopulateWorldListings();

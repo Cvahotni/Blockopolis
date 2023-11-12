@@ -115,6 +115,15 @@ public class WorldModifier
         return ChunkBorder.ChunkBorderDirection.UNDEFINED;
     }
 
+    public static ushort GetBlockAt(Vector3 pos) {
+        int x = (int) pos.x;
+        int y = (int) pos.y;
+        int z = (int) pos.z;
+
+        Debug.Log(x + ", " + y + ", " + z);
+        return GetBlockAt(x, y, z);
+    }
+
     public static ushort GetBlockAt(int worldX, int worldY, int worldZ) {
         long chunkPos = BlockPositionToChunkPos(worldX, worldZ);
         if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return 0;
