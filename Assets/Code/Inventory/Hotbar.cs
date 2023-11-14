@@ -101,9 +101,7 @@ public class Hotbar : MonoBehaviour
         }
 
         ItemSlot currentSlot = GetCurrentSlot();
-
-        Debug.Log("Modified index: " + data.slotIndex + ", Current Index: " + slotIndex);
-
+        
         if(data.slotIndex != slotIndex) return;
         if(data.amount != 0) return;
 
