@@ -61,8 +61,8 @@ public class MenuEventSystem : MonoBehaviour
     }
 
     private void AddBackListeners() {
-        backEvent.AddListener(menuController.ToggleToWorldSelection);
         backEvent.AddListener(worldsEditingToggle.DisableEditMode);
+        backEvent.AddListener(menuController.ToggleToWorldSelection);
     }
 
     public void InvokeEdit(string name) {

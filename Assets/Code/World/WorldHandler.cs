@@ -58,6 +58,8 @@ public class WorldHandler
         string currentPath = WorldStorageProperties.savesFolderName + currentWorld.Name;
         string newPath = WorldStorageProperties.savesFolderName + newName;
 
+        WorldList.Rename(currentWorld.Name, newName);
+
         currentWorld.Name = newName;
         Directory.Move(currentPath, newPath);
         
@@ -68,7 +70,9 @@ public class WorldHandler
     public static void DeleteCurrentWorld() {
         if(!IsCurrentWorldValid()) return;
 
+        WorldList.Delete(currentWorld.Name);
         Directory.Delete(WorldStorageProperties.savesFolderName + currentWorld.Name, true);
+        
         Debug.Log("Deleted world: " + currentWorld.Name);
     }
 

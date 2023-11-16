@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class WorldListing : MonoBehaviour
+public class WorldButtonListing : MonoBehaviour
 {
     [SerializeField] private TMP_Text worldName;
     [SerializeField] private GameObject editIcon;
@@ -14,7 +14,12 @@ public class WorldListing : MonoBehaviour
 
     private MenuEventSystem menuEventSystem;
 
-    public bool IsEditing { set { isEditing = value; }}
+    public bool IsEditing { 
+        set { 
+            isEditing = value; 
+            editIcon.SetActive(value);
+        }
+    }
 
     private void Start() {
         menuEventSystem = MenuEventSystem.Instance;
@@ -37,9 +42,5 @@ public class WorldListing : MonoBehaviour
 
     private void EditWorld() {
         menuEventSystem.InvokeEdit(currentName);
-    }
-
-    private void FixedUpdate() {
-        editIcon.SetActive(isEditing);
     }
 }

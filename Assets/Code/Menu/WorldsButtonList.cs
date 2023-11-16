@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class WorldsList : MonoBehaviour
+public class WorldsButtonList : MonoBehaviour
 {
-    public static WorldsList Instance { get; private set; }
+    public static WorldsButtonList Instance { get; private set; }
 
     [SerializeField] private GameObject worldListing;
 
@@ -20,21 +20,13 @@ public class WorldsList : MonoBehaviour
 
     public void GenerateWorldListings() {
         ClearWorldListings();
+        if(WorldList.Count() == 0) WorldList.Populate();
 
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string path = currentDirectory + Path.DirectorySeparatorChar + WorldStorageProperties.savesFolderSecondaryName;
-        
-        if(!Directory.Exists(WorldStorageProperties.savesFolderSecondaryName)) return;
-        string[] subDirectories = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
+        for(int i = 0; i < WorldList.Count(); i++) {
+            string currentWorldName = WorldList.At(i);
 
-        foreach(string subDirectory in subDirectories) {
-            string[] splitName = subDirectory.Split(Path.DirectorySeparatorChar);
-            string currentWorldName = splitName[splitName.Length - 1];
-
-            if(!WorldHandler.DoesWorldExist(currentWorldName)) continue;
-        
             GameObject worldListingObject = Instantiate(worldListing, transform.position, Quaternion.identity, this.transform);
-            WorldListing currentListing = worldListingObject.GetComponent<WorldListing>();
+            WorldButtonListing currentListing = worldListingObject.GetComponent<WorldButtonListing>();
 
             currentListing.SetName(currentWorldName);
         }

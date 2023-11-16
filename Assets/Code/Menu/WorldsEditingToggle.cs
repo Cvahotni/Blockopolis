@@ -7,7 +7,7 @@ public class WorldsEditingToggle : MonoBehaviour
 {
     public static WorldsEditingToggle Instance { get; private set; }
 
-    private List<WorldListing> listings = new List<WorldListing>();
+    private List<WorldButtonListing> listings = new List<WorldButtonListing>();
     private bool isEditing = false;
 
     [SerializeField] private TMP_Text editButtonText;
@@ -40,14 +40,14 @@ public class WorldsEditingToggle : MonoBehaviour
         GameObject[] listingObjects = GameObject.FindGameObjectsWithTag(MenuProperties.worldListingTag);
 
         foreach (GameObject listingObject in listingObjects) {
-            listings.Add(listingObject.GetComponent<WorldListing>());
+            listings.Add(listingObject.GetComponent<WorldButtonListing>());
         }
     }
 
     private void UpdateWorldListings() {
         UpdateEditButtonText();
 
-        foreach(WorldListing listing in listings) {
+        foreach(WorldButtonListing listing in listings) {
             listing.IsEditing = isEditing;
         }
     }
