@@ -2,16 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VoxelModification
+public struct VoxelModification
 {
-    private Vector3Int position;
+    private int x;
+    private int y;
+    private int z;
+
     private ushort id;
 
-    public Vector3Int Position { get { return position; }}
+    public int X { get { return x; }}
+    public int Y { get { return y; }}
+    public int Z { get { return z; }}
+
     public ushort ID { get { return id; }}
 
-    public VoxelModification(Vector3Int position, ushort id) {
-        this.position = position;
+    public VoxelModification(int x, int y, int z, ushort id) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+
         this.id = id;
     }
 }

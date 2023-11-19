@@ -38,12 +38,12 @@ public class ChunkObjectPool : MonoBehaviour
 
     public void ReturnToPool(long coord) {
         GameObject gameObject = GameObject.Find("" + coord);
+        if(gameObject == null) return;
+
         ReturnToPool(gameObject);
     }
 
     public void ReturnToPool(GameObject gameObject) {
-        if(gameObject == null) return;
-
         MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
         meshFilter.mesh.Clear();
 

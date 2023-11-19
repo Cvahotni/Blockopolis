@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1709439504368386370}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.245, y: 0.1, z: 0.245}
+  m_LocalPosition: {x: -0.235, y: 0.1, z: 0.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63,7 +63,7 @@ Transform:
   m_GameObject: {fileID: 1827230553309892923}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.29, y: 0.38, z: 0}
+  m_LocalPosition: {x: 0, y: 0.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -112,7 +112,7 @@ MonoBehaviour:
   - {fileID: 1082263860864008897}
   - {fileID: 7285944100124806076}
   - {fileID: 51890349658251235}
-  checkDistance: 0.2
+  checkDistance: 0.1
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -224,7 +224,7 @@ Transform:
   m_GameObject: {fileID: 2938990066720982652}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.245, y: 0.1, z: -0.245}
+  m_LocalPosition: {x: 0.235, y: 0.1, z: -0.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -398,7 +398,7 @@ Transform:
   m_GameObject: {fileID: 3981003843023245530}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.245, y: 0.1, z: 0.245}
+  m_LocalPosition: {x: 0.235, y: 0.1, z: 0.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -429,7 +429,7 @@ Transform:
   m_GameObject: {fileID: 4506072753520580104}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.245, y: 0.1, z: -0.245}
+  m_LocalPosition: {x: -0.235, y: 0.1, z: -0.235}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -667,9 +667,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c4e3614bc69d2739c59b18a454f2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
+  speed: 48
   gravity: -9.81
-  jumpHeight: 4
+  jumpHeight: 30
   playerContainerTransform: {fileID: 461729789009755802}
   playerRigidBody: {fileID: 3321812370123416527}
 --- !u!1001 &4146536041966911950

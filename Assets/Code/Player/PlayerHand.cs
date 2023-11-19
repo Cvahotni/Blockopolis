@@ -14,7 +14,11 @@ public class PlayerHand : MonoBehaviour
     private ItemRegistry itemRegistry;
 
     private int currentHotbarSlot;
-    private float currentAnimatorTime;
+
+    private float currentWalkAnimatorTime;
+    private float currentSwingAnimatorTime;
+
+    private bool isSwingingRepeat;
 
     private WaitForSeconds shortTime = new WaitForSeconds(0.128f);
     private WaitForSeconds swingTime = new WaitForSeconds(0.161f);
@@ -83,7 +87,10 @@ public class PlayerHand : MonoBehaviour
         AssignAnimator();
         handObjectAnimator.speed = animatorSpeed;
 
-        SetCurrentAnimatorTime();
+        isSwingingRepeat = handObjectAnimator.GetBool("isSwingingRepeat");
+        
+        SetCurrentWalkAnimatorTime();
+        SetCurrentSwingAnimatorTime();
 
         handObjectAnimator.SetBool("isSwitchingDown", false);
         Destroy(handObject);
@@ -97,9 +104,11 @@ public class PlayerHand : MonoBehaviour
         meshRenderer.sharedMaterial = heldItemMaterial;
 
         AssignAnimator();
+        UpdateAnimatorTime(1, currentWalkAnimatorTime);
+        UpdateAnimatorTime(2, currentSwingAnimatorTime);
 
-        handObjectAnimator.Update(currentAnimatorTime);
         handObjectAnimator.SetBool("isSwitchingUp", true);
+        handObjectAnimator.SetBool("isSwingingRepeat", isSwingingRepeat);
 
         StartCoroutine(SwitchHeldItemHandReset());
         yield return null;
@@ -150,8 +159,20 @@ public class PlayerHand : MonoBehaviour
         }
     }
 
-    private void SetCurrentAnimatorTime() {
+    private void UpdateAnimatorTime(int layer, float time) {
+        AnimatorStateInfo stateInfo = handObjectAnimator.GetCurrentAnimatorStateInfo(layer);
+        float normalizedTime = time / stateInfo.length;
+
+        handObjectAnimator.PlayInFixedTime(stateInfo.fullPathHash, layer, time);
+    }
+
+    private void SetCurrentWalkAnimatorTime() {
         AnimatorStateInfo animatorState = handObjectAnimator.GetCurrentAnimatorStateInfo(1);
-        currentAnimatorTime = animatorState.normalizedTime;
+        currentWalkAnimatorTime = animatorState.normalizedTime;
+    }
+
+    private void SetCurrentSwingAnimatorTime() {
+        AnimatorStateInfo animatorState = handObjectAnimator.GetCurrentAnimatorStateInfo(2);
+        currentSwingAnimatorTime = animatorState.normalizedTime;
     }
 }

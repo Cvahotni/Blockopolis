@@ -10,14 +10,14 @@ public class WorldModifier
         List<long> chunksToAddToQueue = new List<long>();
 
         foreach(VoxelModification modification in modifications) {
-            Vector3Int position = modification.Position;
+            Vector3Int position = new Vector3Int(modification.X, modification.Y, modification.Z);
             ushort id = modification.ID;
 
             long chunkPos = BlockPositionToChunkPos(position.x, position.z);
 
             if(!WorldStorage.DoesChunkExist(chunkPos)) {
                 Debug.Log("Tried to modify the world at an invalid chunk position: " + chunkPos);
-                return;
+                continue;
             }
 
             int relativeX = GetRelativeX(position.x);

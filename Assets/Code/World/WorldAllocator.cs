@@ -14,7 +14,6 @@ public class WorldAllocator : MonoBehaviour
     private Queue<long> immidiateChunkQueue = new Queue<long>();
 
     private WorldEventSystem worldEventSystem;
-
     private EndlessTerrain endlessTerrain;
 
     private int chunksGenerated;

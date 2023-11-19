@@ -15,6 +15,7 @@ public class ChunkBuilder : MonoBehaviour
     private readonly ProfilerMarker buildChunkNoiseMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkNoiseMap3D");
     private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
     private readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
+    private readonly ProfilerMarker placeChunkFeaturesMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkFeatures");
 
     private WorldEventSystem worldEventSystem;
     private EndlessTerrain endlessTerrain;
@@ -30,6 +31,7 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     public void BuildChunk(long chunkCoord) {
+        if(endlessTerrain.IsChunkOutOfRange(chunkCoord)) return;
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
@@ -61,8 +63,9 @@ public class ChunkBuilder : MonoBehaviour
         buildData.noiseOffset[1] = terrainNoiseOffset.y;
 
         if(!WorldStorage.DoesChunkExist(chunkCoord)) {
-            BuildChunkNoiseMap3D(buildData); //This is for testing purposes
-            BuildChunkVoxelMap(buildData);
+            //BuildChunkNoiseMap3D(buildData); //This is for testing purposes
+            BuildChunkVoxelMap(buildData); 
+            //PlaceChunkFeatures(buildData); //This is for testing purposes
         }
 
         BuildChunkMesh(buildData);
@@ -70,6 +73,20 @@ public class ChunkBuilder : MonoBehaviour
 
         SaveChunkVoxelMap(chunkCoord, voxelMap);
         buildData.Dispose();
+    }
+
+    private void PlaceChunkFeatures(ChunkBuildData chunkBuildData) {
+        placeChunkFeaturesMarker.Begin();
+
+        var placeFeaturesJob = new ChunkPlaceFeaturesJob() {
+            voxelMap = chunkBuildData.voxelMap,
+            coord = chunkBuildData.chunkPos
+        };
+
+        JobHandle placeFeaturesJobHandle = placeFeaturesJob.Schedule();
+        placeFeaturesJobHandle.Complete();
+
+        placeChunkFeaturesMarker.End();
     }
 
     private void BuildChunkNoiseMap3D(ChunkBuildData chunkBuildData) {

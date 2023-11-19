@@ -112,7 +112,7 @@ public class PlayerBuild : MonoBehaviour
         ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
-            new VoxelModification(targetPos, 0)
+            new VoxelModification(targetPos.x, targetPos.y, targetPos.z, 0)
         });
 
         Vector3 blockBreakParticlePosition = GetOffsetTargetPos();
@@ -129,7 +129,7 @@ public class PlayerBuild : MonoBehaviour
         if(targetBlock == 0) return;
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
-            new VoxelModification(highlightPos, targetBlock)
+            new VoxelModification(highlightPos.x, highlightPos.y, highlightPos.z, targetBlock)
         });
 
         playerEventSystem.InvokeBlockPlace();
