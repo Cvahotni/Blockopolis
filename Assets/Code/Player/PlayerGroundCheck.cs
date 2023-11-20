@@ -21,8 +21,6 @@ public class PlayerGroundCheck : MonoBehaviour
     }
 
     private bool IsGroundedViaRaycast() {
-        bool voxelCheck = false;
-
         foreach(Transform transform in groundChecks) {
             RaycastHit hit;
 
