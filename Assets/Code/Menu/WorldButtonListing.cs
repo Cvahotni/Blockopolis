@@ -36,8 +36,15 @@ public class WorldButtonListing : MonoBehaviour
     }
 
     private void SelectWorld() {
-        WorldHandler.LoadWorld(currentName);
-        SceneManager.LoadScene(sceneName: MenuProperties.gameSceneName);
+        bool loadStatus = WorldHandler.LoadWorld(currentName);
+        
+        if(loadStatus) {
+            SceneManager.LoadScene(sceneName: MenuProperties.gameSceneName);
+        }
+
+        else {
+            Debug.Log("World load attempt failed!");
+        }
     }
 
     private void EditWorld() {

@@ -19,9 +19,16 @@ public class WorldHandler
         currentWorld = new World(name, currentSeed);
     }
 
-    public static void LoadWorld(string name) {
+    public static bool LoadWorld(string name) {
         Debug.Log("Loading world: " + name);
+
+        if(!IsCurrentWorldValid()) {
+            Debug.Log("Failed to load world: " + name);
+            return false;
+        }
+
         currentWorld = WorldInfoSaveLoad.LoadWorldInfo(name);
+        return true;
     }
 
     public static void LoadWorldInventory() {
@@ -29,6 +36,11 @@ public class WorldHandler
 
         if(inventory == null) {
             Debug.Log("Can't find a valid inventory, consider adding one to the scene.");
+            return;
+        }
+
+        if(!IsCurrentWorldValid()) {
+            Debug.Log("Failed to load inventory");
             return;
         }
 
@@ -86,7 +98,14 @@ public class WorldHandler
     }
 
     private static bool IsCurrentWorldValid() {
-        return currentWorld.Name != "";
+        return IsWorldValid(currentWorld.Name);
+    }
+
+    private static bool IsWorldValid(string name) {
+        bool nameInvalid = name == "";
+        bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
+
+        return !nameInvalid && !directoryInvalid;
     }
 
     private static int HashStringSeed(string seed) {
