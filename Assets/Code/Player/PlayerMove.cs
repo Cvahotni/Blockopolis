@@ -16,6 +16,7 @@ public class PlayerMove : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
     private bool isWalking;
+    private bool isEnabled = true;
 
     public bool IsWalking {
         get { return isWalking; }
@@ -30,12 +31,23 @@ public class PlayerMove : MonoBehaviour
     }
     
     private void Update() {
+        if(!isEnabled) return;
         GetInput();
 
         HandleMoveVelocity();
         MoveVelocity();
 
         HandleJumpVelocity();
+    }
+
+    public void Enable() {
+        isEnabled = true;
+        playerRigidBody.isKinematic = !isEnabled;
+    }
+
+    public void Disable() {
+        isEnabled = false;
+        playerRigidBody.isKinematic = !isEnabled;
     }
 
     public void UpdateIsGrounded(bool value) {

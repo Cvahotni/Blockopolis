@@ -10,6 +10,7 @@ public class BlockRegistry
     private static List<BlockType> blockTypes = new List<BlockType>();
 
     private static NativeHashMap<ushort, BlockType> blockTypeDictionary;
+    private static bool disposed = false;
 
     public static NativeHashMap<ushort, BlockType> BlockTypeDictionary {
         get { return blockTypeDictionary; }
@@ -55,9 +56,11 @@ public class BlockRegistry
 
     private static void DestroyBlockTypeDictionary() {
         blockTypeDictionary.Dispose();
+        disposed = true;
     }
 
     public static void OnDestroy() {
+        if(disposed) return;
         DestroyBlockTypeDictionary();
     }
 }

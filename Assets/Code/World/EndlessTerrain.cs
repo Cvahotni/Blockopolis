@@ -53,7 +53,7 @@ public class EndlessTerrain : MonoBehaviour
 
     private void BuildInitialChunks() {
         lastPlayerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
-        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
+        GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ());
     }
 
     private void Update() {
@@ -69,7 +69,7 @@ public class EndlessTerrain : MonoBehaviour
         long coord = GetChunkCoordFromVector3(playerTransform.position);
         lastPlayerChunkCoord = coord;
 
-        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
+        GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ());
     }
 
     private void RemoveOutOfRangeChunks() {
@@ -79,7 +79,7 @@ public class EndlessTerrain : MonoBehaviour
         }
     }
 
-    private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ) {
+    private void GenerateChunksAroundPlayer(int originX, int originZ) {
         for(int x = -viewDistance + originX; x < viewDistance + originX; x++) {
             for(int z = -viewDistance + originZ; z < viewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
@@ -88,7 +88,6 @@ public class EndlessTerrain : MonoBehaviour
                 if(IsChunkInWorld(coord)) continue;
                 if(IsChunkOutOfRange(coord)) continue;
 
-                yield return shortWait;
                 worldEventSystem.InvokeChunkAdd(coord);
             }
         }

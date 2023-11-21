@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MenuProperties
 {
+    public static readonly string menuSceneName = "Main Menu";
     public static readonly string gameSceneName = "Game";
     public static readonly string worldListingTag = "WorldListing";
     public static readonly string editButtonTextDisabled = "Edit";

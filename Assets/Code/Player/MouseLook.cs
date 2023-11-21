@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
+    public static MouseLook Instance { get; private set; }
+    private PauseEventSystem pauseEventSystem;
+
     [SerializeField] private float sensitivity = 100.0f;
     [SerializeField] private float blendRate = 1.0f;
     [SerializeField] private Transform playerBody;
@@ -17,15 +20,43 @@ public class MouseLook : MonoBehaviour
     private float mouseLerpX = 0.0f;
     private float mouseLerpY = 0.0f;
 
+    private bool isEnabled = true;
+
+    private void Awake() {
+        if(Instance != null && Instance != this) Destroy(this);
+        else Instance = this;
+    }
+
+    private void Start() {
+        pauseEventSystem = PauseEventSystem.Instance;
+    }
+
     private void LateUpdate() {
+        if(!isEnabled) return;
+
         HandleLockInputs();
         GetMouseInput();
         RotatePlayer();
     }
 
+    public void Enable() {
+        isEnabled = true;
+    }
+
+    public void Disable() {
+        isEnabled = false;
+    }
+
+    public void ReleaseCursor() {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void LockCursor() {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     private void HandleLockInputs() {
-        if(Input.GetButtonDown("Cancel")) Cursor.lockState = CursorLockMode.None;
-    	if(Input.GetButtonDown("Click")) Cursor.lockState = CursorLockMode.Locked;
+        if(Input.GetButtonDown("Cancel")) pauseEventSystem.InvokePause();
     }
 
     private void GetMouseInput() {

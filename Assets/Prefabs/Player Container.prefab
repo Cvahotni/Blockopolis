@@ -112,7 +112,7 @@ MonoBehaviour:
   - {fileID: 1082263860864008897}
   - {fileID: 7285944100124806076}
   - {fileID: 51890349658251235}
-  checkDistance: 0.1
+  checkDistance: 0.15
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 64

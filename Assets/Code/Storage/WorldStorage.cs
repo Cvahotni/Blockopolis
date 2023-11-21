@@ -88,6 +88,15 @@ public static class WorldStorage
         return WorldStorageProperties.savesFolderName + world.Name + Path.DirectorySeparatorChar + "region" + Path.DirectorySeparatorChar + regionPos.ToString() + ".dat";
     }
 
+    public static void Clear() {
+        Destroy();
+
+        regionMap.Clear();
+        awaitingRegions.Clear();
+
+        Debug.Log("Cleared region data.");
+    }
+
     public static void Destroy() {
         int disposedCount = 0;
 

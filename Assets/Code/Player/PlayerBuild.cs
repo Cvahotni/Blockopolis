@@ -31,6 +31,8 @@ public class PlayerBuild : MonoBehaviour
     private ushort targetRaycastBlock;
     private ushort targetBlock;
 
+    private bool isEnabled = true;
+
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
@@ -44,12 +46,24 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void Update() {
+        if(!isEnabled) return;
+
         RaycastIntoWorld();
         UpdateBlockOutline();
         UpdateBlockCrackOutline();
 
         AdjustBlockCrackAnimatorSpeed();
         GetInputs();
+    }
+
+    public void Enable() {
+        isEnabled = true;
+        blockCrackAnimator.enabled = true;
+    }
+
+    public void Disable() {
+        isEnabled = false;
+        blockCrackAnimator.enabled = false;
     }
 
     private void GetInputs() {
@@ -75,7 +89,7 @@ public class PlayerBuild : MonoBehaviour
             playerEventSystem.InvokeBlockBreakStart();
         }
 
-        currentBlockBreakProgress += Time.deltaTime * GetBlockBreakSpeed();
+        currentBlockBreakProgress += Time.deltaTime * Time.timeScale * GetBlockBreakSpeed();
 
         if(currentBlockBreakProgress >= maxBlockBreakProgress) {
             currentBlockBreakProgress = 0.0f;

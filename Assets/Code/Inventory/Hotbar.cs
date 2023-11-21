@@ -11,13 +11,7 @@ public class Hotbar : MonoBehaviour
 
     [SerializeField] private int hotbarLength = 9;
 
-    private bool hotbarEnabled = false;
-
-    public bool HotbarEnabled {
-        get { return hotbarEnabled; }
-        set { hotbarEnabled = value; }
-    }
-
+    private bool hotbarEnabled = true;
     private int slotIndex = 0;
 
     private InventoryEventSystem inventoryEventSystem;
@@ -140,6 +134,14 @@ public class Hotbar : MonoBehaviour
 
     public void SetStatus(bool status) {
         hotbarEnabled = status;
+    }
+
+    public void Enable() {
+        SetStatus(true);
+    }
+
+    public void Disable() {
+        SetStatus(false);
     }
 
     public void TakeFromCurrentSlot() {

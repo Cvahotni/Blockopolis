@@ -58,7 +58,7 @@ public class WorldLoadingScreen : MonoBehaviour
     private void UpdateProgressBar() {
         progressBar.value = GetProgressAmount();
         
-        if(progressBar.value >= 1.0f) {
+        if(progressBar.value >= 1.0f && screenEnabled) {
             screenEnabled = false;
             worldEventSystem.InvokeCullChunksChange(!screenEnabled);
         }

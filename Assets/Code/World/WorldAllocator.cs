@@ -109,7 +109,10 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void OnDestroy() {
+        WorldStorage.Clear();
+    }
+
+    private void OnApplicationQuit() {
         BlockRegistry.OnDestroy();
-        WorldStorage.Destroy();
     }
 }

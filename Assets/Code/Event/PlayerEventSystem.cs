@@ -27,6 +27,7 @@ public class PlayerEventSystem : MonoBehaviour
     private PlayerMove playerMove;
     private PlayerHand playerHand;
     private Hotbar hotbar;
+    private MouseLook mouseLook;
 
     private UnityEvent<bool> groundCheckEvent = new UnityEvent<bool>();
 
@@ -47,6 +48,7 @@ public class PlayerEventSystem : MonoBehaviour
         playerMove = PlayerMove.Instance;
         playerHand = PlayerHand.Instance;
         hotbar = Hotbar.Instance;
+        mouseLook = MouseLook.Instance;
 
         if(playerMove == null || playerHand == null) {
             Debug.LogError("The Player object must be enabled for the game to start.");
@@ -84,6 +86,7 @@ public class PlayerEventSystem : MonoBehaviour
     }
 
     private void AddPlayerSpawnListeners() {
+        playerSpawnEvent.AddListener(mouseLook.LockCursor);
         playerSpawnEvent.AddListener(playerMove.TeleportToSpawn);
         playerSpawnEvent.AddListener(hotbar.UpdateHeldItem);
     }

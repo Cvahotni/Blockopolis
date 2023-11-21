@@ -8,6 +8,6 @@ public class DroppedItemRotate : MonoBehaviour
     [SerializeField] private float rotationSpeed;
 
     private void Update() {
-        rotatingObject.Rotate(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
+        rotatingObject.Rotate(0.0f, rotationSpeed * Time.deltaTime * Time.timeScale, 0.0f);
     }
 }

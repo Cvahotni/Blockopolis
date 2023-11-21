@@ -5,7 +5,21 @@ using UnityEngine.Events;
 
 public class MenuEventSystem : MonoBehaviour
 {
-    public static MenuEventSystem Instance { get; private set; }
+    public static MenuEventSystem Instance {
+        get {
+            if(_instance == null) {
+                Debug.LogError("The MenuEventSystem must be present in the scene at all times.");
+            }
+
+            return _instance;
+        }
+
+        set {
+            _instance = value;
+        }
+    }
+
+    private static MenuEventSystem _instance;
 
     private MenuController menuController;
     private EditWorldMenuController editWorldMenuController;
@@ -19,7 +33,7 @@ public class MenuEventSystem : MonoBehaviour
     private UnityEvent backEvent = new UnityEvent();
 
     private void Awake() {
-        if(Instance != null && Instance != this) Destroy(this);
+        if(_instance != null && _instance != this) Destroy(this);
         else Instance = this;
     }
 
