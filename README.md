@@ -2,7 +2,7 @@
 A Minecraft clone made with Unity, as a hobby project.
 
 I am currently not accepting commits from people,
-if you have any questions add me on discord (spectralmage12).
+if you have any questions add me on Discord (spectralmage12).
 
 # Requirements
 - Unity 2022.3.9f
@@ -11,7 +11,7 @@ if you have any questions add me on discord (spectralmage12).
 # Installation
 - Clone the project using git
 - Open it with Unity 2023.1.7f
-- Open the Package Maneger window
+- Open the Package Manager window
 - Install the packages: Burst, Collections, Mathematics, Universal RP, and Text Mesh Pro
 
 # Something went wrong?
