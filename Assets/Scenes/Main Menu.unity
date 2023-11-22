@@ -67,9 +67,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -3460,6 +3457,7 @@ GameObject:
   - component: {fileID: 726532335}
   - component: {fileID: 726532336}
   - component: {fileID: 726532337}
+  - component: {fileID: 726532338}
   m_Layer: 0
   m_Name: Menu Holder
   m_TagString: Untagged
@@ -3554,6 +3552,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3bd21992df2f8d38868c481dd27993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &726532338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 726532331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bc7143769a247f0af7a07c2609c95c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  worldListing: {fileID: 7425671816385649819, guid: 046bf1b4c451986fcbb7044b70aa4838, type: 3}
+  content: {fileID: 1005456000}
 --- !u!1 &825243587
 GameObject:
   m_ObjectHideFlags: 0
@@ -4385,7 +4397,6 @@ GameObject:
   - component: {fileID: 1005456000}
   - component: {fileID: 1005456001}
   - component: {fileID: 1005456002}
-  - component: {fileID: 1005456003}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -4452,19 +4463,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
---- !u!114 &1005456003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1005455999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2bc7143769a247f0af7a07c2609c95c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  worldListing: {fileID: 7425671816385649819, guid: 046bf1b4c451986fcbb7044b70aa4838, type: 3}
 --- !u!1 &1007640114
 GameObject:
   m_ObjectHideFlags: 0
@@ -5276,6 +5274,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 726532338}
+        m_TargetAssemblyTypeName: WorldsButtonList, Assembly-CSharp
+        m_MethodName: GenerateWorldListings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 726532332}
         m_TargetAssemblyTypeName: MenuController, Assembly-CSharp
         m_MethodName: ToggleToMainMenu

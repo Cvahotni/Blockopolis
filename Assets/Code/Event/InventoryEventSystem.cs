@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[DefaultExecutionOrder(200)]
+[DefaultExecutionOrder(-200)]
 public class InventoryEventSystem : MonoBehaviour
 {
     public static InventoryEventSystem Instance {

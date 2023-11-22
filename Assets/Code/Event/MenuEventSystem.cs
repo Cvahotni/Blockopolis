@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+[DefaultExecutionOrder(5)]
 public class MenuEventSystem : MonoBehaviour
 {
     public static MenuEventSystem Instance {
@@ -25,6 +26,7 @@ public class MenuEventSystem : MonoBehaviour
     private EditWorldMenuController editWorldMenuController;
     private WorldsEditingToggle worldsEditingToggle;
     private RenameWorldMenuController renameWorldMenuController;
+    private WorldsButtonList worldsButtonList;
 
     private UnityEvent deleteEvent = new UnityEvent();
     private UnityEvent renameEvent = new UnityEvent();
@@ -42,6 +44,7 @@ public class MenuEventSystem : MonoBehaviour
         editWorldMenuController = EditWorldMenuController.Instance;
         worldsEditingToggle = WorldsEditingToggle.Instance;
         renameWorldMenuController = RenameWorldMenuController.Instance;
+        worldsButtonList = WorldsButtonList.Instance;
 
         AddDeleteListeners();
         AddEditListeners();
@@ -54,6 +57,7 @@ public class MenuEventSystem : MonoBehaviour
         deleteEvent.AddListener(editWorldMenuController.DeleteCurrentWorld);
         deleteEvent.AddListener(menuController.ToggleToWorldSelection);
         deleteEvent.AddListener(worldsEditingToggle.DisableEditMode);
+        deleteEvent.AddListener(worldsButtonList.GenerateWorldListings);
     }
 
     private void AddEditListeners() {
@@ -72,11 +76,13 @@ public class MenuEventSystem : MonoBehaviour
         renameEvent.AddListener(renameWorldMenuController.Rename);
         renameEvent.AddListener(menuController.ToggleToWorldSelection);
         renameEvent.AddListener(worldsEditingToggle.DisableEditMode);
+        renameEvent.AddListener(worldsButtonList.GenerateWorldListings);
     }
 
     private void AddBackListeners() {
         backEvent.AddListener(worldsEditingToggle.DisableEditMode);
         backEvent.AddListener(menuController.ToggleToWorldSelection);
+        backEvent.AddListener(worldsButtonList.GenerateWorldListings);
     }
 
     public void InvokeEdit(string name) {

@@ -22,7 +22,7 @@ public class WorldHandler
     public static bool LoadWorld(string name) {
         Debug.Log("Loading world: " + name);
 
-        if(!IsCurrentWorldValid()) {
+        if(!IsWorldValid(name)) {
             Debug.Log("Failed to load world: " + name);
             return false;
         }
@@ -49,7 +49,6 @@ public class WorldHandler
 
     public static void SaveCurrentWorld() {
         Inventory inventory = Inventory.Instance;
-
         WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
         
         if(inventory != null) {
@@ -101,10 +100,11 @@ public class WorldHandler
         return IsWorldValid(currentWorld.Name);
     }
 
-    private static bool IsWorldValid(string name) {
+    public static bool IsWorldValid(string name) {
         bool nameInvalid = name == "";
         bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
 
+        Debug.Log("directoryInvalid: " + directoryInvalid);
         return !nameInvalid && !directoryInvalid;
     }
 

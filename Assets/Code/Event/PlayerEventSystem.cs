@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[DefaultExecutionOrder(300)]
+[DefaultExecutionOrder(-300)]
 public class PlayerEventSystem : MonoBehaviour
 {
     public static PlayerEventSystem Instance {

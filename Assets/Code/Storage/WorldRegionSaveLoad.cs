@@ -28,7 +28,6 @@ public class WorldRegionSaveLoad
 
         foreach(var regionPair in region.VoxelStorageMap) {
             long key = regionPair.Key;
-
             NativeArray<ushort> voxelArray = regionPair.Value;
 
             NativeList<EncodedVoxelMapEntry> array = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);

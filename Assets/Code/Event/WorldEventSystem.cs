@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-[DefaultExecutionOrder(500)]
+[DefaultExecutionOrder(-500)]
 [RequireComponent(typeof(PlayerEventSystem))]
 [RequireComponent(typeof(InventoryEventSystem))]
 public class WorldEventSystem : MonoBehaviour
