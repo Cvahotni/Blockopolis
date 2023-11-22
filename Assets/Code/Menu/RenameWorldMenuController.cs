@@ -22,6 +22,7 @@ public class RenameWorldMenuController : MonoBehaviour
 
     private void Start() {
         editWorldMenuController = EditWorldMenuController.Instance;
+        nameField.characterLimit = WorldStorageProperties.worldNameLimit;
     }
 
     private void FixedUpdate() {

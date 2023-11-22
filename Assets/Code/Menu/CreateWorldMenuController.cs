@@ -10,6 +10,11 @@ public class CreateWorldMenuController : MonoBehaviour
     [SerializeField] private TMP_InputField nameField;
     [SerializeField] private TMP_InputField seedField;
     [SerializeField] private Button createButton;
+
+    private void Start() {
+        nameField.characterLimit = WorldStorageProperties.worldNameLimit;
+        seedField.characterLimit = WorldStorageProperties.worldSeedLimit;
+    }
     
     private void FixedUpdate() {
         createButton.interactable = CanCreate();

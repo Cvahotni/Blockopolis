@@ -102,10 +102,10 @@ public class WorldHandler
 
     public static bool IsWorldValid(string name) {
         bool nameInvalid = name == "";
+        bool nameTooLong = name.Length > WorldStorageProperties.worldNameLimit;
         bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
 
-        Debug.Log("directoryInvalid: " + directoryInvalid);
-        return !nameInvalid && !directoryInvalid;
+        return !nameInvalid && !nameTooLong && !directoryInvalid;
     }
 
     private static int HashStringSeed(string seed) {
