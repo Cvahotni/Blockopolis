@@ -10,7 +10,7 @@ using Unity.Mathematics;
 public struct ChunkMeshBuilderJob : IJob
 {
     public NativeArray<ushort> voxelMap;
-    public NativeHashMap<ushort, BlockType> blockTypes; 
+    public NativeParallelHashMap<ushort, BlockType> blockTypes; 
 
     public NativeList<ChunkVertex> vertices;
     public NativeList<uint> indices;

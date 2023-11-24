@@ -9,16 +9,16 @@ public class BlockRegistry
     private static List<BlockTypeObject> blockTypeObjects = new List<BlockTypeObject>();
     private static List<BlockType> blockTypes = new List<BlockType>();
 
-    private static NativeHashMap<ushort, BlockType> blockTypeDictionary;
+    private static NativeParallelHashMap<ushort, BlockType> blockTypeDictionary;
     private static bool disposed = false;
 
-    public static NativeHashMap<ushort, BlockType> BlockTypeDictionary {
+    public static NativeParallelHashMap<ushort, BlockType> BlockTypeDictionary {
         get { return blockTypeDictionary; }
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
-        blockTypeDictionary = new NativeHashMap<ushort, BlockType>(blockTypes.Count, Allocator.Persistent);
+        blockTypeDictionary = new NativeParallelHashMap<ushort, BlockType>(blockTypes.Count, Allocator.Persistent);
 
         LoadBlockTypesFromFolder();
         PopulateBlockTypes();

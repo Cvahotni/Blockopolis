@@ -48,6 +48,7 @@ public class PlayerHand : MonoBehaviour
     }
 
     public void SwitchHeldItem(object sender, SwitchedItemStack stack) {
+        if(!handObject.activeSelf) return;
         AssignAnimator();
 
         handObjectAnimator.SetBool("isSwitchingUp", false);

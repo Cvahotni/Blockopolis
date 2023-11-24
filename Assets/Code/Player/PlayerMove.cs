@@ -8,8 +8,9 @@ public class PlayerMove : MonoBehaviour
     public static PlayerMove Instance { get; private set; }
 
     [SerializeField] private float speed = 6.0f;
-    [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float jumpHeight = 4.0f;
+    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float horizontalDragFactor = 0.5f;
 
     [SerializeField] private Transform playerContainerTransform;
     [SerializeField] private Rigidbody playerRigidBody;
@@ -30,15 +31,16 @@ public class PlayerMove : MonoBehaviour
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
     }
-    
+
+
     private void Update() {
         if(!isEnabled) return;
         GetInput();
 
         HandleMoveVelocity();
-        MoveVelocity();
-
         HandleJumpVelocity();
+
+        AdjustDrag();
     }
 
     public void Enable(object sender, EventArgs e) {
@@ -66,14 +68,9 @@ public class PlayerMove : MonoBehaviour
         isWalking = x != 0.0f || z != 0.0f && isGrounded;
     }
 
-    private void MoveVelocity() {
-        Vector3 originalVelocity = playerRigidBody.velocity;
-        playerRigidBody.velocity = new Vector3(velocity.x, originalVelocity.y + (velocity.y), velocity.z);
-    }
-
     private void HandleMoveVelocity() {
         Vector3 move = transform.right * x + transform.forward * z;
-        velocity = new Vector3(move.x, velocity.y, move.z);
+        playerRigidBody.AddForce(move, ForceMode.VelocityChange);
     }
 
     private void HandleJumpVelocity() {
@@ -81,5 +78,14 @@ public class PlayerMove : MonoBehaviour
             Vector3 originalVelocity = playerRigidBody.velocity;
             playerRigidBody.velocity = new Vector3(originalVelocity.x, Mathf.Sqrt(jumpHeight * -2.0f * gravity), originalVelocity.z);
         }
+    }
+
+    private void AdjustDrag() {
+        Vector3 velocity = playerRigidBody.velocity;
+
+        velocity.x *= 1.0f - horizontalDragFactor;
+        velocity.z *= 1.0f - horizontalDragFactor;
+
+        playerRigidBody.velocity = velocity;
     }
 }
