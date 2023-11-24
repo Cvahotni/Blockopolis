@@ -37,7 +37,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void AddStack(ItemStack stack) {
+    public void AddStack(object sender, ItemStack stack) {
         ushort leftOverStackSize = stack.Amount;
 
         for(int i = 0; i < slots.Length; i++) {

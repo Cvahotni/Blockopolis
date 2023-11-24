@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 
 public class WorldHandler
 {
@@ -47,7 +48,7 @@ public class WorldHandler
         WorldInventorySaveLoad.LoadWorldInventory(currentWorld, inventory);
     }
 
-    public static void SaveCurrentWorld() {
+    public static void SaveCurrentWorld(object sender, EventArgs e) {
         Inventory inventory = Inventory.Instance;
         WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
         

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using System;
 
 public class PauseEventSystem : MonoBehaviour
 {
@@ -29,9 +29,9 @@ public class PauseEventSystem : MonoBehaviour
     private PlayerHand playerHand;
     private EndlessTerrain endlessTerrain;
 
-    private UnityEvent pauseEvent = new UnityEvent();
-    private UnityEvent unpauseEvent = new UnityEvent();
-    private UnityEvent saveAndQuitEvent = new UnityEvent();
+    private event EventHandler pauseEvent;
+    private event EventHandler unpauseEvent;
+    private event EventHandler saveAndQuitEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -53,40 +53,40 @@ public class PauseEventSystem : MonoBehaviour
     }
 
     private void AddPauseListeners() {
-        pauseEvent.AddListener(TimeLock.Lock);
-        pauseEvent.AddListener(pauseMenu.DisplayPauseMenu);
-        pauseEvent.AddListener(mouseLook.ReleaseCursor);
-        pauseEvent.AddListener(playerMove.Disable);
-        pauseEvent.AddListener(mouseLook.Disable);
-        pauseEvent.AddListener(playerBuild.Disable);
-        pauseEvent.AddListener(hotbar.Disable);
+        pauseEvent += TimeLock.Lock;
+        pauseEvent += pauseMenu.DisplayPauseMenu;
+        pauseEvent += mouseLook.ReleaseCursor;
+        pauseEvent += playerMove.Disable;
+        pauseEvent += mouseLook.Disable;
+        pauseEvent += playerBuild.Disable;
+        pauseEvent += hotbar.Disable;
     }
 
     private void AddUnpauseListeners() {
-        unpauseEvent.AddListener(TimeLock.Unlock);
-        unpauseEvent.AddListener(pauseMenu.HidePauseMenu);
-        unpauseEvent.AddListener(mouseLook.LockCursor);
-        unpauseEvent.AddListener(playerMove.Enable);
-        unpauseEvent.AddListener(mouseLook.Enable);
-        unpauseEvent.AddListener(playerBuild.Enable);
-        unpauseEvent.AddListener(hotbar.Enable);
+        unpauseEvent += TimeLock.Unlock;
+        unpauseEvent += pauseMenu.HidePauseMenu;
+        unpauseEvent += mouseLook.LockCursor;
+        unpauseEvent += playerMove.Enable;
+        unpauseEvent += mouseLook.Enable;
+        unpauseEvent += playerBuild.Enable;
+        unpauseEvent += hotbar.Enable;
     }
 
     private void AddSaveAndQuitListeners() {
-        saveAndQuitEvent.AddListener(WorldHandler.SaveCurrentWorld);
-        saveAndQuitEvent.AddListener(TimeLock.Unlock);
-        saveAndQuitEvent.AddListener(pauseMenu.ReturnToTitleScreen);
+        saveAndQuitEvent += WorldHandler.SaveCurrentWorld;
+        saveAndQuitEvent += TimeLock.Unlock;
+        saveAndQuitEvent += pauseMenu.ReturnToTitleScreen;
     }
 
     public void InvokePause() {
-        pauseEvent.Invoke();
+        pauseEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeUnpause() {
-        unpauseEvent.Invoke();
+        unpauseEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeSaveAndQuit() {
-        saveAndQuitEvent.Invoke();
+        saveAndQuitEvent.Invoke(this, EventArgs.Empty);
     }
 }

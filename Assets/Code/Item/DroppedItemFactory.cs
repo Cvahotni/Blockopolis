@@ -22,7 +22,7 @@ public class DroppedItemFactory : MonoBehaviour
         itemRegistry = ItemRegistry.Instance;
     }
 
-    public void DropItemFromBlock(BlockBreakData data) {
+    public void DropItemFromBlock(object sender, BlockBreakData data) {
         DropItem(new Vector3(data.x, data.y, data.z), data.block, data.amount);
     }
 

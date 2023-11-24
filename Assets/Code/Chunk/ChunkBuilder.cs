@@ -30,7 +30,7 @@ public class ChunkBuilder : MonoBehaviour
         endlessTerrain = EndlessTerrain.Instance;
     }
 
-    public void BuildChunk(long chunkCoord) {
+    public void BuildChunk(object sender, long chunkCoord) {
         if(endlessTerrain.IsChunkOutOfRange(chunkCoord)) return;
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 

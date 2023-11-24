@@ -42,11 +42,9 @@ public class WorldAllocator : MonoBehaviour
     private void Update() {
         BuildNextChunk(ref immidiateChunkQueue);
         BuildNextChunk(ref chunkQueue);
-
-        if(Input.GetKeyDown(KeyCode.H)) WorldHandler.SaveCurrentWorld();
     }
 
-    public void AddChunkToQueue(long coord) {
+    public void AddChunkToQueue(object sender, long coord) {
         chunkQueue.Enqueue(coord);
     }
 
@@ -89,7 +87,7 @@ public class WorldAllocator : MonoBehaviour
         return coord == int.MaxValue;
     }
 
-    public void UpdateCullChunksOutOfView(bool value) {
+    public void UpdateCullChunksOutOfView(object sender, bool value) {
         cullChunksOutOfView = value;
     }
 

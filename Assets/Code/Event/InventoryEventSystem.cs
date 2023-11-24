@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using System;
 
 [DefaultExecutionOrder(-200)]
 public class InventoryEventSystem : MonoBehaviour
@@ -27,10 +27,10 @@ public class InventoryEventSystem : MonoBehaviour
     private Inventory inventory;
     private Hotbar hotbar;
 
-    private UnityEvent<ushort> targetSlotUpdateEvent = new UnityEvent<ushort>();
-    private UnityEvent<SwitchedItemStack> modifyHeldSlotEvent = new UnityEvent<SwitchedItemStack>();
-    private UnityEvent<ItemStack> itemPickupEvent = new UnityEvent<ItemStack>();
-    private UnityEvent<ItemSlotIndex> hotbarUpdateEvent = new UnityEvent<ItemSlotIndex>();
+    private event EventHandler<ushort> targetSlotUpdateEvent;
+    private event EventHandler<SwitchedItemStack> modifyHeldSlotEvent;
+    private event EventHandler<ItemStack> itemPickupEvent;
+    private event EventHandler<ItemSlotIndex> hotbarUpdateEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -50,35 +50,35 @@ public class InventoryEventSystem : MonoBehaviour
     }
 
     private void AddTargetSlotUpdateListeners() {
-        targetSlotUpdateEvent.AddListener(playerBuild.ModifyTargetBlock);
+        targetSlotUpdateEvent += playerBuild.ModifyTargetBlock;
     }
 
     private void AddModifyHeldSlotListeners() {
-        modifyHeldSlotEvent.AddListener(playerHand.SwitchHeldItem);
+        modifyHeldSlotEvent += playerHand.SwitchHeldItem;
     }
 
     private void AddItemPickupListeners() {
-        itemPickupEvent.AddListener(inventory.AddStack);
-        itemPickupEvent.AddListener(playerBuild.ModifyTargetBlock);
+        itemPickupEvent += inventory.AddStack;
+        itemPickupEvent += playerBuild.ModifyTargetBlock;
     }
 
     private void AddHotbarUpdateListeners() {
-        hotbarUpdateEvent.AddListener(hotbar.UpdateHeldItem);
+        hotbarUpdateEvent += hotbar.UpdateHeldItem;
     }
 
     public void InvokeTargetSlotUpdate(ushort id) {
-        targetSlotUpdateEvent.Invoke(id);
+        targetSlotUpdateEvent.Invoke(this, id);
     }
 
     public void InvokeModifyHeldSlot(SwitchedItemStack stack) {
-        modifyHeldSlotEvent.Invoke(stack);
+        modifyHeldSlotEvent.Invoke(this, stack);
     }
 
     public void InvokeItemPickup(ItemStack stack) {
-        itemPickupEvent.Invoke(stack);
+        itemPickupEvent.Invoke(this, stack);
     }
 
     public void InvokeHotbarUpdate(ItemSlotIndex data) {
-        hotbarUpdateEvent.Invoke(data);
+        hotbarUpdateEvent.Invoke(this, data);
     }
 }

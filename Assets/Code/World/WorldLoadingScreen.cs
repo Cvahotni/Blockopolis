@@ -68,12 +68,11 @@ public class WorldLoadingScreen : MonoBehaviour
         return (float) chunksGenerated / amountOfChunksInViewDistance;
     }
 
-    public void UpdateChunksGenerated(int amount) {
+    public void UpdateChunksGenerated(object sender, int amount) {
         chunksGenerated = amount;
     }
 
-    public void UpdateAmountOfChunksInViewDistance(int amount) {
-        Debug.Log("Amount changed!");
+    public void UpdateAmountOfChunksInViewDistance(object sender, int amount) {
         amountOfChunksInViewDistance = amount;
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
 [DefaultExecutionOrder(-300)]
 public class PlayerEventSystem : MonoBehaviour
@@ -29,13 +30,12 @@ public class PlayerEventSystem : MonoBehaviour
     private Hotbar hotbar;
     private MouseLook mouseLook;
 
-    private UnityEvent<bool> groundCheckEvent = new UnityEvent<bool>();
-
-    private UnityEvent blockBreakStartEvent = new UnityEvent();
-    private UnityEvent blockBreakEndEvent = new UnityEvent();
-    private UnityEvent<BlockBreakData> blockBreakEvent = new UnityEvent<BlockBreakData>();
-    private UnityEvent blockPlaceEvent = new UnityEvent();
-    private UnityEvent playerSpawnEvent = new UnityEvent();
+    private event EventHandler<bool> groundCheckEvent;
+    private event EventHandler blockBreakStartEvent;
+    private event EventHandler blockBreakEndEvent;
+    private event EventHandler<BlockBreakData> blockBreakEvent;
+    private event EventHandler blockPlaceEvent;
+    private event EventHandler playerSpawnEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -64,54 +64,54 @@ public class PlayerEventSystem : MonoBehaviour
     } 
 
     private void AddGroundCheckListeners() {
-        groundCheckEvent.AddListener(playerMove.UpdateIsGrounded);
+        groundCheckEvent += playerMove.UpdateIsGrounded;
     }
 
     private void AddBlockBreakStartListeners() {
-        blockBreakStartEvent.AddListener(playerHand.SwingHeldItemRepeating);
+        blockBreakStartEvent += playerHand.SwingHeldItemRepeating;
     }
 
     private void AddBlockBreakEndListeners() {
-        blockBreakEndEvent.AddListener(playerHand.ResetHandSwing);
+        blockBreakEndEvent += playerHand.ResetHandSwing;
     }
 
     private void AddBlockBreakListeners() {
-        blockBreakEvent.AddListener(playerHand.ResetLayers);
-        blockBreakEvent.AddListener(playerBlockBreakEffect.PlayBlockBreakParticle);
-        blockBreakEvent.AddListener(droppedItemFactory.DropItemFromBlock);
+        blockBreakEvent += playerHand.ResetLayers;
+        blockBreakEvent += playerBlockBreakEffect.PlayBlockBreakParticle;
+        blockBreakEvent += droppedItemFactory.DropItemFromBlock;
     }
 
     private void AddBlockPlaceListeners() {
-        blockPlaceEvent.AddListener(hotbar.TakeFromCurrentSlot);
+        blockPlaceEvent += hotbar.TakeFromCurrentSlot;
     }
 
     private void AddPlayerSpawnListeners() {
-        playerSpawnEvent.AddListener(mouseLook.LockCursor);
-        playerSpawnEvent.AddListener(playerMove.TeleportToSpawn);
-        playerSpawnEvent.AddListener(hotbar.UpdateHeldItem);
+        playerSpawnEvent += mouseLook.LockCursor;
+        playerSpawnEvent += playerMove.TeleportToSpawn;
+        playerSpawnEvent += hotbar.UpdateHeldItem;
     }
 
     public void InvokeGroundCheck(bool value) {
-        groundCheckEvent.Invoke(value);
+        groundCheckEvent.Invoke(this, value);
     }
 
     public void InvokeBlockBreakStart() {
-        blockBreakStartEvent.Invoke();
+        blockBreakStartEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeBlockBreakEnd() {
-        blockBreakEndEvent.Invoke();
+        blockBreakEndEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeBlockBreak(BlockBreakData data) {
-        blockBreakEvent.Invoke(data);
+        blockBreakEvent.Invoke(this, data);
     }
 
     public void InvokeBlockPlace() {
-        blockPlaceEvent.Invoke();
+        blockPlaceEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokePlayerSpawn() {
-        playerSpawnEvent.Invoke();
+        playerSpawnEvent.Invoke(this, EventArgs.Empty);
     }
 }

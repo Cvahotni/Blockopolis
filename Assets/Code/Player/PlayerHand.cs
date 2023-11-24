@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerHand : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class PlayerHand : MonoBehaviour
         handObjectAnimator.SetBool("isWalking", playerMove.IsWalking);
     }
 
-    public void SwitchHeldItem(SwitchedItemStack stack) {
+    public void SwitchHeldItem(object sender, SwitchedItemStack stack) {
         AssignAnimator();
 
         handObjectAnimator.SetBool("isSwitchingUp", false);
@@ -64,7 +65,7 @@ public class PlayerHand : MonoBehaviour
         StartCoroutine(SwingItemHandReset());
     }
 
-    public void SwingHeldItemRepeating() {
+    public void SwingHeldItemRepeating(object sender, EventArgs e) {
         AssignAnimator();
 
         handObjectAnimator.SetBool("isSwinging", false);
@@ -128,8 +129,12 @@ public class PlayerHand : MonoBehaviour
         ResetHandSwing();
     }
 
-    public void ResetLayers(BlockBreakData data) {
+    public void ResetLayers(object sender, BlockBreakData data) {
         ResetLayers();
+    }
+
+    public void ResetHandSwing(object sender, EventArgs e) {
+        ResetHandSwing();
     }
 
     public void ResetHandSwing() {

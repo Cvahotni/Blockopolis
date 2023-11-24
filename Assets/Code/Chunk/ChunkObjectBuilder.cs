@@ -37,7 +37,7 @@ public class ChunkObjectBuilder : MonoBehaviour
         groundLayer = LayerMask.NameToLayer("Ground");
     }
 
-    public void BuildChunkObject(BuiltChunkData builtChunkData) {
+    public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
         GameObject chunkGameObject = chunkObjectPool.GetFromPool();
         chunkGameObject.SetActive(true);    
 

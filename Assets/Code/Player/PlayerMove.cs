@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -40,21 +41,21 @@ public class PlayerMove : MonoBehaviour
         HandleJumpVelocity();
     }
 
-    public void Enable() {
+    public void Enable(object sender, EventArgs e) {
         isEnabled = true;
         playerRigidBody.isKinematic = !isEnabled;
     }
 
-    public void Disable() {
+    public void Disable(object sender, EventArgs e) {
         isEnabled = false;
         playerRigidBody.isKinematic = !isEnabled;
     }
 
-    public void UpdateIsGrounded(bool value) {
+    public void UpdateIsGrounded(object sender, bool value) {
         isGrounded = value;
     }
 
-    public void TeleportToSpawn() {
+    public void TeleportToSpawn(object sender, EventArgs e) {
         playerContainerTransform.position = WorldSpawner.GetPlayerSpawnLocation();
     }
 

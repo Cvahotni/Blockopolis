@@ -113,7 +113,7 @@ public class EndlessTerrain : MonoBehaviour
         return chunkCount;
     }
 
-    public void AddChunkToAddedChunks(long coord) {
+    public void AddChunkToAddedChunks(object sender, long coord) {
         addedChunks.Add(coord);
     }
 
@@ -121,11 +121,11 @@ public class EndlessTerrain : MonoBehaviour
         return addedChunks.Contains(coord);
     }
 
-    public void RemoveChunk(BuiltChunkData data) {
-        RemoveChunk(data.coord);
+    public void RemoveChunk(object sender, BuiltChunkData data) {
+        RemoveChunk(sender, data.coord);
     }
 
-    public void RemoveChunk(long coord) {
+    public void RemoveChunk(object sender, long coord) {
         addedChunks.Remove(coord);
     }
 

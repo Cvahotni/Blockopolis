@@ -21,7 +21,7 @@ public class PlayerBlockBreakEffect : MonoBehaviour
         itemRegistry = ItemRegistry.Instance;
     }
 
-    public void PlayBlockBreakParticle(BlockBreakData data) {
+    public void PlayBlockBreakParticle(object sender, BlockBreakData data) {
         if(itemRegistry == null) {
             Debug.LogError("The ItemRegistry script must be present in order to play a block break particle.");
             return;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -17,15 +18,19 @@ public class PauseMenu : MonoBehaviour
         HidePauseMenu();
     }
 
-    public void DisplayPauseMenu() {
+    public void DisplayPauseMenu(object sender, EventArgs e) {
         pauseMenu.SetActive(true);
+    }
+
+    public void HidePauseMenu(object sender, EventArgs e) {
+        HidePauseMenu();
     }
 
     public void HidePauseMenu() {
         pauseMenu.SetActive(false);
     }
 
-    public void ReturnToTitleScreen() {
+    public void ReturnToTitleScreen(object sender, EventArgs e) {
         SceneManager.LoadScene(sceneName: MenuProperties.menuSceneName);
     }
 }

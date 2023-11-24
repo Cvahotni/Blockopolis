@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class Hotbar : MonoBehaviour
 {
     public static Hotbar Instance { get; private set; }
 
     [SerializeField] private RectTransform hightlight;
-
     [SerializeField] private int hotbarLength = 9;
 
     private bool hotbarEnabled = true;
@@ -65,7 +65,7 @@ public class Hotbar : MonoBehaviour
         UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, stack.Amount));
     }
 
-    public void UpdateHeldItem() {
+    public void UpdateHeldItem(object sender, EventArgs e) {
         UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, 0));
     }
 
@@ -73,7 +73,7 @@ public class Hotbar : MonoBehaviour
         UpdateHeldItem(scroll, new ItemSlotIndex(slotIndex, 0));
     }
 
-    public void UpdateHeldItem(ItemSlotIndex data) {
+    public void UpdateHeldItem(object sender, ItemSlotIndex data) {
         UpdateHeldItem(1.0f / 20f, data);
     }
 
@@ -132,19 +132,19 @@ public class Hotbar : MonoBehaviour
         inventoryEventSystem.InvokeTargetSlotUpdate(id);
     }
 
-    public void SetStatus(bool status) {
+    public void SetStatus(object sender, bool status) {
         hotbarEnabled = status;
     }
 
-    public void Enable() {
-        SetStatus(true);
+    public void Enable(object sender, EventArgs e) {
+        hotbarEnabled = true;
     }
 
-    public void Disable() {
-        SetStatus(false);
+    public void Disable(object sender, EventArgs e) {
+        hotbarEnabled = false;
     }
 
-    public void TakeFromCurrentSlot() {
+    public void TakeFromCurrentSlot(object sender, EventArgs e) {
         if(inventory == null) {
             Debug.LogError("The Inventory script must be present in the scene in order to take from the current slot.");
             return;

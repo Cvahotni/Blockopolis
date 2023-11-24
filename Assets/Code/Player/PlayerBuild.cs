@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerBuild : MonoBehaviour
 {
@@ -56,12 +57,12 @@ public class PlayerBuild : MonoBehaviour
         GetInputs();
     }
 
-    public void Enable() {
+    public void Enable(object sender, EventArgs e) {
         isEnabled = true;
         blockCrackAnimator.enabled = true;
     }
 
-    public void Disable() {
+    public void Disable(object sender, EventArgs e) {
         isEnabled = false;
         blockCrackAnimator.enabled = false;
     }
@@ -113,12 +114,16 @@ public class PlayerBuild : MonoBehaviour
         return 1.0f / type.hardness;
     }
 
-    public void ModifyTargetBlock(ItemStack stack) {
+    public void ModifyTargetBlock(object sender, ItemStack stack) {
         ModifyTargetBlock(stack.ID);
     }
 
     public void ModifyTargetBlock(ushort id) {
         targetBlock = id;
+    }
+
+    public void ModifyTargetBlock(object sender, ushort id) {
+        ModifyTargetBlock(id);
     }
 
     private void DestroyTargetBlock() {

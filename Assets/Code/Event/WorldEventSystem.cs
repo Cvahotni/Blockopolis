@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
 [DefaultExecutionOrder(-500)]
 [RequireComponent(typeof(PlayerEventSystem))]
@@ -32,13 +33,13 @@ public class WorldEventSystem : MonoBehaviour
     private ChunkObjectPool chunkObjectPool;
     private ChunkObjectBuilder chunkObjectBuilder;
 
-    private UnityEvent<long> chunkAddEvent = new UnityEvent<long>();
-    private UnityEvent<long> chunkRemoveEvent = new UnityEvent<long>();
-    private UnityEvent<long> chunkBuildEvent = new UnityEvent<long>();
-    private UnityEvent<BuiltChunkData> chunkObjectBuildEvent = new UnityEvent<BuiltChunkData>();
-    private UnityEvent<bool> cullChunksChangeEvent = new UnityEvent<bool>();
-    private UnityEvent<int> chunksGeneratedChangeEvent = new UnityEvent<int>();
-    private UnityEvent<int> amountOfChunksInViewDistanceChangeEvent = new UnityEvent<int>();
+    private event EventHandler<long> chunkAddEvent;
+    private event EventHandler<long> chunkRemoveEvent;
+    private event EventHandler<long> chunkBuildEvent;
+    private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
+    private event EventHandler<bool> cullChunksChangeEvent;
+    private event EventHandler<int> chunksGeneratedChangeEvent;
+    private event EventHandler<int> amountOfChunksInViewDistanceChangeEvent;
 
 
     private void Awake() {
@@ -65,62 +66,62 @@ public class WorldEventSystem : MonoBehaviour
     }
 
     private void AddChunkAddListeners() {
-        chunkAddEvent.AddListener(worldAllocator.AddChunkToQueue);
-        chunkAddEvent.AddListener(endlessTerrain.AddChunkToAddedChunks);
+        chunkAddEvent += worldAllocator.AddChunkToQueue;
+        chunkAddEvent += endlessTerrain.AddChunkToAddedChunks;
     }
 
     private void AddChunkRemoveListeners() {
-        chunkRemoveEvent.AddListener(chunkObjectPool.ReturnToPool);
-        chunkRemoveEvent.AddListener(endlessTerrain.RemoveChunk);
+        chunkRemoveEvent += chunkObjectPool.ReturnToPool;
+        chunkRemoveEvent += endlessTerrain.RemoveChunk;
     }
 
     private void AddChunkBuildListeners() {
-        chunkBuildEvent.AddListener(chunkBuilder.BuildChunk);
+        chunkBuildEvent += chunkBuilder.BuildChunk;
     }
 
     private void AddChunkObjectBuildListeners() {
-        chunkObjectBuildEvent.AddListener(chunkObjectPool.ReturnToPool);
-        chunkObjectBuildEvent.AddListener(chunkObjectBuilder.BuildChunkObject);
+        chunkObjectBuildEvent += chunkObjectPool.ReturnToPool;
+        chunkObjectBuildEvent += chunkObjectBuilder.BuildChunkObject;
     }
 
     private void AddCullChunksChangeListeners() {
-        cullChunksChangeEvent.AddListener(worldAllocator.UpdateCullChunksOutOfView);
-        cullChunksChangeEvent.AddListener(hotbar.SetStatus);
+        cullChunksChangeEvent += worldAllocator.UpdateCullChunksOutOfView;
+        cullChunksChangeEvent += hotbar.SetStatus;
     }
 
     private void AddChunksGeneratedChangeListeners() {
-        chunksGeneratedChangeEvent.AddListener(worldLoadingScreen.UpdateChunksGenerated);
+        chunksGeneratedChangeEvent += worldLoadingScreen.UpdateChunksGenerated;
     }
 
     private void AddAmountOfChunksInViewDistanceChangeListeners() {
-        amountOfChunksInViewDistanceChangeEvent.AddListener(worldLoadingScreen.UpdateAmountOfChunksInViewDistance);
+        amountOfChunksInViewDistanceChangeEvent += worldLoadingScreen.UpdateAmountOfChunksInViewDistance;
     }
 
     public void InvokeChunkAdd(long coord) {
-        chunkAddEvent.Invoke(coord);
+        chunkAddEvent.Invoke(this, coord);
     }
 
     public void InvokeChunkRemove(long coord) {
-        chunkRemoveEvent.Invoke(coord);
+        chunkRemoveEvent.Invoke(this, coord);
     }
 
     public void InvokeChunkBuild(long coord) {
-        chunkBuildEvent.Invoke(coord);
+        chunkBuildEvent.Invoke(this, coord);
     }
 
     public void InvokeChunkObjectBuild(BuiltChunkData data) {
-        chunkObjectBuildEvent.Invoke(data);
+        chunkObjectBuildEvent.Invoke(this, data);
     }
 
     public void InvokeCullChunksChange(bool value) {
-        cullChunksChangeEvent.Invoke(value);
+        cullChunksChangeEvent.Invoke(this, value);
     }
 
     public void InvokeChunksGeneratedChange(int amount) {
-        chunksGeneratedChangeEvent.Invoke(amount);
+        chunksGeneratedChangeEvent.Invoke(this, amount);
     }
 
     public void InvokeAmountOfChunksInViewDistanceChange(int amount) {
-        amountOfChunksInViewDistanceChangeEvent.Invoke(amount);
+        amountOfChunksInViewDistanceChangeEvent.Invoke(this, amount);
     }
 }

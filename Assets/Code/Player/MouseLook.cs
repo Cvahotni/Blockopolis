@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MouseLook : MonoBehaviour
 {
@@ -39,19 +40,19 @@ public class MouseLook : MonoBehaviour
         RotatePlayer();
     }
 
-    public void Enable() {
+    public void Enable(object sender, EventArgs e) {
         isEnabled = true;
     }
 
-    public void Disable() {
+    public void Disable(object sender, EventArgs e) {
         isEnabled = false;
     }
 
-    public void ReleaseCursor() {
+    public void ReleaseCursor(object sender, EventArgs e) {
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void LockCursor() {
+    public void LockCursor(object sender, EventArgs e) {
         Cursor.lockState = CursorLockMode.Locked;
     }
 
