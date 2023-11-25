@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerGroundCheck : MonoBehaviour
 {
     [SerializeField] private Transform[] groundChecks;
-
     [SerializeField] private float checkDistance = 1.0f;
     [SerializeField] private LayerMask groundLayerMask;
 
