@@ -19,9 +19,9 @@ public struct ChunkBuildData
     public NativeArray<float> noiseOffset;
     public NativeArray<float> noiseMap3D;
 
-    public ChunkBuildData(NativeArray<long> chunkPos, NativeList<ChunkVertex> vertices, 
-                          NativeList<uint> indices, NativeArray<ushort> voxelMap, NativeList<EncodedVoxelMapEntry> encodedVoxelMap, 
-                          NativeList<float> frequencies, NativeList<float> amplitudes, NativeArray<float> noiseOffset, NativeArray<float> noiseMap3D) {
+    public ChunkBuildData(ref NativeArray<long> chunkPos, ref NativeList<ChunkVertex> vertices, 
+                          ref NativeList<uint> indices, ref NativeArray<ushort> voxelMap, ref NativeList<EncodedVoxelMapEntry> encodedVoxelMap, 
+                          ref NativeList<float> frequencies, ref NativeList<float> amplitudes, ref NativeArray<float> noiseOffset, ref NativeArray<float> noiseMap3D) {
                             this.chunkPos = chunkPos;
                             this.vertices = vertices;
                             this.indices = indices;

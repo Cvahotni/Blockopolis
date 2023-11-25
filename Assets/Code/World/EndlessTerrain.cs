@@ -6,7 +6,6 @@ using UnityEngine.Scripting;
 public class EndlessTerrain : MonoBehaviour
 {
     public static EndlessTerrain Instance { get; private set; }
-
     private WorldEventSystem worldEventSystem;
 
     public Transform playerTransform;

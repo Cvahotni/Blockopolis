@@ -31,7 +31,6 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     public void BuildChunk(object sender, long chunkCoord) {
-        if(endlessTerrain.IsChunkOutOfRange(chunkCoord)) return;
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
@@ -50,10 +49,10 @@ public class ChunkBuilder : MonoBehaviour
         foreach(float amplitude in endlessTerrain.Amplitudes) amplitudes.Add(amplitude);
 
         ChunkBuildData buildData = new ChunkBuildData(
-            chunkPos, vertices,
-            indices, voxelMap, encodedVoxelMap,
-            frequencies, amplitudes, noiseOffset,
-            noiseMap3D
+            ref chunkPos, ref vertices,
+            ref indices, ref voxelMap, ref encodedVoxelMap,
+            ref frequencies, ref amplitudes, ref noiseOffset,
+            ref noiseMap3D
         );
 
         Vector2 terrainNoiseOffset = endlessTerrain.GetTerrainNoiseOffset();
@@ -69,7 +68,7 @@ public class ChunkBuilder : MonoBehaviour
         }
 
         BuildChunkMesh(buildData);
-        worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(vertices, indices, chunkPos[0]));
+        worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(ref vertices, ref indices, chunkPos[0]));
 
         SaveChunkVoxelMap(chunkCoord, voxelMap);
         buildData.Dispose();

@@ -9,7 +9,7 @@ public struct BuiltChunkData
     public NativeList<uint> indices;
     public long coord;
 
-    public BuiltChunkData(NativeList<ChunkVertex> vertices, NativeList<uint> indices, long coord) {
+    public BuiltChunkData(ref NativeList<ChunkVertex> vertices, ref NativeList<uint> indices, long coord) {
         this.vertices = vertices;
         this.indices = indices;
         this.coord = coord;

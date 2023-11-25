@@ -35,6 +35,7 @@ public class WorldEventSystem : MonoBehaviour
 
     private event EventHandler<long> chunkAddEvent;
     private event EventHandler<long> chunkRemoveEvent;
+    private event EventHandler<long> chunkRemoveFinalEvent;
     private event EventHandler<long> chunkBuildEvent;
     private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
     private event EventHandler<bool> cullChunksChangeEvent;
@@ -58,6 +59,7 @@ public class WorldEventSystem : MonoBehaviour
 
         AddChunkAddListeners();
         AddChunkRemoveListeners();
+        AddChunkRemoveFinalListeners();
         AddChunkBuildListeners();
         AddChunkObjectBuildListeners();
         AddCullChunksChangeListeners();
@@ -72,7 +74,10 @@ public class WorldEventSystem : MonoBehaviour
 
     private void AddChunkRemoveListeners() {
         chunkRemoveEvent += chunkObjectPool.ReturnToPool;
-        chunkRemoveEvent += endlessTerrain.RemoveChunk;
+    }
+
+    private void AddChunkRemoveFinalListeners() {
+        chunkRemoveFinalEvent += endlessTerrain.RemoveChunk;
     }
 
     private void AddChunkBuildListeners() {
@@ -103,6 +108,10 @@ public class WorldEventSystem : MonoBehaviour
 
     public void InvokeChunkRemove(long coord) {
         chunkRemoveEvent.Invoke(this, coord);
+    }
+
+    public void InvokeChunkRemoveFinal(long coord) {
+        chunkRemoveFinalEvent.Invoke(this, coord);
     }
 
     public void InvokeChunkBuild(long coord) {

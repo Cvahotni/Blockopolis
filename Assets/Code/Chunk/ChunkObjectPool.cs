@@ -5,6 +5,7 @@ using UnityEngine;
 public class ChunkObjectPool : MonoBehaviour
 {
     public static ChunkObjectPool Instance { get; private set; }
+    private WorldEventSystem worldEventSystem;
     
     [SerializeField]
     private int poolSize = 1024;
@@ -17,6 +18,7 @@ public class ChunkObjectPool : MonoBehaviour
     }
 
     private void Start() {
+        worldEventSystem = WorldEventSystem.Instance;
         PopulatePool();
     }
 
@@ -40,6 +42,7 @@ public class ChunkObjectPool : MonoBehaviour
         GameObject gameObject = GameObject.Find("" + coord);
         if(gameObject == null) return;
 
+        worldEventSystem.InvokeChunkRemoveFinal(coord);
         ReturnToPool(gameObject);
     }
 

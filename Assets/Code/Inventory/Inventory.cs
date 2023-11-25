@@ -5,7 +5,6 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public static Inventory Instance { get; private set; }
-
     private InventoryEventSystem inventoryEventSystem;
 
     [SerializeField] private UiItemSlot[] slots;

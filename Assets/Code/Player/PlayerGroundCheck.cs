@@ -9,6 +9,7 @@ public class PlayerGroundCheck : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
 
     private PlayerEventSystem playerEventSystem;
+    private RaycastHit[] results = new RaycastHit[1];
 
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;
@@ -21,13 +22,11 @@ public class PlayerGroundCheck : MonoBehaviour
 
     private bool IsGroundedViaRaycast() {
         foreach(Transform transform in groundChecks) {
-            RaycastHit hit;
-
-            if(Physics.Raycast(transform.position, 
+            if(Physics.RaycastNonAlloc(transform.position,
                                 Vector3.down,
-                                out hit,
+                                results,
                                 checkDistance,
-                                groundLayerMask)) {
+                                groundLayerMask) != 0) {
 
                                     return true;
             }
