@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Stone Block Item
   m_EditorClassIdentifier: 
   id: 3
-  sprite: {fileID: 21300000, guid: a64eff6133cfb4fe6a3b42342785800b, type: 3}
+  sprite: {fileID: 21300000, guid: 18aaeaddf3eeeba1ba163740fe56d4b5, type: 3}
   brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
   brokenMaterial: {fileID: 2100000, guid: 10193253aaa40773b99a83e62e0f71c3, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: 985181d7f407117c1b49db10a3cf93a0, type: 2}

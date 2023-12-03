@@ -12,6 +12,13 @@ public class WorldRegionSaveLoad
 {
     private static byte[] regionBytes = new byte[65536 * 16];
     private static byte[] chunkBytes = new byte[65536];
+    private static NativeList<EncodedVoxelMapEntry> encodedArray;
+    private static bool destroyed = false;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void Start() {
+        encodedArray = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
+    }
 
     public static void SaveRegion(World world, string path, WorldRegion region) {
         string directoryCheckPath = WorldStorageProperties.savesFolderName + Path.DirectorySeparatorChar + world.Name + Path.DirectorySeparatorChar + WorldStorageProperties.regionFolderName;
@@ -30,11 +37,10 @@ public class WorldRegionSaveLoad
             long key = regionPair.Key;
             NativeArray<ushort> voxelArray = regionPair.Value;
 
-            NativeList<EncodedVoxelMapEntry> array = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
-            ChunkEncoderDecoder.Encode(voxelArray, array);
+            ChunkEncoderDecoder.Encode(voxelArray, encodedArray);
 
-            byte[] bytes = NativeArrayExtension.ToRawBytes<EncodedVoxelMapEntry>(array);
-            array.Dispose();
+            byte[] bytes = NativeArrayExtension.ToRawBytes<EncodedVoxelMapEntry>(encodedArray);
+            encodedArray.Clear();
 
             using (var stream = new FileStream(path, FileMode.Append)) {
                 WriteRegionMetaData(metaDataPath, key, stream.Length, bytes.Length);
@@ -109,5 +115,12 @@ public class WorldRegionSaveLoad
 
     private static string GetMetadataPath(string path) {
         return path + WorldStorageProperties.metadataExtension;
+    }
+
+    public static void OnDestroy() {
+        if(destroyed) return;
+
+        encodedArray.Dispose();
+        destroyed = true;
     }
 }

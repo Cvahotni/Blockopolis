@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dirt Block Item
   m_EditorClassIdentifier: 
   id: 2
-  sprite: {fileID: 21300000, guid: 2099f7dcb72b09b17bd7702663c21012, type: 3}
+  sprite: {fileID: 21300000, guid: e5f5a1286831964feadd1cf2b1c14453, type: 3}
   brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
   brokenMaterial: {fileID: 2100000, guid: 878e970e4105e2bc1a586057ca37bf36, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: fde23088b24b6a11e91f33e1876e586d, type: 2}

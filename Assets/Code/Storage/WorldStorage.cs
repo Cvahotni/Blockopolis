@@ -97,7 +97,7 @@ public static class WorldStorage
         Debug.Log("Cleared region data.");
     }
 
-    public static void Destroy() {
+    private static void Destroy() {
         int disposedCount = 0;
 
         foreach(var regionPair in regionMap) disposedCount += regionPair.Value.Destroy();

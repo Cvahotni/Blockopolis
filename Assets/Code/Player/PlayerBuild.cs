@@ -14,25 +14,33 @@ public class PlayerBuild : MonoBehaviour
     [SerializeField] private GameObject blockOutline;
     [SerializeField] private GameObject blockCrackOutline;
 
+    [SerializeField] private LayerMask chunkMask;
+    [SerializeField] private LayerMask playerMask;
+
+    private PlayerEventSystem playerEventSystem;
+
     private Animator blockCrackAnimator;
     private Camera playerCamera;
 
     private Vector3Int targetPos;
     private Vector3Int previousTargetPos;
-
     private Vector3Int highlightPos;
 
     private float currentBlockBreakProgress;
     private float maxBlockBreakProgress = 1.0f;
 
-    private bool isMining = false;
-
-    private PlayerEventSystem playerEventSystem;
-
     private ushort targetRaycastBlock;
     private ushort targetBlock;
 
+    private bool isMining = false;
     private bool isEnabled = true;
+
+    private RaycastHit[] raycastHit;
+
+    private RaycastHit HitData {
+        get { return raycastHit[0]; }
+        set { raycastHit[0] = value; }
+    }
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -41,6 +49,7 @@ public class PlayerBuild : MonoBehaviour
 
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;
+        raycastHit = new RaycastHit[1];
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
@@ -77,7 +86,9 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void MineCurrentBlock() {
-        if(!CanModifyAt(targetPos)) return;
+        Vector3 offsetTargetPos = GetOffsetTargetPos();
+
+        if(!CanModifyAt(offsetTargetPos)) return;
         if(!blockCrackOutline.activeSelf) return;
 
         if(currentBlockBreakProgress == 0.0f) {
@@ -127,7 +138,9 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void DestroyTargetBlock() {
-        if(!CanModifyAt(targetPos)) return;
+        Vector3 offsetTargetPos = GetOffsetTargetPos();
+
+        if(!CanModifyAt(offsetTargetPos)) return;
         ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
@@ -144,7 +157,9 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void PlaceTargetBlock() {
-        if(!CanModifyAt(highlightPos)) return;
+        Vector3 offsetHighlightPos = GetOffsetHighlightPos();
+
+        if(!CanModifyAt(offsetHighlightPos)) return;
         if(targetBlock == 0) return;
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
@@ -156,6 +171,7 @@ public class PlayerBuild : MonoBehaviour
 
     private void RaycastIntoWorld() {
         if(previousTargetPos != null) previousTargetPos = targetPos;
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
         float step = checkIncrement;
         Vector3 playerPosition = playerCamera.transform.position;
@@ -167,58 +183,51 @@ public class PlayerBuild : MonoBehaviour
         Vector3Int playerPositionFloored = new Vector3Int(positionX, positionY, positionZ);
         Vector3 lastPos = new Vector3();
 
-        while(step < reach) {
-            Vector3 pos = playerCamera.transform.position + playerCamera.transform.forward * step;
-            Vector3Int posFlooredAsInt = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-
-            targetRaycastBlock = WorldModifier.GetBlockAt(posFlooredAsInt.x, posFlooredAsInt.y, posFlooredAsInt.z);
-
-            if(targetRaycastBlock != 0) {
-                Vector3Int lastPosFloored = new Vector3Int(Mathf.FloorToInt(lastPos.x), Mathf.FloorToInt(lastPos.y), Mathf.FloorToInt(lastPos.z));
-
-                highlightPos = lastPosFloored;
-                targetPos = posFlooredAsInt;
-            
-                return;
-            }
-            
-            lastPos = posFlooredAsInt;
-            step += checkIncrement;
-        }
-
         targetPos = playerPositionFloored;
         highlightPos = playerPositionFloored;
+
+        if(Physics.RaycastNonAlloc(ray, raycastHit, reach, chunkMask) != 0) {
+            Vector3 targetPoint = HitData.point - HitData.normal * 0.1f;
+            Vector3 targetHighlightPoint = HitData.point + HitData.normal * 0.1f;
+        
+            int targetPosX = Mathf.FloorToInt(targetPoint.x);
+            int targetPosY = Mathf.FloorToInt(targetPoint.y);
+            int targetPosZ = Mathf.FloorToInt(targetPoint.z);
+
+            int targetHighlightPosX = Mathf.FloorToInt(targetHighlightPoint.x);
+            int targetHighlightPosY = Mathf.FloorToInt(targetHighlightPoint.y);
+            int targetHighlightPosZ = Mathf.FloorToInt(targetHighlightPoint.z);
+
+            targetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
+
+            if(targetRaycastBlock != 0) {
+                targetPos.x = targetPosX;
+                targetPos.y = targetPosY;
+                targetPos.z = targetPosZ;
+
+                highlightPos.x = targetHighlightPosX;
+                highlightPos.y = targetHighlightPosY;
+                highlightPos.z = targetHighlightPosZ;
+            }
+        }
     }
 
-    private bool CanModifyAt(Vector3Int position) {
-        int cameraPositionX = Mathf.FloorToInt(playerCamera.transform.position.x);
-        int cameraPositionY = Mathf.FloorToInt(playerCamera.transform.position.y);
-        int cameraPositionZ = Mathf.FloorToInt(playerCamera.transform.position.z);
-    
-        Vector3Int boxPosition = new Vector3Int(cameraPositionX, Mathf.FloorToInt(cameraPositionY + 0.5f), cameraPositionZ);
-        Vector3Int boxLowerPosition = new Vector3Int(cameraPositionX, Mathf.FloorToInt(cameraPositionY - 0.5f), cameraPositionZ);
-
-        bool boxCheck = Vector3Int.Distance(position, boxPosition) <= playerBounds;
-        bool boxLowerCheck = Vector3Int.Distance(position, boxLowerPosition) <= playerBounds;
-
-        bool boxBoundsCheck = !boxCheck && !boxLowerCheck;
-        bool yIsInWorld = position.y >= 0 && position.y < VoxelProperties.chunkHeight;
-
-        return boxBoundsCheck && yIsInWorld;
+    private bool CanModifyAt(Vector3 position) {
+        return !Physics.CheckBox(position, Vector3.one * 0.5f, Quaternion.identity, playerMask, QueryTriggerInteraction.Ignore);
     }
 
     private void UpdateBlockOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
 
-        blockOutline.SetActive(CanModifyAt(targetPos));
+        blockOutline.SetActive(CanModifyAt(blockOutlinePosition));
         blockOutline.transform.position = blockOutlinePosition;
     }
 
     private void UpdateBlockCrackOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
-        bool shouldCrackOutlineBeActive = CanModifyAt(targetPos) && isMining;
+        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition) && isMining;
 
-        blockCrackOutline.SetActive(CanModifyAt(targetPos) && isMining);
+        blockCrackOutline.SetActive(CanModifyAt(blockOutlinePosition) && isMining);
         blockCrackOutline.transform.position = blockOutlinePosition;
 
         if(previousTargetPos != targetPos) ResetMiningProgress(false);
@@ -226,5 +235,9 @@ public class PlayerBuild : MonoBehaviour
 
     private Vector3 GetOffsetTargetPos() {
         return new Vector3(targetPos.x + 0.5f, targetPos.y + 0.5f, targetPos.z + 0.5f);
+    }
+
+    private Vector3 GetOffsetHighlightPos() {
+        return new Vector3(highlightPos.x + 0.5f, highlightPos.y + 0.5f, highlightPos.z + 0.5f);
     }
 }

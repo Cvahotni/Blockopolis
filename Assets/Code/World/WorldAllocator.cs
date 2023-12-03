@@ -5,7 +5,6 @@ using Unity.Collections;
 using Unity.Mathematics;
 
 [RequireComponent(typeof(EndlessTerrain))]
-
 public class WorldAllocator : MonoBehaviour
 {
     public static WorldAllocator Instance { get; private set; }
@@ -108,9 +107,5 @@ public class WorldAllocator : MonoBehaviour
 
     private void OnDestroy() {
         WorldStorage.Clear();
-    }
-
-    private void OnApplicationQuit() {
-        BlockRegistry.OnDestroy();
     }
 }

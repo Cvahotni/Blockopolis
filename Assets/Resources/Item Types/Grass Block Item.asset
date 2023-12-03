@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Grass Block Item
   m_EditorClassIdentifier: 
   id: 1
-  sprite: {fileID: 21300000, guid: 64fde63abba8cb9ef8dce9fcaf31211b, type: 3}
+  sprite: {fileID: 21300000, guid: 24554f5695f8db9dda316b8f46c670de, type: 3}
   brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
   brokenMaterial: {fileID: 2100000, guid: 878e970e4105e2bc1a586057ca37bf36, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: f1bd6cd71cad3348589f74f66c55272d, type: 2}

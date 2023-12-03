@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Sand Block Item
   m_EditorClassIdentifier: 
   id: 5
-  sprite: {fileID: 21300000, guid: 5285a79bc0dfb7145872d157f671e629, type: 3}
+  sprite: {fileID: 21300000, guid: ff8951e5380935b5c9fbd237fed1e8f2, type: 3}
   brokenSprite: {fileID: 21300000, guid: 7fb59c7d589a4fd01998a664259529d2, type: 3}
   brokenMaterial: {fileID: 2100000, guid: 4b2ded9af58010fe6b77fc4bb53e781b, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: 4b06c86cb8038f0d093d75ba04f417cf, type: 2}

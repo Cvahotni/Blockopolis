@@ -10,6 +10,7 @@ public class ChunkObjectBuilder : MonoBehaviour
     private VertexAttributeDescriptor positionDescriptor = new VertexAttributeDescriptor(VertexAttribute.Position);
 	private VertexAttributeDescriptor texCoordDescriptor = new VertexAttributeDescriptor(VertexAttribute.TexCoord0);
 	private VertexAttributeDescriptor normalDescriptor = new VertexAttributeDescriptor(VertexAttribute.Normal);
+    private readonly string chunkTagName = "Ground";
 
     public static ChunkObjectBuilder Instance { get; private set; }
 
@@ -74,6 +75,8 @@ public class ChunkObjectBuilder : MonoBehaviour
         meshCollider.sharedMaterial = physicsMaterial;
 
         chunkGameObject.layer = groundLayer;
+        chunkGameObject.tag = chunkTagName;
+
         chunkGameObject.SetActive(true);
     }
 }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef1a6f3f8d2d517f69285301318b57a5, type: 3}
+  m_Name: Planks Block Item
+  m_EditorClassIdentifier: 
+  id: 9
+  sprite: {fileID: 21300000, guid: af43ca85ef0b4c0278a440a050b77276, type: 3}
+  brokenSprite: {fileID: 21300000, guid: f415405d6485a879bb08ba469028b551, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: 8b53115f55bd75a268aca4690bfc8aca, type: 2}
+  droppedItemMaterial: {fileID: 2100000, guid: 0213e6d8dae904f858a7c5a815083b03, type: 2}
+  itemForm: 0
+  heldItemPrefab: {fileID: 7949245008419684630, guid: 81e4ac3dbfb9eb5b6abf5b719748d535, type: 3}
+  droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
