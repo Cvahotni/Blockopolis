@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26d0bc08852706ca080d37c142ec30df, type: 3}
   m_Name: Planks
   m_EditorClassIdentifier: 
-  id: 8
+  id: 9
   solid: 1
   hardness: 2
   backTexture: {x: 10, y: 0}
