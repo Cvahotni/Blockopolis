@@ -23,7 +23,6 @@ public class Inventory : MonoBehaviour
         inventoryEventSystem = InventoryEventSystem.Instance;
 
         WorldHandler.LoadWorldInventory();
-        GiveTestStacks();
     }
 
     private void InitItemSlots() {
@@ -35,12 +34,6 @@ public class Inventory : MonoBehaviour
 
             index++;
         }
-    }
-
-    private void GiveTestStacks() {
-        SetStack(0, new ItemStack(7, 80));
-        SetStack(1, new ItemStack(8, 80));
-        SetStack(2, new ItemStack(9, 80));
     }
 
     public void AddStack(object sender, ItemStack stack) {

@@ -102,6 +102,11 @@ public class WorldHandler
     }
 
     public static bool IsWorldValid(string name) {
+        if(name == null) {
+            Debug.LogError("A world must be selected before the game scene can run.");
+            return false;
+        }
+
         bool nameInvalid = name == "";
         bool nameTooLong = name.Length > WorldStorageProperties.worldNameLimit;
         bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
