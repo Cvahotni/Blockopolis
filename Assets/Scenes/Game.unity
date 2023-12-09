@@ -4059,6 +4059,7 @@ GameObject:
   - component: {fileID: 1258926991}
   - component: {fileID: 1258926992}
   - component: {fileID: 1258926993}
+  - component: {fileID: 1258926994}
   m_Layer: 0
   m_Name: Voxel Manager
   m_TagString: Untagged
@@ -4173,6 +4174,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolSize: 1024
+--- !u!114 &1258926994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258926985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7568b0a1c120531e289746ca8a3a6e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!20 &1309493249 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6071612793094909807, guid: 35c580695bb1634de95ca9499a87b71c, type: 3}

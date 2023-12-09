@@ -20,8 +20,9 @@ public struct ChunkBuildData
     public NativeArray<float> noiseMap3D;
 
     public ChunkBuildData(ref NativeArray<long> chunkPos, ref NativeList<ChunkVertex> vertices, 
-                          ref NativeList<uint> indices, ref NativeArray<ushort> voxelMap, ref NativeList<EncodedVoxelMapEntry> encodedVoxelMap, 
-                          ref NativeList<float> frequencies, ref NativeList<float> amplitudes, ref NativeArray<float> noiseOffset, ref NativeArray<float> noiseMap3D) {
+                          ref NativeList<uint> indices, ref NativeArray<ushort> voxelMap, ref NativeList<EncodedVoxelMapEntry> encodedVoxelMap,
+                          ref NativeList<float> frequencies, ref NativeList<float> amplitudes, 
+                          ref NativeArray<float> noiseOffset, ref NativeArray<float> noiseMap3D) {
                             this.chunkPos = chunkPos;
                             this.vertices = vertices;
                             this.indices = indices;
@@ -38,8 +39,6 @@ public struct ChunkBuildData
         vertices.Dispose();
         indices.Dispose();
         encodedVoxelMap.Dispose();
-        frequencies.Dispose();
-        amplitudes.Dispose();
         noiseOffset.Dispose();
         noiseMap3D.Dispose();
     }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting;
+using Unity.Collections;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -28,6 +29,15 @@ public class EndlessTerrain : MonoBehaviour
 
     public List<float> Frequencies { get { return frequencies; }}
     public List<float> Amplitudes { get { return amplitudes; }}
+
+    private NativeList<float> nativeFrequencies;
+    private NativeList<float> nativeAmplitudes;
+
+    public NativeList<float> NativeFrequencies { get { return nativeFrequencies; }}
+    public NativeList<float> NativeAmplitudes { get { return nativeAmplitudes; }}
+
+    private Vector2 noiseOffset;
+    public Vector2 NoiseOffset { get { return noiseOffset; }}
     
     private WaitForSeconds shortWait;
 
@@ -40,10 +50,21 @@ public class EndlessTerrain : MonoBehaviour
         worldEventSystem = WorldEventSystem.Instance;
         shortWait = new WaitForSeconds(1.0f / chunksPerSecond);
 
+        noiseOffset = GetTerrainNoiseOffset();
+
         MovePlayerToSpawn();
+        BuildNativeArrays();
 
         worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(GetAmountOfChunksInViewDistance());
         BuildInitialChunks();
+    }
+
+    private void BuildNativeArrays() {
+        nativeFrequencies = new NativeList<float>(Allocator.Persistent);
+        nativeAmplitudes = new NativeList<float>(Allocator.Persistent);
+
+        foreach(float frequency in frequencies) nativeFrequencies.Add(frequency);
+        foreach(float amplitude in amplitudes) nativeAmplitudes.Add(amplitude);
     }
 
     private void MovePlayerToSpawn() {
@@ -159,5 +180,10 @@ public class EndlessTerrain : MonoBehaviour
 
     private int GetPlayerChunkZ() {
         return (int) playerTransform.position.z >> VoxelProperties.chunkBitShift;
+    }
+
+    private void OnDestroy() {
+        nativeFrequencies.Dispose();
+        nativeAmplitudes.Dispose();
     }
 }

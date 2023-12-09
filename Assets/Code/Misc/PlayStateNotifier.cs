@@ -8,17 +8,16 @@ public static class PlayStateNotifier
 {
 	static PlayStateNotifier() {
 		#if UNITY_EDITOR
-		EditorApplication.playmodeStateChanged += ModeChanged;
+		EditorApplication.playModeStateChanged += ModeChanged;
 		#endif
 	}
 
-	static void ModeChanged() {
-		#if UNITY_EDITOR
-
-		if (!EditorApplication.isPlayingOrWillChangePlaymode) {
+	#if UNITY_EDITOR
+	static void ModeChanged(PlayModeStateChange state) {
+		if (state == PlayModeStateChange.ExitingPlayMode) {
 			BlockRegistry.OnDestroy();
+			FeatureRegistry.OnDestroy();
 		}
-
-		#endif
 	}
+	#endif
 }

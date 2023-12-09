@@ -8,6 +8,7 @@ using Unity.Mathematics;
 using Unity.Profiling;
 
 [RequireComponent(typeof(EndlessTerrain))]
+[RequireComponent(typeof(WorldFeatures))]
 public class ChunkBuilder : MonoBehaviour
 {
     public static ChunkBuilder Instance { get; private set; }
@@ -19,6 +20,7 @@ public class ChunkBuilder : MonoBehaviour
 
     private WorldEventSystem worldEventSystem;
     private EndlessTerrain endlessTerrain;
+    private WorldFeatures worldFeatures;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -28,6 +30,7 @@ public class ChunkBuilder : MonoBehaviour
     private void Start() {
         worldEventSystem = WorldEventSystem.Instance;
         endlessTerrain = EndlessTerrain.Instance;
+        worldFeatures = WorldFeatures.Instance;
     }
 
     public void BuildChunk(object sender, long chunkCoord) {
@@ -39,53 +42,68 @@ public class ChunkBuilder : MonoBehaviour
         NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord);
         NativeList<EncodedVoxelMapEntry> encodedVoxelMap = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
 
-        NativeList<float> frequencies = new NativeList<float>(Allocator.Persistent);
-        NativeList<float> amplitudes = new NativeList<float>(Allocator.Persistent);
-
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
         NativeArray<float> noiseMap3D = CreateNewNoiseMap();
 
-        foreach(float frequency in endlessTerrain.Frequencies) frequencies.Add(frequency);
-        foreach(float amplitude in endlessTerrain.Amplitudes) amplitudes.Add(amplitude);
+        NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
+        NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
 
-        ChunkBuildData buildData = new ChunkBuildData(
+        ChunkBuildData chunkBuildData = new ChunkBuildData(
             ref chunkPos, ref vertices,
             ref indices, ref voxelMap, ref encodedVoxelMap,
-            ref frequencies, ref amplitudes, ref noiseOffset,
-            ref noiseMap3D
+            ref nativeFrequencies, ref nativeAmplitudes, 
+            ref noiseOffset, ref noiseMap3D
         );
 
-        Vector2 terrainNoiseOffset = endlessTerrain.GetTerrainNoiseOffset();
-        buildData.chunkPos[0] = chunkCoord;
+        NativeList<FeaturePlacement> featurePlacements = worldFeatures.GetPlacements();
+        NativeParallelHashMap<FeaturePlacement, ushort> featureData = FeatureRegistry.FeatureData;
+        NativeParallelHashMap<ushort, FeatureSettings> featureSettings = FeatureRegistry.FeatureSettings;
 
-        buildData.noiseOffset[0] = terrainNoiseOffset.x;
-        buildData.noiseOffset[1] = terrainNoiseOffset.y;
+        Vector2 terrainNoiseOffset = endlessTerrain.NoiseOffset;
+        chunkBuildData.chunkPos[0] = chunkCoord;
+
+        chunkBuildData.noiseOffset[0] = terrainNoiseOffset.x;
+        chunkBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
         if(!WorldStorage.DoesChunkExist(chunkCoord)) {
-            //BuildChunkNoiseMap3D(buildData); //This is for testing purposes
-            BuildChunkVoxelMap(buildData); 
-            //PlaceChunkFeatures(buildData); //This is for testing purposes
+            buildChunkVoxelMapMarker.Begin();
+
+            var chunkVoxelBuilderJob = new ChunkVoxelBuilderJob() {
+                voxelMap = chunkBuildData.voxelMap,
+                coord = chunkBuildData.chunkPos,
+
+                frequencies = chunkBuildData.frequencies,
+                amplitudes = chunkBuildData.amplitudes,
+
+                noiseOffset = chunkBuildData.noiseOffset
+            };
+
+            JobHandle chunkVoxelJobHandle = chunkVoxelBuilderJob.Schedule();
+            chunkVoxelJobHandle.Complete();
+
+            buildChunkVoxelMapMarker.End();
+            placeChunkFeaturesMarker.Begin();
+
+            var chunkPlaceFeaturesJob = new ChunkPlaceFeaturesJob() {
+                voxelMap = chunkBuildData.voxelMap,
+                coord = chunkBuildData.chunkPos,
+
+                featurePlacements = featurePlacements,
+                featureData = featureData,
+                featureSettings = featureSettings
+            };
+
+            JobHandle placeFeaturesJobHandle = chunkPlaceFeaturesJob.Schedule();
+            placeFeaturesJobHandle.Complete();
+
+            placeChunkFeaturesMarker.End();
         }
 
-        BuildChunkMesh(buildData);
+        BuildChunkMesh(chunkBuildData);
         worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(ref vertices, ref indices, chunkPos[0]));
 
         SaveChunkVoxelMap(chunkCoord, voxelMap);
-        buildData.Dispose();
-    }
-
-    private void PlaceChunkFeatures(ChunkBuildData chunkBuildData) {
-        placeChunkFeaturesMarker.Begin();
-
-        var placeFeaturesJob = new ChunkPlaceFeaturesJob() {
-            voxelMap = chunkBuildData.voxelMap,
-            coord = chunkBuildData.chunkPos
-        };
-
-        JobHandle placeFeaturesJobHandle = placeFeaturesJob.Schedule();
-        placeFeaturesJobHandle.Complete();
-
-        placeChunkFeaturesMarker.End();
+        chunkBuildData.Dispose();
     }
 
     private void BuildChunkNoiseMap3D(ChunkBuildData chunkBuildData) {
@@ -100,25 +118,6 @@ public class ChunkBuilder : MonoBehaviour
         noiseMapBuildJobHandle.Complete();
 
         buildChunkNoiseMapMarker.End();
-    }
-
-    private void BuildChunkVoxelMap(ChunkBuildData chunkBuildData) {
-        buildChunkVoxelMapMarker.Begin();
-
-        var chunkVoxelJob = new ChunkVoxelBuilderJob() {
-            voxelMap = chunkBuildData.voxelMap,
-            coord = chunkBuildData.chunkPos,
-
-            frequencies = chunkBuildData.frequencies,
-            amplitudes = chunkBuildData.amplitudes,
-
-            noiseOffset = chunkBuildData.noiseOffset
-        };
-
-        JobHandle chunkVoxelJobHandle = chunkVoxelJob.Schedule();
-        chunkVoxelJobHandle.Complete();
-
-        buildChunkVoxelMapMarker.End();
     }
 
     private void BuildChunkMesh(ChunkBuildData chunkBuildData) {

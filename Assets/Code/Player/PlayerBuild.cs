@@ -9,7 +9,6 @@ public class PlayerBuild : MonoBehaviour
 
     [SerializeField] private float reach = 5.0f;
     [SerializeField] private float checkIncrement = 0.5f;
-    [SerializeField] private float playerBounds = 0.5f;
 
     [SerializeField] private GameObject blockOutline;
     [SerializeField] private GameObject blockCrackOutline;
@@ -181,7 +180,6 @@ public class PlayerBuild : MonoBehaviour
         int positionZ = Mathf.FloorToInt(playerPosition.z);
 
         Vector3Int playerPositionFloored = new Vector3Int(positionX, positionY, positionZ);
-        Vector3 lastPos = new Vector3();
 
         targetPos = playerPositionFloored;
         highlightPos = playerPositionFloored;

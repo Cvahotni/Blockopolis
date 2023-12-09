@@ -1,9 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 
 public class Noise
 {
+    public static float Get2DNoise(float worldX, float worldZ, float noiseOffsetX, float noiseOffsetZ, NativeList<float> frequencies, NativeList<float> amplitudes) {
+        int frequenciesCount = frequencies.Length;
+        float totalNoiseValue = 0.0f;
+
+        float terrainNoiseOffsetX = noiseOffsetX;
+        float terrainNoiseOffsetZ = noiseOffsetZ;
+
+        for(int i = 0; i < frequenciesCount; i++) {
+            float currentFrequency = frequencies[i];
+            float currentAmplitude = amplitudes[i];
+        
+            totalNoiseValue += Noise.Get2DNoiseAt(terrainNoiseOffsetX, terrainNoiseOffsetZ, worldX, worldZ, currentAmplitude, currentFrequency);
+        }
+
+        return totalNoiseValue;
+    }
+
+
     public static float Get2DNoiseAt(float offsetX, float offsetZ, float x, float z, float amplitude, float frequency) {
         float xOffset = 0.01f;
         float zOffset = 0.01f;

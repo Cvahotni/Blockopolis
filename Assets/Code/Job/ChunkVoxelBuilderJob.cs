@@ -22,8 +22,8 @@ public struct ChunkVoxelBuilderJob : IJob
     }
 
     private void PopulateVoxelMap() {
-        int seaLevel = 64;
         int soilLevel = 6;
+        int seaLevel = 64;
 
         float yOffset = -16.0f;
 
@@ -32,14 +32,14 @@ public struct ChunkVoxelBuilderJob : IJob
                 float worldX = GetWorldX(x);
                 float worldZ = GetWorldZ(z);
 
-                float noiseLevel = Get2DNoise(worldX, worldZ) + yOffset;
+                float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + yOffset;
                 int yLevel = (int) (noiseLevel);
 
                 for(int y = 0; y < VoxelProperties.chunkHeight; y++) {
                     int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
 
                     if(y == yLevel && yLevel > seaLevel) voxelMap[voxelMapArrayIndex] = 1;
-                    else if(y == yLevel && yLevel <= seaLevel) voxelMap[voxelMapArrayIndex] = 5;
+                    else if(y == yLevel && WorldUtil.IsBelowSeaLevel(yLevel)) voxelMap[voxelMapArrayIndex] = 5;
 
                     else if(y == 0) voxelMap[voxelMapArrayIndex] = 4;
 
@@ -50,23 +50,6 @@ public struct ChunkVoxelBuilderJob : IJob
                 }
             }
         }
-    }
-
-    private float Get2DNoise(float worldX, float worldZ) {
-        int frequenciesCount = frequencies.Length;
-        float totalNoiseValue = 0.0f;
-
-        float terrainNoiseOffsetX = noiseOffset[0];
-        float terrainNoiseOffsetZ = noiseOffset[1];
-
-        for(int i = 0; i < frequenciesCount; i++) {
-            float currentFrequency = frequencies[i];
-            float currentAmplitude = amplitudes[i];
-        
-            totalNoiseValue += Noise.Get2DNoiseAt(terrainNoiseOffsetX, terrainNoiseOffsetZ, worldX, worldZ, currentAmplitude, currentFrequency);
-        }
-
-        return totalNoiseValue;
     }
     
     private float GetWorldX(int x) {

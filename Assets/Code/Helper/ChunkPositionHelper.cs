@@ -26,6 +26,20 @@ public class ChunkPositionHelper
         return (int) (pos % VoxelProperties.worldSizeInChunks) - VoxelProperties.worldSizeInChunksHalved;
     }
 
+    public static int GetFeatureChunkPosX(long pos) {
+        if(pos == int.MaxValue) return int.MaxValue;
+        int chunkPosX = GetChunkPosX(pos);
+
+        return chunkPosX * VoxelProperties.featureChunkMultplier;
+    }
+
+    public static int GetFeatureChunkPosZ(long pos) {
+        if(pos == int.MaxValue) return int.MaxValue;
+        int chunkPosZ = GetChunkPosZ(pos);
+
+        return chunkPosZ * VoxelProperties.featureChunkMultplier;
+    }
+
     public static long ModifyChunkPos(long chunkPos, int modX, int modZ) {
         int chunkPosX = GetChunkPosX(chunkPos) + modX;
         int chunkPosZ = GetChunkPosZ(chunkPos) + modZ;
