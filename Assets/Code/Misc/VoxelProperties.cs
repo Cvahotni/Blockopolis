@@ -9,8 +9,7 @@ public class VoxelProperties {
 	public static readonly int worldMaxY = 1024;
 	public static readonly int worldMinY = -128;
 
-	public static readonly int featureChunkMultplier = 3;
-	public static readonly int featureChunkWidth = chunkWidth * featureChunkMultplier;
+	public static readonly int featureChunkBuffer = 2;
 
 	public static readonly int chunkWidthLowRes = chunkWidth / 2;
     public static readonly int chunkHeightLowRes = chunkHeight / 2;

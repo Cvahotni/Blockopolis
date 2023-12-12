@@ -33,9 +33,9 @@ public class MouseLook : MonoBehaviour
     }
 
     private void LateUpdate() {
+        HandleLockInputs();
         if(!isEnabled) return;
 
-        HandleLockInputs();
         GetMouseInput();
         RotatePlayer();
     }
@@ -57,7 +57,7 @@ public class MouseLook : MonoBehaviour
     }
 
     private void HandleLockInputs() {
-        if(Input.GetButtonDown("Cancel")) pauseEventSystem.InvokePause();
+        if(Input.GetButtonDown("Cancel")) pauseEventSystem.InvokePauseToggle();
     }
 
     private void GetMouseInput() {

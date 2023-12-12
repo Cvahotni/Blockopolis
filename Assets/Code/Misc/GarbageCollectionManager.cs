@@ -22,7 +22,7 @@ public class GarbageCollectionManager : MonoBehaviour
     private void CollectGarbage() {
         timeSinceLastGC = 0f;
 
-        #if !UNITY_EDITOR
+        #if !UNITY_EDITOR && !UNITY_WEBGL
         GarbageCollector.GCMode = GarbageCollector.Mode.Enabled;
         System.GC.Collect();
         GarbageCollector.GCMode = GarbageCollector.Mode.Disabled;

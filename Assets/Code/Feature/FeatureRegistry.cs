@@ -34,7 +34,7 @@ public class FeatureRegistry
     }
 
     private static void AddTree() {
-        featureSettings.Add(0, new FeatureSettings(5, 7, 5));
+        featureSettings.Add(0, new FeatureSettings(5, 7, 5, 3, FeaturePlaceType.Surface, 66));
 
         for(int i = -2; i <= 2; i++) {
             for(int j = 3; j < 5; j++) {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Scripting;
 using Unity.Collections;
+using Unity.Mathematics;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -55,7 +56,10 @@ public class EndlessTerrain : MonoBehaviour
         MovePlayerToSpawn();
         BuildNativeArrays();
 
-        worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(GetAmountOfChunksInViewDistance());
+        worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(
+            GetAmountOfChunksInViewDistance()
+        );
+
         BuildInitialChunks();
     }
 
@@ -73,13 +77,18 @@ public class EndlessTerrain : MonoBehaviour
 
     private void BuildInitialChunks() {
         lastPlayerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
-        GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ());
+        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
     }
 
     private void Update() {
         playerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
 
         if(playerChunkCoord != lastPlayerChunkCoord) {
+            worldEventSystem.InvokeRemoveFeatures(
+                new int3(GetPlayerChunkX(), GetPlayerChunkZ(), 
+                viewDistance + VoxelProperties.featureChunkBuffer)
+            );
+
             RemoveOutOfRangeChunks();
             CheckViewDistance();
         }
@@ -89,24 +98,27 @@ public class EndlessTerrain : MonoBehaviour
         long coord = GetChunkCoordFromVector3(playerTransform.position);
         lastPlayerChunkCoord = coord;
 
-        GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ());
+        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
     }
 
     private void RemoveOutOfRangeChunks() {
         for(int i = addedChunks.Count - 1; i >= 0; i--) {
             long chunk = addedChunks[i];
-            if(IsChunkOutOfRange(chunk)) worldEventSystem.InvokeChunkRemove(chunk);
+            if(IsChunkOutOfRange(chunk, 0)) worldEventSystem.InvokeChunkRemove(chunk);
         }
     }
 
-    private void GenerateChunksAroundPlayer(int originX, int originZ) {
+    private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ) {
+        worldEventSystem.InvokePlaceFeatures(new int3(originX, originZ, viewDistance + VoxelProperties.featureChunkBuffer));
+
         for(int x = -viewDistance + originX; x < viewDistance + originX; x++) {
             for(int z = -viewDistance + originZ; z < viewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
+                yield return shortWait;
 
                 if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
                 if(IsChunkInWorld(coord)) continue;
-                if(IsChunkOutOfRange(coord)) continue;
+                if(IsChunkOutOfRange(coord, 0)) continue;
 
                 worldEventSystem.InvokeChunkAdd(coord);
             }
@@ -124,7 +136,7 @@ public class EndlessTerrain : MonoBehaviour
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
 
                 if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
-                if(IsChunkOutOfRange(coord)) continue;
+                if(IsChunkOutOfRange(coord, 0)) continue;
 
                 chunkCount++;
             }
@@ -141,15 +153,11 @@ public class EndlessTerrain : MonoBehaviour
         return addedChunks.Contains(coord);
     }
 
-    public void RemoveChunk(object sender, BuiltChunkData data) {
-        RemoveChunk(sender, data.coord);
-    }
-
     public void RemoveChunk(object sender, long coord) {
         addedChunks.Remove(coord);
     }
 
-    public bool IsChunkOutOfRange(long coord) {
+    public bool IsChunkOutOfRange(long coord, int viewDistanceModifier) {
         int worldX = ChunkPositionHelper.GetChunkPosWX(coord);
         int worldZ = ChunkPositionHelper.GetChunkPosWZ(coord);
 
@@ -159,7 +167,11 @@ public class EndlessTerrain : MonoBehaviour
         Vector3 playerTransformPosition = new Vector3(playerTransform.position.x, 0.0f, playerTransform.position.z);
         Vector3 worldPosition = new Vector3(worldX, 0.0f, worldZ);
 
-        return Vector3.Distance(playerTransformPosition, worldPosition) > viewDistance * VoxelProperties.chunkWidth;
+        return Vector3.Distance(playerTransformPosition, worldPosition) > (viewDistance + viewDistanceModifier) * VoxelProperties.chunkWidth;
+    }
+
+    public bool IsFeatureChunkOutOfRange(long coord) {
+        return IsChunkOutOfRange(coord, VoxelProperties.featureChunkBuffer);
     }
 
     private long GetChunkCoordFromVector3(Vector3 pos) {
@@ -170,8 +182,8 @@ public class EndlessTerrain : MonoBehaviour
     }
 
     public Vector2 GetTerrainNoiseOffset() {
-        Random.InitState(WorldHandler.CurrentWorld.Seed);
-        return new Vector2(Random.value, Random.value);
+        UnityEngine.Random.InitState(WorldHandler.CurrentWorld.Seed);
+        return new Vector2(UnityEngine.Random.value, UnityEngine.Random.value);
     }
 
     private int GetPlayerChunkX() {

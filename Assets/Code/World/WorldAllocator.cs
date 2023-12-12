@@ -55,7 +55,7 @@ public class WorldAllocator : MonoBehaviour
         if(queue.Count == 0) return;
 
         long chunkPos = queue.Dequeue();
-        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos);
+        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
 
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
 

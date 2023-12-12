@@ -8,9 +8,19 @@ public struct FeatureSettings
     public int sizeY;
     public int sizeZ;
 
-    public FeatureSettings(int sizeX, int sizeY, int sizeZ) {
+    public int featuresPerChunk;
+    public FeaturePlaceType placeType;
+
+    public int minY;
+
+    public FeatureSettings(int sizeX, int sizeY, int sizeZ, int featuresPerChunk, FeaturePlaceType placeType, int minY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.sizeZ = sizeZ;
+
+        this.featuresPerChunk = featuresPerChunk;
+        this.placeType = placeType;
+
+        this.minY = minY;
     }
 }

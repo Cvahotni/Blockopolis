@@ -26,11 +26,13 @@ public class PauseEventSystem : MonoBehaviour
     private PlayerBuild playerBuild;
     private Hotbar hotbar;
     private PauseMenu pauseMenu;
+    private PauseMenuToggle pauseMenuToggle;
     private PlayerHand playerHand;
     private EndlessTerrain endlessTerrain;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
+    private event EventHandler pauseToggleEvent;
     private event EventHandler saveAndQuitEvent;
 
     private void Awake() {
@@ -44,11 +46,13 @@ public class PauseEventSystem : MonoBehaviour
         playerBuild = PlayerBuild.Instance;
         hotbar = Hotbar.Instance;
         pauseMenu = PauseMenu.Instance;
+        pauseMenuToggle = PauseMenuToggle.Instance;
         playerHand = PlayerHand.Instance;
         endlessTerrain = EndlessTerrain.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
+        AddPauseToggleListeners();
         AddSaveAndQuitListeners();
     }
 
@@ -72,6 +76,10 @@ public class PauseEventSystem : MonoBehaviour
         unpauseEvent += hotbar.Enable;
     }
 
+    private void AddPauseToggleListeners() {
+        pauseToggleEvent += pauseMenuToggle.TogglePause;
+    }
+
     private void AddSaveAndQuitListeners() {
         saveAndQuitEvent += WorldHandler.SaveCurrentWorld;
         saveAndQuitEvent += TimeLock.Unlock;
@@ -84,6 +92,10 @@ public class PauseEventSystem : MonoBehaviour
 
     public void InvokeUnpause() {
         unpauseEvent.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokePauseToggle() {
+        pauseToggleEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeSaveAndQuit() {

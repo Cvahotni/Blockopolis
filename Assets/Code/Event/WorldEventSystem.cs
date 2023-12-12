@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.Mathematics;
 using System;
 
 [DefaultExecutionOrder(-500)]
@@ -32,11 +33,14 @@ public class WorldEventSystem : MonoBehaviour
     private ChunkBuilder chunkBuilder;
     private ChunkObjectPool chunkObjectPool;
     private ChunkObjectBuilder chunkObjectBuilder;
+    private WorldFeaturePlacer worldFeaturePlacer;
 
     private event EventHandler<long> chunkAddEvent;
     private event EventHandler<long> chunkRemoveEvent;
     private event EventHandler<long> chunkRemoveFinalEvent;
     private event EventHandler<long> chunkBuildEvent;
+    private event EventHandler<int3> placeFeaturesEvent;
+    private event EventHandler<int3> removeFeaturesEvent;
     private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
     private event EventHandler<bool> cullChunksChangeEvent;
     private event EventHandler<int> chunksGeneratedChangeEvent;
@@ -56,11 +60,14 @@ public class WorldEventSystem : MonoBehaviour
         chunkBuilder = ChunkBuilder.Instance;
         chunkObjectPool = ChunkObjectPool.Instance;
         chunkObjectBuilder = ChunkObjectBuilder.Instance;
+        worldFeaturePlacer = WorldFeaturePlacer.Instance;
 
         AddChunkAddListeners();
         AddChunkRemoveListeners();
         AddChunkRemoveFinalListeners();
         AddChunkBuildListeners();
+        AddPlaceFeaturesListeners();
+        AddRemoveFeaturesListeners();
         AddChunkObjectBuildListeners();
         AddCullChunksChangeListeners();
         AddChunksGeneratedChangeListeners();
@@ -82,6 +89,14 @@ public class WorldEventSystem : MonoBehaviour
 
     private void AddChunkBuildListeners() {
         chunkBuildEvent += chunkBuilder.BuildChunk;
+    }
+
+    private void AddPlaceFeaturesListeners() {
+        placeFeaturesEvent += worldFeaturePlacer.PlaceFeatures;
+    }
+
+    private void AddRemoveFeaturesListeners() {
+        removeFeaturesEvent += worldFeaturePlacer.RemoveFeatures;
     }
 
     private void AddChunkObjectBuildListeners() {
@@ -116,6 +131,14 @@ public class WorldEventSystem : MonoBehaviour
 
     public void InvokeChunkBuild(long coord) {
         chunkBuildEvent.Invoke(this, coord);
+    }
+
+    public void InvokePlaceFeatures(int3 data) {
+        placeFeaturesEvent.Invoke(this, data);
+    }
+
+    public void InvokeRemoveFeatures(int3 data) {
+        removeFeaturesEvent.Invoke(this, data);
     }
 
     public void InvokeChunkObjectBuild(BuiltChunkData data) {

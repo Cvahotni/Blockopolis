@@ -4060,6 +4060,7 @@ GameObject:
   - component: {fileID: 1258926992}
   - component: {fileID: 1258926993}
   - component: {fileID: 1258926994}
+  - component: {fileID: 1258926995}
   m_Layer: 0
   m_Name: Voxel Manager
   m_TagString: Untagged
@@ -4109,7 +4110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 49181542}
   viewDistance: 32
-  chunksPerSecond: 200
+  chunksPerSecond: 256
   frequencies:
   - 0.0008
   - 0.001
@@ -4184,6 +4185,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7568b0a1c120531e289746ca8a3a6e99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1258926995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1258926985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14f6f24bf0f8381ba586e5043c1476a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!20 &1309493249 stripped
@@ -5859,6 +5872,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1857861251}
   - component: {fileID: 1857861250}
+  - component: {fileID: 1857861253}
   m_Layer: 0
   m_Name: Pause Manager
   m_TagString: Untagged
@@ -5894,6 +5908,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 693642176}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1857861253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857861249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b4021e20cc9aa6668760eff016b5f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseScreen: {fileID: 752620921}
 --- !u!1 &1860182772
 GameObject:
   m_ObjectHideFlags: 0
