@@ -16,17 +16,13 @@ public class EndlessTerrain : MonoBehaviour
     private long playerChunkCoord = long.MaxValue;
     private long lastPlayerChunkCoord = long.MaxValue;
     
-    [SerializeField]
-    private int viewDistance = 4;
+    [SerializeField] private int viewDistance = 4;
 
-    [SerializeField]
-    private int chunksPerSecond = 256;
+    [SerializeField] private int chunksPerSecond = 256;
 
-    [SerializeField]
-    private List<float> frequencies = new List<float>();
+    [SerializeField] private List<float> frequencies = new List<float>();
 
-    [SerializeField]
-    private List<float> amplitudes = new List<float>();
+    [SerializeField] private List<float> amplitudes = new List<float>();
 
     public List<float> Frequencies { get { return frequencies; }}
     public List<float> Amplitudes { get { return amplitudes; }}
@@ -51,6 +47,7 @@ public class EndlessTerrain : MonoBehaviour
         worldEventSystem = WorldEventSystem.Instance;
         shortWait = new WaitForSeconds(1.0f / chunksPerSecond);
 
+        Application.targetFrameRate = 250;
         noiseOffset = GetTerrainNoiseOffset();
 
         MovePlayerToSpawn();

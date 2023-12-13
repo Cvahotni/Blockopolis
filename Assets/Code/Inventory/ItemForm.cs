@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum ItemForm
 {
-    BlockItem, Tool
+    BlockItem, Sword, Pickaxe, Axe, Shovel
 }

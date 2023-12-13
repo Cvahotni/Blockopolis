@@ -4110,7 +4110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerTransform: {fileID: 49181542}
   viewDistance: 32
-  chunksPerSecond: 256
+  chunksPerSecond: 512
   frequencies:
   - 0.0008
   - 0.001
@@ -4199,6 +4199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14f6f24bf0f8381ba586e5043c1476a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  featuresPerSecond: 384
 --- !u!20 &1309493249 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6071612793094909807, guid: 35c580695bb1634de95ca9499a87b71c, type: 3}

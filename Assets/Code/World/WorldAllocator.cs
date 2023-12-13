@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
+using System;
 
 [RequireComponent(typeof(EndlessTerrain))]
 public class WorldAllocator : MonoBehaviour
@@ -17,6 +18,7 @@ public class WorldAllocator : MonoBehaviour
 
     private int chunksGenerated;
     private bool cullChunksOutOfView = false;
+    private bool shouldBuildChunks = true;
 
     private World currentWorld;
 
@@ -52,7 +54,7 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void BuildNextChunk(ref Queue<long> queue) {
-        if(queue.Count == 0) return;
+        if(queue.Count == 0 || !shouldBuildChunks) return;
 
         long chunkPos = queue.Dequeue();
         bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
@@ -88,6 +90,22 @@ public class WorldAllocator : MonoBehaviour
 
     public void UpdateCullChunksOutOfView(object sender, bool value) {
         cullChunksOutOfView = value;
+    }
+
+    public void DisableChunkBuilding(object sender, int3 data) {
+        DisableChunkBuilding();
+    }
+
+    public void EnableChunkBuilding(object sender, EventArgs e) {
+        EnableChunkBuilding();
+    }
+
+    private void DisableChunkBuilding() {
+        shouldBuildChunks = false;
+    }
+
+    private void EnableChunkBuilding() {
+        shouldBuildChunks = true;
     }
 
     private bool IsChunkInFrustum(long coord) {

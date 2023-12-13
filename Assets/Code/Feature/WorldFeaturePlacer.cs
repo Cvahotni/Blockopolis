@@ -11,8 +11,12 @@ public class WorldFeaturePlacer : MonoBehaviour
     public static WorldFeaturePlacer Instance { get; private set; }
     private List<long> addedFeatureChunks = new List<long>();
 
+    private WorldEventSystem worldEventSystem;
     private WorldFeatures worldFeatures;
     private EndlessTerrain endlessTerrain;
+
+    private WaitForSeconds shortWait;
+    [SerializeField] private int featuresPerSecond = 80;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -20,12 +24,15 @@ public class WorldFeaturePlacer : MonoBehaviour
     }
 
     private void Start() {
+        shortWait = new WaitForSeconds(1.0f / featuresPerSecond);
+
+        worldEventSystem = WorldEventSystem.Instance;
         worldFeatures = WorldFeatures.Instance;
         endlessTerrain = EndlessTerrain.Instance;
     }
 
     public void PlaceFeatures(object sender, int3 data) {
-        PlaceFeatures(data.x, data.y, data.z);
+        StartCoroutine(PlaceFeatures(data.x, data.y, data.z));
     }
 
     public void RemoveFeatures(object sender, int3 data) {
@@ -40,12 +47,13 @@ public class WorldFeaturePlacer : MonoBehaviour
         worldFeatures.Clear();
     }
 
-    private void PlaceFeatures(int originX, int originZ, int addedViewDistance) {
+    private IEnumerator PlaceFeatures(int originX, int originZ, int addedViewDistance) {
         for(int x = -addedViewDistance + originX; x < addedViewDistance + originX; x++) {
             for(int z = -addedViewDistance + originZ; z < addedViewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
-
                 if(addedFeatureChunks.Contains(coord)) continue;
+
+                yield return shortWait;
                 if(endlessTerrain.IsFeatureChunkOutOfRange(coord)) continue;
 
                 foreach(var pair in FeatureRegistry.FeatureSettings) {
@@ -56,6 +64,8 @@ public class WorldFeaturePlacer : MonoBehaviour
                 addedFeatureChunks.Add(coord);
             }
         }
+
+        worldEventSystem.InvokeFinishedBuildingFeatures();
     }
 
     private void PlaceFeaturesOfType(int x, int z, ushort type) {
