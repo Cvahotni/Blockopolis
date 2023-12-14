@@ -16,7 +16,6 @@ public class WorldFeaturePlacer : MonoBehaviour
     private EndlessTerrain endlessTerrain;
 
     private WaitForSeconds shortWait;
-    [SerializeField] private int featuresPerSecond = 80;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -24,7 +23,7 @@ public class WorldFeaturePlacer : MonoBehaviour
     }
 
     private void Start() {
-        shortWait = new WaitForSeconds(1.0f / featuresPerSecond);
+        shortWait = new WaitForSeconds(1.0f / GameSettings.FeaturesPerSecond);
 
         worldEventSystem = WorldEventSystem.Instance;
         worldFeatures = WorldFeatures.Instance;

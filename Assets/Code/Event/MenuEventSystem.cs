@@ -9,7 +9,7 @@ public class MenuEventSystem : MonoBehaviour
     public static MenuEventSystem Instance {
         get {
             if(_instance == null) {
-                Debug.LogError("The MenuEventSystem must be present in the scene at all times.");
+                Debug.LogError("The MenuEventSystem must be present in the main scene at all times.");
             }
 
             return _instance;

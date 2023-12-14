@@ -6,9 +6,6 @@ public class ChunkObjectPool : MonoBehaviour
 {
     public static ChunkObjectPool Instance { get; private set; }
     private WorldEventSystem worldEventSystem;
-    
-    [SerializeField]
-    private int poolSize = 1024;
 
     private Queue<GameObject> poolQueue = new Queue<GameObject>();
 
@@ -23,7 +20,7 @@ public class ChunkObjectPool : MonoBehaviour
     }
 
     private void PopulatePool() {
-        for(int i = 0; i < poolSize; i++) {
+        for(int i = 0; i < GameSettings.ChunkPoolSize; i++) {
             GameObject gameObject = CreateGameObject();
             ReturnToPool(gameObject);
         }

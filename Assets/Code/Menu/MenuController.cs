@@ -12,6 +12,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject editWorldMenuObject;
     [SerializeField] private GameObject deleteWorldMenuObject;
     [SerializeField] private GameObject renameWorldMenuObject;
+    [SerializeField] private GameObject settingsMenuObject;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -33,6 +34,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, false);
         ToggleMenuObject(deleteWorldMenuObject, false);
         ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, false);
     }
 
     public void ToggleToWorldSelection() {
@@ -42,6 +44,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, false);
         ToggleMenuObject(deleteWorldMenuObject, false);
         ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, false);
     }
 
     public void ToggleToCreateWorld() {
@@ -51,6 +54,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, false);
         ToggleMenuObject(deleteWorldMenuObject, false);
         ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, false);
     }
 
     public void ToggleToEditWorld(string name) {
@@ -60,6 +64,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, true);
         ToggleMenuObject(deleteWorldMenuObject, false);
         ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, false);
     }
 
     public void ToggleToDeleteWorld() {
@@ -69,6 +74,7 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, false);
         ToggleMenuObject(deleteWorldMenuObject, true);
         ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, false);
     }
 
     public void ToggleToRenameWorld() {
@@ -78,6 +84,17 @@ public class MenuController : MonoBehaviour
         ToggleMenuObject(editWorldMenuObject, false);
         ToggleMenuObject(deleteWorldMenuObject, false);
         ToggleMenuObject(renameWorldMenuObject, true);
+        ToggleMenuObject(settingsMenuObject, false);
+    }
+
+    public void ToggleToSettings() {
+        ToggleMenuObject(mainMenuObject, false);
+        ToggleMenuObject(worldSelectionObject, false);
+        ToggleMenuObject(createWorldMenuObject, false);
+        ToggleMenuObject(editWorldMenuObject, false);
+        ToggleMenuObject(deleteWorldMenuObject, false);
+        ToggleMenuObject(renameWorldMenuObject, false);
+        ToggleMenuObject(settingsMenuObject, true);
     }
 
     private void ToggleMenuObject(GameObject menuObject, bool value) {
