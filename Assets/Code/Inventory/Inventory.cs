@@ -23,6 +23,10 @@ public class Inventory : MonoBehaviour
         inventoryEventSystem = InventoryEventSystem.Instance;
 
         WorldHandler.LoadWorldInventory();
+
+        SetStack(0, new ItemStack(1005, 1));
+        SetStack(1, new ItemStack(1010, 1));
+        SetStack(2, new ItemStack(1015, 1));
     }
 
     private void InitItemSlots() {

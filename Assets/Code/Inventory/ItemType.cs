@@ -1,33 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 [CreateAssetMenu(fileName = "New Item Type", menuName = "Voxel Engine/Item Type")]
 public class ItemType : ScriptableObject
 {
-    [SerializeField]
-    private ushort id;
+    [SerializeField] private ushort id;
+    [SerializeField] private ItemForm itemForm;
 
-    [SerializeField]
-    private Sprite sprite;
+    [SerializeField] private BlockMaterial mineableMaterial;
+    [SerializeField] private float speedMultiplier;
 
-    [SerializeField]
-    private Sprite brokenSprite;
+    [SerializeField] private Sprite sprite;
+    [SerializeField] private Sprite brokenSprite;
 
-    [SerializeField]
-    private Material brokenMaterial;
+    [SerializeField] private Material brokenMaterial;
+    [SerializeField] private Material droppedItemMaterial;
 
-    [SerializeField]
-    private Material droppedItemMaterial;
-
-    [SerializeField]
-    private ItemForm itemForm;
-
-    [SerializeField]
-    private GameObject heldItemPrefab;
-
-    [SerializeField]
-    private GameObject droppedItemPrefab;
+    [SerializeField] private GameObject heldItemPrefab;
+    [SerializeField] private GameObject droppedItemPrefab;
 
     public ushort ID {
         get { return id; }
@@ -35,6 +27,14 @@ public class ItemType : ScriptableObject
 
     public Sprite Sprite {
         get { return sprite; }
+    }
+
+    public BlockMaterial MineableMaterial {
+        get { return mineableMaterial; }
+    }
+
+    public float SpeedMultiplier {
+        get { return speedMultiplier; }
     }
 
     public Sprite BrokenSprite {

@@ -8,6 +8,7 @@ public class BlockTypeObject : ScriptableObject
     public ushort id;
     public bool solid;
 
+    public BlockMaterial material;
     public float hardness;
     
     public Vector2 backTexture;

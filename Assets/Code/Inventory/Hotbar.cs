@@ -16,7 +16,6 @@ public class Hotbar : MonoBehaviour
 
     private InventoryEventSystem inventoryEventSystem;
     private Inventory inventory;
-    private ItemRegistry itemRegistry;
 
     private ItemSlot CurrentSlot {
         get { return GetSlot(slotIndex); }
@@ -34,7 +33,6 @@ public class Hotbar : MonoBehaviour
     private void Start() {
         inventoryEventSystem = InventoryEventSystem.Instance;
         inventory = Inventory.Instance;
-        itemRegistry = ItemRegistry.Instance;
     }
 
     private void Update() {
@@ -109,11 +107,6 @@ public class Hotbar : MonoBehaviour
     }
 
     private void UpdatePlayerTargetBlock() {
-        if(itemRegistry == null) {
-            Debug.LogError("The ItemRegistry script must be present in the scene in order to update the target block.");
-            return;
-        }
-
         if(inventory == null) {
             Debug.LogError("The Inventory script must be present in the scene in order to update the target block.");
             return;
@@ -127,8 +120,6 @@ public class Hotbar : MonoBehaviour
         }
 
         ushort id = currentSlot.Stack.ID;
-
-        if(!itemRegistry.IsItemForm(id, ItemForm.BlockItem)) return;
         inventoryEventSystem.InvokeTargetSlotUpdate(id);
     }
 

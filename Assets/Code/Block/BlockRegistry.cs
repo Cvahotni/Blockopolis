@@ -37,6 +37,7 @@ public class BlockRegistry
             blockType.id = blockTypeObject.id;
             blockType.solid = blockTypeObject.solid;
 
+            blockType.material = blockTypeObject.material;
             blockType.hardness = blockTypeObject.hardness;
 
             blockType.frontTexture = new float2(blockTypeObject.frontTexture.x, blockTypeObject.frontTexture.y);

@@ -17,6 +17,7 @@ public class PlayerBuild : MonoBehaviour
     [SerializeField] private LayerMask playerMask;
 
     private PlayerEventSystem playerEventSystem;
+    private ItemRegistry itemRegistry;
 
     private Animator blockCrackAnimator;
     private Camera playerCamera;
@@ -52,6 +53,8 @@ public class PlayerBuild : MonoBehaviour
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
+    
+        itemRegistry = ItemRegistry.Instance;
     }
 
     private void Update() {
@@ -121,7 +124,9 @@ public class PlayerBuild : MonoBehaviour
     
     private float GetBlockBreakSpeed() {
         BlockType type = BlockRegistry.BlockTypeDictionary[targetRaycastBlock];
-        return 1.0f / type.hardness;
+
+        if(itemRegistry == null) return 1.0f / type.hardness;
+        return itemRegistry.GetItemMineMultiplier(targetBlock, targetRaycastBlock) / type.hardness;
     }
 
     public void ModifyTargetBlock(object sender, ItemStack stack) {
@@ -160,6 +165,10 @@ public class PlayerBuild : MonoBehaviour
 
         if(!CanModifyAt(offsetHighlightPos)) return;
         if(targetBlock == 0) return;
+
+        if(itemRegistry != null) {
+            if(!itemRegistry.IsItemForm(targetBlock, ItemForm.BlockItem)) return;
+        }
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
             new VoxelModification(highlightPos.x, highlightPos.y, highlightPos.z, targetBlock)

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef1a6f3f8d2d517f69285301318b57a5, type: 3}
+  m_Name: Wooden Pickaxe
+  m_EditorClassIdentifier: 
+  id: 1001
+  itemForm: 1
+  mineableMaterial: 1
+  speedMultiplier: 6.52
+  sprite: {fileID: 21300000, guid: 4cf73c4263ddd48149984fd74a3e28c5, type: 3}
+  brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: 10193253aaa40773b99a83e62e0f71c3, type: 2}
+  droppedItemMaterial: {fileID: 2100000, guid: 3ce6d08c04f35d5a6ab93d7e92326d3d, type: 2}
+  heldItemPrefab: {fileID: 7949245008419684630, guid: 73770792f3dba9accab08a64b3cd9ccb, type: 3}
+  droppedItemPrefab: {fileID: 8845799518492459054, guid: 6927084878d09cbfea583643d950b62e, type: 3}

@@ -9,6 +9,7 @@ public struct BlockType
     public ushort id;
     public bool solid;
 
+    public BlockMaterial material;
     public float hardness;
     
     public float2 backTexture;

@@ -61,6 +61,23 @@ public class ItemRegistry : MonoBehaviour
         return false;
     }
 
+    public float GetItemMineMultiplier(ushort id, ushort blockId) {
+        BlockMaterial blockMaterial = BlockRegistry.BlockTypeDictionary[blockId].material;
+        BlockMaterial mineMaterial = BlockMaterial.Unknown;
+
+        float mineSpeed = 1.0f;
+        
+        foreach(ItemType itemType in itemTypes) {
+            if(itemType.ID == id) {
+                mineMaterial = itemType.MineableMaterial;
+                mineSpeed = itemType.SpeedMultiplier;
+            }
+        }
+
+        if(blockMaterial == mineMaterial) return mineSpeed;
+        return 1.0f;
+    }
+
     public GameObject GetItemDroppedPrefab(ushort id) {
         foreach(ItemType itemType in itemTypes) {
             if(itemType.ID == id) return itemType.DroppedItemPrefab;

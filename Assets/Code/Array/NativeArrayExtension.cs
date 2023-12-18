@@ -12,7 +12,7 @@ public static class NativeArrayExtension
     }
 
     public static void CopyFromRawBytes<T>(this NativeArray<T> arr, byte[] bytes, int bytesLength) where T : struct {
-        var byteArr = new NativeArray<byte>(bytesLength, Allocator.Temp);
+        var byteArr = new NativeArray<byte>(bytesLength, Allocator.Persistent);
         NativeArray<byte>.Copy(bytes, byteArr, bytesLength);
 
         var slice = new NativeSlice<byte>(byteArr).SliceConvert<T>();
