@@ -10,7 +10,7 @@ if you have any questions add me on Discord (spectralmage12).
 
 # Installation
 - Clone the project using git
-- Open it with Unity 2023.2.1f
+- Open it with Unity 2022.3.9f
 - Open the Package Manager window
 - Install the packages: Burst, Collections, Mathematics, Universal RP, and Text Mesh Pro
 
