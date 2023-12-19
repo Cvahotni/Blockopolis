@@ -41,8 +41,8 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void Update() {
-        BuildNextChunk(ref immidiateChunkQueue);
-        BuildNextChunk(ref chunkQueue);
+        BuildNextChunk(ref immidiateChunkQueue, true);
+        BuildNextChunk(ref chunkQueue, false);
     }
 
     public void AddChunkToQueue(object sender, long coord) {
@@ -53,8 +53,9 @@ public class WorldAllocator : MonoBehaviour
         immidiateChunkQueue.Enqueue(coord);
     }
 
-    private void BuildNextChunk(ref Queue<long> queue) {
-        if(queue.Count == 0 || !shouldBuildChunks) return;
+    private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
+        bool shouldBuildNextChunk = shouldBuildChunks || immediate;
+        if(queue.Count == 0 || !shouldBuildNextChunk) return;
 
         long chunkPos = queue.Dequeue();
         bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
@@ -74,7 +75,7 @@ public class WorldAllocator : MonoBehaviour
         if(shouldCreateRegion) WorldStorage.CreateRegionAt(regionPos);
 
         if(shouldCullChunk || regionIsInvalid) {
-            chunkQueue.Enqueue(chunkPos);
+            queue.Enqueue(chunkPos);
             return;
         }
 

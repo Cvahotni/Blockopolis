@@ -7,7 +7,7 @@ public class GameSettings
 {
     private static int viewDistance = 12;
     private static int chunksPerSecond = 512;
-    private static int featuresPerSecond = 384;
+    private static int featuresPerSecond = 1500;
     private static int chunkPoolSize = 4096;
     private static int maxFramerate = 250;
     private static bool enableVSync = true;
