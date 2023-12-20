@@ -9,6 +9,7 @@ public class PlayerBuild : MonoBehaviour
 
     [SerializeField] private float reach = 5.0f;
     [SerializeField] private float checkIncrement = 0.5f;
+    [SerializeField] private float breakDelay = 0.1f;
 
     [SerializeField] private GameObject blockOutline;
     [SerializeField] private GameObject blockCrackOutline;
@@ -26,6 +27,8 @@ public class PlayerBuild : MonoBehaviour
     private Vector3Int previousTargetPos;
     private Vector3Int highlightPos;
 
+    private WaitForSeconds mineDelayWaitForSeconds;
+
     private float currentBlockBreakProgress;
     private float maxBlockBreakProgress = 1.0f;
 
@@ -34,6 +37,7 @@ public class PlayerBuild : MonoBehaviour
 
     private bool isMining = false;
     private bool isEnabled = true;
+    private bool canMine = true;
 
     private RaycastHit[] raycastHit;
 
@@ -55,6 +59,7 @@ public class PlayerBuild : MonoBehaviour
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
     
         itemRegistry = ItemRegistry.Instance;
+        mineDelayWaitForSeconds = new WaitForSeconds(breakDelay);
     }
 
     private void Update() {
@@ -92,6 +97,7 @@ public class PlayerBuild : MonoBehaviour
 
         if(!CanModifyAt(offsetTargetPos)) return;
         if(!blockCrackOutline.activeSelf) return;
+        if(!canMine) return;
 
         if(currentBlockBreakProgress == 0.0f) {
             blockCrackAnimator.enabled = true;
@@ -116,6 +122,11 @@ public class PlayerBuild : MonoBehaviour
         blockCrackAnimator.enabled = false;
 
         if(endAnimation) playerEventSystem.InvokeBlockBreakEnd();
+    }
+
+    private IEnumerator MineDelayCoroutine() {
+        yield return mineDelayWaitForSeconds;
+        canMine = true;
     }
 
     private void AdjustBlockCrackAnimatorSpeed() {
@@ -158,6 +169,9 @@ public class PlayerBuild : MonoBehaviour
             block, 1);
 
         playerEventSystem.InvokeBlockBreak(blockBreakData);
+
+        canMine = false;
+        StartCoroutine(MineDelayCoroutine());
     }
 
     private void PlaceTargetBlock() {

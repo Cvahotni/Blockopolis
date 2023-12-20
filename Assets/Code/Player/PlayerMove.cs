@@ -38,9 +38,9 @@ public class PlayerMove : MonoBehaviour
         GetInput();
 
         HandleMoveVelocity();
-        HandleJumpVelocity();
-
         AdjustDrag();
+
+        HandleJumpVelocity();
     }
 
     public void Enable(object sender, EventArgs e) {

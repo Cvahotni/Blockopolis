@@ -11,11 +11,13 @@ public class PlayerGroundCheck : MonoBehaviour
     private PlayerEventSystem playerEventSystem;
     private RaycastHit[] results = new RaycastHit[1];
 
+    private WaitForSeconds shortWait;
+
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         playerEventSystem.InvokeGroundCheck(IsGroundedViaRaycast());
         DrawDebugRays();
     }
