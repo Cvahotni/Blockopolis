@@ -170,7 +170,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3, y: 1.3, z: 1.3}
+  m_Size: {x: 0.5, y: 1.8, z: 0.5}
   m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!54 &3321812370123416527
 Rigidbody:
@@ -591,7 +591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reach: 5
   checkIncrement: 0.1
-  breakDelay: 0.1
+  breakDelay: 0.2
   blockOutline: {fileID: 0}
   blockCrackOutline: {fileID: 0}
   chunkMask:
@@ -728,10 +728,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c4e3614bc69d2739c59b18a454f2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3.25
+  speed: 4.317
   jumpHeight: 5
   gravity: -9.81
-  horizontalDragFactor: 0.5
+  horizontalDragFactor: 1
   playerContainerTransform: {fileID: 461729789009755802}
   playerRigidBody: {fileID: 3321812370123416527}
 --- !u!136 &3246785994137809249

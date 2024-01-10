@@ -135,7 +135,7 @@ public class Hotbar : MonoBehaviour
         hotbarEnabled = false;
     }
 
-    public void TakeFromCurrentSlot(object sender, EventArgs e) {
+    public void TakeFromCurrentSlot(object sender, BlockModifyData data) {
         if(inventory == null) {
             Debug.LogError("The Inventory script must be present in the scene in order to take from the current slot.");
             return;

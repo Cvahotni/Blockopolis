@@ -62,7 +62,7 @@ public class ItemRegistry : MonoBehaviour
     }
 
     public float GetItemMineMultiplier(ushort id, ushort blockId) {
-        BlockMaterial blockMaterial = BlockRegistry.BlockTypeDictionary[blockId].material;
+        BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(blockId);
         BlockMaterial mineMaterial = BlockMaterial.Unknown;
 
         float mineSpeed = 1.0f;

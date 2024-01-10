@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct BlockBreakData 
+public struct BlockModifyData 
 {
     public float x;
     public float y;
@@ -11,7 +11,7 @@ public struct BlockBreakData
     public ushort block;
     public ushort amount;
 
-    public BlockBreakData(float x, float y, float z, ushort block, ushort amount) {
+    public BlockModifyData(float x, float y, float z, ushort block, ushort amount) {
         this.x = x;
         this.y = y;
         this.z = z;

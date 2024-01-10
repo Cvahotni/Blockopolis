@@ -26,10 +26,11 @@ public class InventoryEventSystem : MonoBehaviour
     private PlayerHand playerHand;
     private Inventory inventory;
     private Hotbar hotbar;
+    private WorldAudioPlayer worldAudioPlayer;
 
     private event EventHandler<ushort> targetSlotUpdateEvent;
     private event EventHandler<SwitchedItemStack> modifyHeldSlotEvent;
-    private event EventHandler<ItemStack> itemPickupEvent;
+    private event EventHandler<ItemPickupData> itemPickupEvent;
     private event EventHandler<ItemSlotIndex> hotbarUpdateEvent;
 
     private void Awake() {
@@ -42,6 +43,7 @@ public class InventoryEventSystem : MonoBehaviour
         playerHand = PlayerHand.Instance;
         inventory = Inventory.Instance;
         hotbar = Hotbar.Instance;
+        worldAudioPlayer = WorldAudioPlayer.Instance;
 
         AddTargetSlotUpdateListeners();
         AddModifyHeldSlotListeners();
@@ -60,6 +62,7 @@ public class InventoryEventSystem : MonoBehaviour
     private void AddItemPickupListeners() {
         itemPickupEvent += inventory.AddStack;
         itemPickupEvent += playerBuild.ModifyTargetBlock;
+        itemPickupEvent += worldAudioPlayer.PlayItemPickup;
     }
 
     private void AddHotbarUpdateListeners() {
@@ -74,8 +77,8 @@ public class InventoryEventSystem : MonoBehaviour
         modifyHeldSlotEvent.Invoke(this, stack);
     }
 
-    public void InvokeItemPickup(ItemStack stack) {
-        itemPickupEvent.Invoke(this, stack);
+    public void InvokeItemPickup(ItemPickupData data) {
+        itemPickupEvent.Invoke(this, data);
     }
 
     public void InvokeHotbarUpdate(ItemSlotIndex data) {

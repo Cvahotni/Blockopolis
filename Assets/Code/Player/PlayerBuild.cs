@@ -140,8 +140,8 @@ public class PlayerBuild : MonoBehaviour
         return itemRegistry.GetItemMineMultiplier(targetBlock, targetRaycastBlock) / type.hardness;
     }
 
-    public void ModifyTargetBlock(object sender, ItemStack stack) {
-        ModifyTargetBlock(stack.ID);
+    public void ModifyTargetBlock(object sender, ItemPickupData data) {
+        ModifyTargetBlock(data.itemStack.ID);
     }
 
     public void ModifyTargetBlock(ushort id) {
@@ -164,7 +164,7 @@ public class PlayerBuild : MonoBehaviour
 
         Vector3 blockBreakParticlePosition = GetOffsetTargetPos();
         
-        BlockBreakData blockBreakData = new BlockBreakData(
+        BlockModifyData blockBreakData = new BlockModifyData(
             blockBreakParticlePosition.x, blockBreakParticlePosition.y, blockBreakParticlePosition.z,
             block, 1);
 
@@ -188,7 +188,11 @@ public class PlayerBuild : MonoBehaviour
             new VoxelModification(highlightPos.x, highlightPos.y, highlightPos.z, targetBlock)
         });
 
-        playerEventSystem.InvokeBlockPlace();
+        BlockModifyData blockPlaceData = new BlockModifyData(
+            highlightPos.x, highlightPos.y, highlightPos.z,
+            targetBlock, 1);
+
+        playerEventSystem.InvokeBlockPlace(blockPlaceData);
     }
 
     private void RaycastIntoWorld() {

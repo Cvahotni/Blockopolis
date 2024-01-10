@@ -19,7 +19,6 @@ public class GameSettings
     private static readonly int maxChunksPerSecond = 1000;
     private static readonly int minFeaturesPerSecond = 50;
     private static readonly int maxFeaturesPerSecond = 1500;
-    private static readonly int maxChunkPoolSize = 4096;
     private static readonly int minFramerate = 10;
     private static readonly int maxFramerateLimit = 250;
 
@@ -66,7 +65,7 @@ public class GameSettings
 
     public static void SetViewDistance(int newViewDistance) {
         viewDistance = Mathf.Clamp(newViewDistance, minViewDistance, maxViewDistance);
-        chunkPoolSize = (viewDistance * 2) * (viewDistance * 2);
+        chunkPoolSize = 64 * (viewDistance * 2);
     }
 
     public static void SetChunksPerSecond(int newChunksPerSecond) {

@@ -27,6 +27,10 @@ public class Inventory : MonoBehaviour
         SetStack(0, new ItemStack(1005, 1));
         SetStack(1, new ItemStack(1010, 1));
         SetStack(2, new ItemStack(1015, 1));
+        SetStack(3, new ItemStack(6, 999));
+        SetStack(4, new ItemStack(7, 999));
+        SetStack(5, new ItemStack(2, 999));
+        SetStack(5, new ItemStack(8, 999));
     }
 
     private void InitItemSlots() {
@@ -40,7 +44,11 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void AddStack(object sender, ItemStack stack) {
+    public void AddStack(object sender, ItemPickupData data) {
+        AddStack(data.itemStack);
+    }
+
+    private void AddStack(ItemStack stack) {
         ushort leftOverStackSize = stack.Amount;
 
         for(int i = 0; i < slots.Length; i++) {

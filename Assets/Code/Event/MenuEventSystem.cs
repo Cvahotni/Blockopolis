@@ -27,7 +27,10 @@ public class MenuEventSystem : MonoBehaviour
     private WorldsEditingToggle worldsEditingToggle;
     private RenameWorldMenuController renameWorldMenuController;
     private WorldsButtonList worldsButtonList;
+    private MenuAudioPlayer menuAudioPlayer;
 
+    private UnityEvent worldClickEvent = new UnityEvent();
+    private UnityEvent worldSelectEvent = new UnityEvent();
     private UnityEvent deleteEvent = new UnityEvent();
     private UnityEvent renameEvent = new UnityEvent();
     private UnityEvent editEnterEvent = new UnityEvent();
@@ -45,12 +48,23 @@ public class MenuEventSystem : MonoBehaviour
         worldsEditingToggle = WorldsEditingToggle.Instance;
         renameWorldMenuController = RenameWorldMenuController.Instance;
         worldsButtonList = WorldsButtonList.Instance;
+        menuAudioPlayer = MenuAudioPlayer.Instance;
 
+        AddWorldClickListeners();
+        AddWorldSelectListeners();
         AddDeleteListeners();
         AddEditListeners();
         AddEditEnterListeners();
         AddRenameListeners();
         AddBackListeners();
+    }
+
+    private void AddWorldClickListeners() {
+        worldClickEvent.AddListener(menuAudioPlayer.PlayButtonClick);
+    }
+
+    private void AddWorldSelectListeners() {
+        worldSelectEvent.AddListener(menuController.ToggleOverlay);
     }
 
     private void AddDeleteListeners() {
@@ -83,6 +97,14 @@ public class MenuEventSystem : MonoBehaviour
         backEvent.AddListener(worldsEditingToggle.DisableEditMode);
         backEvent.AddListener(menuController.ToggleToWorldSelection);
         backEvent.AddListener(worldsButtonList.GenerateWorldListings);
+    }
+
+    public void InvokeWorldClick() {
+        worldClickEvent.Invoke();
+    }
+
+    public void InvokeWorldSelect() {
+        worldSelectEvent.Invoke();
     }
 
     public void InvokeEdit(string name) {

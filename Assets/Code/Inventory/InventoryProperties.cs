@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class InventoryProperties
 {
-    public static readonly int maxStackSize = 80;
+    public static readonly int maxStackSize = 999;
 }

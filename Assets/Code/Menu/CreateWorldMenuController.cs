@@ -11,6 +11,8 @@ public class CreateWorldMenuController : MonoBehaviour
     [SerializeField] private TMP_InputField seedField;
     [SerializeField] private Button createButton;
 
+    [SerializeField] private float sceneSwitchDelay = 0.2f;
+
     private void Start() {
         nameField.characterLimit = WorldStorageProperties.worldNameLimit;
         seedField.characterLimit = WorldStorageProperties.worldSeedLimit;
@@ -22,6 +24,11 @@ public class CreateWorldMenuController : MonoBehaviour
 
     public void Create() {
         if(!CanCreate()) return;
+        StartCoroutine(CreateCoroutine());
+    }
+
+    private IEnumerator CreateCoroutine() {
+        yield return new WaitForSeconds(sceneSwitchDelay);
 
         string worldName = nameField.text;
         string worldSeed = seedField.text;

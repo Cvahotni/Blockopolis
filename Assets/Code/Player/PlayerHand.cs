@@ -58,7 +58,7 @@ public class PlayerHand : MonoBehaviour
         StartCoroutine(SwitchHeldItemCoroutine(stack));
     }
 
-    public void SwingHeldItem(BlockBreakData data) {
+    public void SwingHeldItem(BlockModifyData data) {
         AssignAnimator();
         handObjectAnimator.SetBool("isSwinging", true);
 
@@ -130,7 +130,7 @@ public class PlayerHand : MonoBehaviour
         ResetHandSwing();
     }
 
-    public void ResetLayers(object sender, BlockBreakData data) {
+    public void ResetLayers(object sender, BlockModifyData data) {
         ResetLayers();
     }
 

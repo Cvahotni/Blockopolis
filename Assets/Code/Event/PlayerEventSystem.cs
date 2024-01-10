@@ -29,12 +29,13 @@ public class PlayerEventSystem : MonoBehaviour
     private PlayerHand playerHand;
     private Hotbar hotbar;
     private MouseLook mouseLook;
+    private WorldAudioPlayer worldAudioPlayer;
 
     private event EventHandler<bool> groundCheckEvent;
     private event EventHandler blockBreakStartEvent;
     private event EventHandler blockBreakEndEvent;
-    private event EventHandler<BlockBreakData> blockBreakEvent;
-    private event EventHandler blockPlaceEvent;
+    private event EventHandler<BlockModifyData> blockBreakEvent;
+    private event EventHandler<BlockModifyData> blockPlaceEvent;
     private event EventHandler playerSpawnEvent;
 
     private void Awake() {
@@ -49,6 +50,7 @@ public class PlayerEventSystem : MonoBehaviour
         playerHand = PlayerHand.Instance;
         hotbar = Hotbar.Instance;
         mouseLook = MouseLook.Instance;
+        worldAudioPlayer = WorldAudioPlayer.Instance;
 
         if(playerMove == null || playerHand == null) {
             Debug.LogError("The Player object must be enabled for the game to start.");
@@ -79,10 +81,12 @@ public class PlayerEventSystem : MonoBehaviour
         blockBreakEvent += playerHand.ResetLayers;
         blockBreakEvent += playerBlockBreakEffect.PlayBlockBreakParticle;
         blockBreakEvent += droppedItemFactory.DropItemFromBlock;
+        blockBreakEvent += worldAudioPlayer.PlayBlockBreak;
     }
 
     private void AddBlockPlaceListeners() {
         blockPlaceEvent += hotbar.TakeFromCurrentSlot;
+        blockPlaceEvent += worldAudioPlayer.PlayBlockPlace;
     }
 
     private void AddPlayerSpawnListeners() {
@@ -103,12 +107,12 @@ public class PlayerEventSystem : MonoBehaviour
         blockBreakEndEvent.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeBlockBreak(BlockBreakData data) {
+    public void InvokeBlockBreak(BlockModifyData data) {
         blockBreakEvent.Invoke(this, data);
     }
 
-    public void InvokeBlockPlace() {
-        blockPlaceEvent.Invoke(this, EventArgs.Empty);
+    public void InvokeBlockPlace(BlockModifyData data) {
+        blockPlaceEvent.Invoke(this, data);
     }
 
     public void InvokePlayerSpawn() {

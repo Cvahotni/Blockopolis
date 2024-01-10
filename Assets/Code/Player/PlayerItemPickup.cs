@@ -21,7 +21,7 @@ public class PlayerItemPickup : MonoBehaviour
         if(droppedItem.Destroyed) return;
         droppedItem.Destroyed = true;
 
-        inventoryEventSystem.InvokeItemPickup(droppedItem.ItemStack);
+        inventoryEventSystem.InvokeItemPickup(new ItemPickupData(droppedItem.ItemStack, currentObject.transform.position));
         Destroy(currentObject, 0.1f);
     }
 }

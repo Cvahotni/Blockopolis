@@ -60,6 +60,10 @@ public class BlockRegistry
         disposed = true;
     }
 
+    public static BlockMaterial GetMaterialForBlock(ushort id) {
+        return blockTypeDictionary[id].material;
+    }
+
     public static void OnDestroy() {
         if(disposed) return;
         DestroyBlockTypeDictionary();

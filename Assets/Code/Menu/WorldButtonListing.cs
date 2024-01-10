@@ -2,12 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class WorldButtonListing : MonoBehaviour
 {
     [SerializeField] private TMP_Text worldName;
     [SerializeField] private GameObject editIcon;
+    [SerializeField] private Button listingButton;
+
+    [SerializeField] private float sceneSwitchDelay = 0.2f;
     
     private string currentName;
     private bool isEditing;
@@ -31,11 +35,19 @@ public class WorldButtonListing : MonoBehaviour
     }
 
     public void Select() {
+        menuEventSystem.InvokeWorldClick();
+
         if(isEditing) EditWorld();
         else SelectWorld();
     }
 
     private void SelectWorld() {
+        StartCoroutine(LoadSceneCoroutine());
+        menuEventSystem.InvokeWorldSelect();
+    }
+
+    private IEnumerator LoadSceneCoroutine() {
+        yield return new WaitForSeconds(sceneSwitchDelay);
         bool loadStatus = WorldHandler.LoadWorld(currentName);
         
         if(loadStatus) {
