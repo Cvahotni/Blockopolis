@@ -39,6 +39,8 @@ public class ChunkObjectBuilder : MonoBehaviour
     }
 
     public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
+        RemoveExistingChunkObject(builtChunkData.coord);
+
         GameObject chunkGameObject = chunkObjectPool.GetFromPool();
         chunkGameObject.SetActive(true);    
 
@@ -78,5 +80,12 @@ public class ChunkObjectBuilder : MonoBehaviour
         chunkGameObject.tag = chunkTagName;
 
         chunkGameObject.SetActive(true);
+    }
+
+    private void RemoveExistingChunkObject(long coord) {
+        GameObject existingChunkObject = GameObject.Find("" + coord);
+        if(existingChunkObject == null) return;
+
+        chunkObjectPool.ReturnToPool(existingChunkObject);
     }
 }

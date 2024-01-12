@@ -69,7 +69,7 @@ public class EndlessTerrain : MonoBehaviour
 
     private void BuildInitialChunks() {
         lastPlayerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
-        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
+        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ(), false));
     }
 
     private void Update() {
@@ -90,7 +90,7 @@ public class EndlessTerrain : MonoBehaviour
         long coord = GetChunkCoordFromVector3(playerTransform.position);
         lastPlayerChunkCoord = coord;
 
-        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ()));
+        StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ(), true));
     }
 
     private void RemoveOutOfRangeChunks() {
@@ -100,13 +100,13 @@ public class EndlessTerrain : MonoBehaviour
         }
     }
 
-    private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ) {
+    private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ, bool async) {
         worldEventSystem.InvokePlaceFeatures(new int3(originX, originZ, GameSettings.ViewDistance + VoxelProperties.featureChunkBuffer));
 
         for(int x = -GameSettings.ViewDistance + originX; x < GameSettings.ViewDistance + originX; x++) {
             for(int z = -GameSettings.ViewDistance + originZ; z < GameSettings.ViewDistance + originZ; z++) {
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
-                yield return shortWait;
+                if(async) yield return shortWait;
 
                 if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
                 if(IsChunkInWorld(coord)) continue;

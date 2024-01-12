@@ -16,7 +16,7 @@ public class WorldModifier
             long chunkPos = BlockPositionToChunkPos(position.x, position.z);
 
             if(!WorldStorage.DoesChunkExist(chunkPos)) {
-                Debug.Log("Tried to modify the world at an invalid chunk position: " + chunkPos);
+                Debug.LogError("Tried to modify the world at an invalid chunk position: " + chunkPos);
                 continue;
             }
 

@@ -238,7 +238,11 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private bool CanModifyAt(Vector3 position) {
-        return !Physics.CheckBox(position, Vector3.one * 0.5f, Quaternion.identity, playerMask, QueryTriggerInteraction.Ignore);
+        bool boxCheck = !Physics.CheckBox(position, Vector3.one * 0.5f, Quaternion.identity, playerMask, QueryTriggerInteraction.Ignore);
+        bool skyCheck = position.y < VoxelProperties.chunkHeight;
+        bool voidCheck = position.y >= 0;
+
+        return boxCheck && skyCheck && voidCheck;
     }
 
     private void UpdateBlockOutline() {

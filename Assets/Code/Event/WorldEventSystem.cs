@@ -43,7 +43,7 @@ public class WorldEventSystem : MonoBehaviour
     private event EventHandler<int3> removeFeaturesEvent;
     private event EventHandler featurePlacingFinishedEvent;
     private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
-    private event EventHandler<bool> cullChunksChangeEvent;
+    private event EventHandler<bool> loadingScreenStatusEvent;
     private event EventHandler<int> chunksGeneratedChangeEvent;
     private event EventHandler<int> amountOfChunksInViewDistanceChangeEvent;
 
@@ -71,7 +71,7 @@ public class WorldEventSystem : MonoBehaviour
         AddPlaceFeaturesListeners();
         AddRemoveFeaturesListeners();
         AddChunkObjectBuildListeners();
-        AddCullChunksChangeListeners();
+        AddLoadingScreenStatusListeners();
         AddChunksGeneratedChangeListeners();
         AddAmountOfChunksInViewDistanceChangeListeners();
     }
@@ -107,13 +107,14 @@ public class WorldEventSystem : MonoBehaviour
     }
 
     private void AddChunkObjectBuildListeners() {
-        chunkObjectBuildEvent += chunkObjectPool.ReturnToPool;
         chunkObjectBuildEvent += chunkObjectBuilder.BuildChunkObject;
     }
 
-    private void AddCullChunksChangeListeners() {
-        cullChunksChangeEvent += worldAllocator.UpdateCullChunksOutOfView;
-        cullChunksChangeEvent += hotbar.SetStatus;
+    private void AddLoadingScreenStatusListeners() {
+        loadingScreenStatusEvent += worldAllocator.UpdateCullChunksOutOfView;
+        loadingScreenStatusEvent += worldAllocator.UpdateBuildChunksQuickly;
+        loadingScreenStatusEvent += worldFeaturePlacer.UpdateBuildFeaturesQuickly;
+        loadingScreenStatusEvent += hotbar.SetStatus;
     }
 
     private void AddChunksGeneratedChangeListeners() {
@@ -156,8 +157,8 @@ public class WorldEventSystem : MonoBehaviour
         chunkObjectBuildEvent.Invoke(this, data);
     }
 
-    public void InvokeCullChunksChange(bool value) {
-        cullChunksChangeEvent.Invoke(this, value);
+    public void InvokeLoadingScreenStatus(bool value) {
+        loadingScreenStatusEvent.Invoke(this, value);
     }
 
     public void InvokeChunksGeneratedChange(int amount) {

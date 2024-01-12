@@ -13,6 +13,10 @@ public class MenuAudioPlayer : MonoBehaviour
         else Instance = this;
     }
 
+    private void Start() {
+        DontDestroyOnLoad(this);
+    }
+
     public void PlayButtonClick() {
         menuAudioSource.Play();
     }

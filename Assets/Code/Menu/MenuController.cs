@@ -16,8 +16,6 @@ public class MenuController : MonoBehaviour
     [SerializeField] private GameObject creditsMenuObject;
     [SerializeField] private GameObject overlayObject;
 
-    [SerializeField] private float gameQuitDelay = 0.2f;
-
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
@@ -28,11 +26,6 @@ public class MenuController : MonoBehaviour
     }
 
     public void Quit() {
-        StartCoroutine(QuitCoroutine());
-    }
-
-    private IEnumerator QuitCoroutine() {
-        yield return new WaitForSeconds(gameQuitDelay);
         Application.Quit();
     }
 

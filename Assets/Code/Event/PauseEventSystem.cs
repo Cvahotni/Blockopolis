@@ -81,6 +81,7 @@ public class PauseEventSystem : MonoBehaviour
     }
 
     private void AddSaveAndQuitListeners() {
+        saveAndQuitEvent += TimeLock.Unlock;
         saveAndQuitEvent += WorldHandler.SaveCurrentWorld;
         saveAndQuitEvent += pauseMenu.ReturnToTitleScreen;
     }

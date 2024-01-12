@@ -5,11 +5,12 @@ using System;
 
 public class GameSettings
 {
-    private static int viewDistance = 12;
-    private static int chunksPerSecond = 512;
-    private static int featuresPerSecond = 1500;
+    private static int viewDistance = 16;
+    private static int chunksPerSecond = 500;
+    private static int featuresPerSecond = 500;
     private static int chunkPoolSize = 4096;
     private static int maxFramerate = 250;
+    private static int chunkBuildsPerFrame = 2;
     private static bool enableVSync = true;
     private static bool fullscreen = false;
 
@@ -17,10 +18,14 @@ public class GameSettings
     private static readonly int maxViewDistance = 32;
     private static readonly int minChunksPerSecond = 50;
     private static readonly int maxChunksPerSecond = 1000;
+    private static readonly int minChunkBuildsPerFrame = 1;
+    private static readonly int maxChunkBuildsPerFrame = 4;
     private static readonly int minFeaturesPerSecond = 50;
     private static readonly int maxFeaturesPerSecond = 1500;
     private static readonly int minFramerate = 10;
     private static readonly int maxFramerateLimit = 250;
+
+    private static readonly int chunksPerSecondMultiplier = 8;
 
     public static int ViewDistance {
         get { return viewDistance; }
@@ -30,6 +35,11 @@ public class GameSettings
     public static int ChunksPerSecond {
         get { return chunksPerSecond; }
         set { chunksPerSecond = value; }
+    }
+
+    public static int ChunkBuildsPerFrame {
+        get { return chunkBuildsPerFrame; }
+        set { chunkBuildsPerFrame = value; }
     }
 
     public static int FeaturesPerSecond {
@@ -57,6 +67,10 @@ public class GameSettings
         set { fullscreen = value; }
     }
 
+    public static int ChunksPerSecondMultiplier {
+        get { return chunksPerSecondMultiplier; }
+    }
+
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Start() {
         GameSettingsStorage.Load();
@@ -74,6 +88,10 @@ public class GameSettings
 
     public static void SetFeaturesPerSecond(int newFeaturesPerSecond) {
         featuresPerSecond = Mathf.Clamp(newFeaturesPerSecond, minFeaturesPerSecond, maxFeaturesPerSecond);
+    }
+
+    public static void SetChunkBuildsPerFrame(int newChunkBuildsPerFrame) {
+        chunkBuildsPerFrame = Mathf.Clamp(newChunkBuildsPerFrame, minChunkBuildsPerFrame, maxChunkBuildsPerFrame);
     }
 
     public static void SetMaxFramerate(int newMaxFramerate) {

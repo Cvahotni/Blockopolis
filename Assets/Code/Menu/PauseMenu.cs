@@ -11,11 +11,6 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject pauseMenuButtons;
 
-    [SerializeField] private float switchSceneDelay = 0.2f;
-
-    private bool sceneSwitchCountingStatus = false;
-    private float sceneSwitchCountdown = 0.1f;
-
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
@@ -23,15 +18,6 @@ public class PauseMenu : MonoBehaviour
 
     private void Start() {
         HidePauseMenu();
-    }
-
-    private void Update() {
-        if(sceneSwitchCountingStatus) sceneSwitchCountdown += Time.fixedDeltaTime;
-
-        if(sceneSwitchCountdown > switchSceneDelay) {
-            sceneSwitchCountdown = 0.0f;
-            SceneManager.LoadSceneAsync(sceneName: MenuProperties.menuSceneName);
-        }
     }
 
     public void DisplayPauseMenu(object sender, EventArgs e) {
@@ -48,6 +34,6 @@ public class PauseMenu : MonoBehaviour
 
     public void ReturnToTitleScreen(object sender, EventArgs e) {
         pauseMenuButtons.SetActive(false);
-        sceneSwitchCountingStatus = true;
+        SceneManager.LoadScene(sceneName: MenuProperties.menuSceneName);
     }
 }

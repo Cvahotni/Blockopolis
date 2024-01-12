@@ -24,6 +24,7 @@ public class SettingsEventSystem : MonoBehaviour
     private UnityEvent<int> viewDistanceChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> chunksPerSecondChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> featuresPerSecondChangeEvent = new UnityEvent<int>();
+    private UnityEvent<int> chunkBuildsPerFrameChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> maxFramerateChangeEvent = new UnityEvent<int>();
     private UnityEvent<bool> enableVSyncChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> fullscreenChangeEvent = new UnityEvent<bool>();
@@ -38,6 +39,7 @@ public class SettingsEventSystem : MonoBehaviour
         AddViewDistanceChangeListeners();
         AddChunksPerSecondChangeListeners();
         AddFeaturesPerSecondChangeListeners();
+        AddChunkBuildsPerFrameChangeListener();
         AddMaxFramerateChangeListeners();
         AddEnableVSyncChangeEventListeners();
         AddFullscreenChangeEventListeners();
@@ -54,6 +56,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     private void AddFeaturesPerSecondChangeListeners() {
         featuresPerSecondChangeEvent.AddListener(GameSettings.SetFeaturesPerSecond);
+    }
+
+    private void AddChunkBuildsPerFrameChangeListener() {
+        chunkBuildsPerFrameChangeEvent.AddListener(GameSettings.SetChunkBuildsPerFrame);
     }
 
     private void AddMaxFramerateChangeListeners() {
@@ -83,6 +89,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     public void InvokeFeaturesPerSecondChange(float amount) {
         featuresPerSecondChangeEvent.Invoke((int) amount * 50);
+    }
+
+    public void InvokeChunkBuildsPerFrameChange(float amount) {
+        chunkBuildsPerFrameChangeEvent.Invoke((int) amount * 1);
     }
 
     public void InvokeMaxFramerateChange(float amount) {

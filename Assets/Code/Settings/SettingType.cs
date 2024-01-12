@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public enum SettingType
 {
-    ViewDistance, ChunksPerSecond, FeaturesPerSecond, MaxFramerate, EnableVSync, Fullscreen
+    ViewDistance, ChunksPerSecond, FeaturesPerSecond, MaxFramerate, EnableVSync, Fullscreen, ChunkBuildsPerFrame
 }

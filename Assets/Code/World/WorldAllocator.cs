@@ -21,6 +21,7 @@ public class WorldAllocator : MonoBehaviour
     private bool shouldBuildChunks = true;
 
     private World currentWorld;
+    private bool buildChunksQuickly = true;
 
     [SerializeField] private Camera playerCamera;
 
@@ -41,8 +42,13 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void Update() {
+        int chunkBuildsPerUpdate = buildChunksQuickly ? GameSettings.ChunksPerSecondMultiplier : GameSettings.ChunkBuildsPerFrame;
+
+        for(int i = 0; i < chunkBuildsPerUpdate; i++) {
+            BuildNextChunk(ref chunkQueue, false);
+        }
+
         BuildNextChunk(ref immidiateChunkQueue, true);
-        BuildNextChunk(ref chunkQueue, false);
     }
 
     public void AddChunkToQueue(object sender, long coord) {
@@ -91,6 +97,10 @@ public class WorldAllocator : MonoBehaviour
 
     public void UpdateCullChunksOutOfView(object sender, bool value) {
         cullChunksOutOfView = value;
+    }
+
+    public void UpdateBuildChunksQuickly(object sender, bool value) {
+        buildChunksQuickly = !value;
     }
 
     public void DisableChunkBuilding(object sender, int3 data) {

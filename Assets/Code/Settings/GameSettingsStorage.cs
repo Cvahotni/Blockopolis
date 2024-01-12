@@ -12,6 +12,7 @@ public class GameSettingsStorage
             writer.WriteLine("viewDistance: " + GameSettings.ViewDistance);
             writer.WriteLine("chunksPerSecond: " + GameSettings.ChunksPerSecond);
             writer.WriteLine("featuresPerSecond: " + GameSettings.FeaturesPerSecond);
+            writer.WriteLine("chunkBuildsPerFrame: " + GameSettings.ChunkBuildsPerFrame);
             writer.WriteLine("maxFramerate: " + GameSettings.MaxFramerate);
             writer.WriteLine("enableVSync: " + GameSettings.EnableVSync);
             writer.WriteLine("fullscreen: " + GameSettings.Fullscreen);
@@ -33,6 +34,7 @@ public class GameSettingsStorage
             if(line.Contains("viewDistance")) GameSettings.ViewDistance = int.Parse(splitStringValue);
             if(line.Contains("chunksPerSecond")) GameSettings.ChunksPerSecond = int.Parse(splitStringValue);
             if(line.Contains("featuresPerSecond")) GameSettings.FeaturesPerSecond = int.Parse(splitStringValue);
+            if(line.Contains("chunkBuildsPerFrame")) GameSettings.ChunkBuildsPerFrame = int.Parse(splitStringValue);
             if(line.Contains("maxFramerate")) GameSettings.MaxFramerate = int.Parse(splitStringValue);
             if(line.Contains("enableVSync")) GameSettings.EnableVSync = bool.Parse(splitStringValue);
             if(line.Contains("fullscreen")) GameSettings.Fullscreen = bool.Parse(splitStringValue);

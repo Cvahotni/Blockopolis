@@ -16,6 +16,7 @@ public class WorldFeaturePlacer : MonoBehaviour
     private EndlessTerrain endlessTerrain;
 
     private WaitForSeconds shortWait;
+    private bool buildFeaturesQuickly = true;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -52,7 +53,7 @@ public class WorldFeaturePlacer : MonoBehaviour
                 long coord = ChunkPositionHelper.GetChunkPos(x, z);
                 if(addedFeatureChunks.Contains(coord)) continue;
 
-                yield return shortWait;
+                if(!buildFeaturesQuickly) yield return shortWait;
                 if(endlessTerrain.IsFeatureChunkOutOfRange(coord)) continue;
 
                 foreach(var pair in FeatureRegistry.FeatureSettings) {
@@ -107,5 +108,9 @@ public class WorldFeaturePlacer : MonoBehaviour
                 WorldUtil.GetRealWorldX(randomX), WorldUtil.GetRealWorldZ(randomZ), 
                 endlessTerrain.NoiseOffset.x, endlessTerrain.NoiseOffset.y, 
                 endlessTerrain.NativeFrequencies, endlessTerrain.NativeAmplitudes)) - 15;
+    }
+
+    public void UpdateBuildFeaturesQuickly(object sender, bool value) {
+        buildFeaturesQuickly = !value;
     }
 }

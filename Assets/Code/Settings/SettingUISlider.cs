@@ -35,6 +35,11 @@ public class SettingUISlider : MonoBehaviour
                 break;
             }
 
+            case SettingType.ChunkBuildsPerFrame: {
+                slider.value = GameSettings.ChunkBuildsPerFrame / multiplier;
+                break;
+            }
+
             default: { break; }
         }
     }
