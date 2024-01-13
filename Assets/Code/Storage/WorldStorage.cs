@@ -10,6 +10,12 @@ public static class WorldStorage
     private static List<long> awaitingRegions = new List<long>();
 
     public static void AddChunk(long coord, NativeArray<ushort> voxelMap) {
+        long regionPos = RegionPositionHelper.ChunkPosToRegionPos(coord);
+
+        if(!DoesRegionExist(regionPos)) {
+            CreateRegionAt(regionPos);
+        }
+
         WorldRegion region = GetRegionAtChunkCoord(coord);
         region.AddChunk(coord, voxelMap);
     }

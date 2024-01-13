@@ -10,6 +10,12 @@ using Unity.Mathematics;
 public struct ChunkMeshBuilderJob : IJob
 {
     public NativeArray<ushort> voxelMap;
+
+    public NativeArray<ushort> leftVoxelMap;
+    public NativeArray<ushort> rightVoxelMap;
+    public NativeArray<ushort> forwardVoxelMap;
+    public NativeArray<ushort> backVoxelMap;
+
     public NativeParallelHashMap<ushort, BlockType> blockTypes; 
 
     public NativeList<ChunkVertex> vertices;
@@ -51,8 +57,7 @@ public struct ChunkMeshBuilderJob : IJob
             uint neighborVoxel = 0;
 
             if(!yOutOfRange || !isVerticalFace) {
-                int neighborVoxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, neighborY, neighborZ);
-                neighborVoxel = voxelMap[neighborVoxelIndex];
+                neighborVoxel = GetNeighborVoxel(neighborX, neighborY, neighborZ);
             }
 
             BlockType blockType = blockTypes[currentVoxel];
@@ -65,6 +70,40 @@ public struct ChunkMeshBuilderJob : IJob
         }
 
         return currentVertexIndex;
+    }
+
+    private uint GetNeighborVoxel(int x, int y, int z) {
+        int neighborX = x;
+        int neighborZ = z;
+
+        if(x < 0) neighborX = VoxelProperties.chunkWidth - 1;
+        if(z < 0) neighborZ = VoxelProperties.chunkWidth - 1;
+
+        if(x >= VoxelProperties.chunkWidth) neighborX = 0;
+        if(z >= VoxelProperties.chunkWidth) neighborZ = 0;
+
+        if(x < 0) {
+            int voxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, y, neighborZ);
+            return leftVoxelMap[voxelIndex];
+        } 
+
+        if(x >= VoxelProperties.chunkWidth) {
+            int voxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, y, neighborZ);
+            return rightVoxelMap[voxelIndex];
+        }
+
+        if(z < 0) {
+            int voxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, y, neighborZ);
+            return backVoxelMap[voxelIndex];
+        } 
+
+        if(z >= VoxelProperties.chunkWidth) {
+            int voxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, y, neighborZ);
+            return forwardVoxelMap[voxelIndex];
+        }
+
+        int currentVoxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, y, neighborZ);
+        return voxelMap[currentVoxelIndex];
     }
 
     private uint MeshFace(uint vertexIndex, int f, Vector3 pos, Vector3 faceCheck, float2 uvOffset) {

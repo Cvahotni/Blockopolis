@@ -27,7 +27,7 @@ public class ChunkEncoderDecoder
     public static NativeArray<ushort> Decode(NativeList<EncodedVoxelMapEntry> encodedVoxelMap, ref ChunkBuilder chunkBuilder) {
         decodeMarker.Begin();
 
-        NativeArray<ushort> voxelMap = chunkBuilder.CreateNewVoxelMap();
+        NativeArray<ushort> voxelMap = chunkBuilder.CreateFreshVoxelMap();
 
         var runLengthDecoderJob = new ChunkRunLengthDecoderJob() {
             decodedVoxelMap = voxelMap,

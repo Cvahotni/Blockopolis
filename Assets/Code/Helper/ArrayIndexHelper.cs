@@ -6,7 +6,7 @@ using Unity.Collections;
 public class ArrayIndexHelper
 {
     public static int GetVoxelArrayIndex(int x, int y, int z) {
-        return ((z + 1) * (VoxelProperties.chunkWidth + 2) * VoxelProperties.chunkHeight) + (y * (VoxelProperties.chunkWidth + 2)) + (x + 1);
+        return (z * (VoxelProperties.chunkWidth) * VoxelProperties.chunkHeight) + (y * (VoxelProperties.chunkWidth)) + x;
     }
 
     public static int GetVoxelArrayIndexWithResolution(int x, int y, int z, int r) {

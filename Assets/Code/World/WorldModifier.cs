@@ -27,8 +27,6 @@ public class WorldModifier
 
             if(IsBlockOnChunkEdge(relativeX, relativeZ)) {
                 ChunkBorder.ChunkBorderDirection borderDirection = GetChunkBorderDirection(relativeX, relativeZ);
-
-                ModifyNeighborChunkVoxels(chunkPos, id, relativeX, position.y, relativeZ, borderDirection);
                 AddNeighborChunks(chunkPos, chunksToAddToQueue);
             }
             
@@ -36,25 +34,6 @@ public class WorldModifier
         }
 
         foreach(long chunkPos in chunksToAddToQueue) worldAllocator.AddImmidiateChunkToQueue(chunkPos);
-    }
-
-    private static void ModifyNeighborChunkVoxels(long currentChunk, ushort currentBlock, int relativeX, int positionY, int relativeZ, ChunkBorder.ChunkBorderDirection borderDirection) {
-        Vector2Int chunkBorderDirectionVector = ChunkBorder.Axes[(int) borderDirection];
-
-        long xNeighborChunk = ChunkPositionHelper.ModifyChunkPos(currentChunk, chunkBorderDirectionVector.x, 0);
-        long yNeighborChunk = ChunkPositionHelper.ModifyChunkPos(currentChunk, 0, chunkBorderDirectionVector.y);
-
-        int edgePositionX = relativeX;
-        int edgePositionZ = relativeZ;
-
-        if(chunkBorderDirectionVector.x == -1) edgePositionX = VoxelProperties.chunkWidth;
-        if(chunkBorderDirectionVector.x == 1) edgePositionX = -1;
-
-        if(chunkBorderDirectionVector.y == -1) edgePositionZ = VoxelProperties.chunkWidth;
-        if(chunkBorderDirectionVector.y == 1) edgePositionZ = -1;
-
-        ModifyChunkVoxelMap(xNeighborChunk, edgePositionX, positionY, relativeZ, currentBlock);
-        ModifyChunkVoxelMap(yNeighborChunk, relativeX, positionY, edgePositionZ, currentBlock);
     }
 
     private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, ushort currentBlock) {
@@ -68,7 +47,7 @@ public class WorldModifier
         if(WorldAllocator.IsChunkOutsideOfWorld(chunk)) return;
         if(!WorldStorage.DoesChunkExist(chunk)) return;
 
-        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk, 0, 0);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, relativeY, relativeZ);
         voxelMap[voxelMapIndex] = currentBlock;
@@ -120,7 +99,6 @@ public class WorldModifier
         int y = (int) pos.y;
         int z = (int) pos.z;
 
-        Debug.Log(x + ", " + y + ", " + z);
         return GetBlockAt(x, y, z);
     }
 
@@ -141,7 +119,7 @@ public class WorldModifier
         }
 
         if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
-        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos, 0, 0);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, worldY, relativeZ);
         if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return 0;

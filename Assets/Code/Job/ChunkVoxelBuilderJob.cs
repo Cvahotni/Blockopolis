@@ -27,8 +27,8 @@ public struct ChunkVoxelBuilderJob : IJob
 
         float yOffset = -16.0f;
 
-        for(int x = -1; x <= VoxelProperties.chunkWidth; x++) {
-            for(int z = -1; z <= VoxelProperties.chunkWidth; z++) {
+        for(int x = 0; x < VoxelProperties.chunkWidth; x++) {
+            for(int z = 0; z < VoxelProperties.chunkWidth; z++) {
                 float worldX = GetWorldX(x);
                 float worldZ = GetWorldZ(z);
 

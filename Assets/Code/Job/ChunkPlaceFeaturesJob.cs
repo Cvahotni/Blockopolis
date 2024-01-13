@@ -71,12 +71,12 @@ public struct ChunkPlaceFeaturesJob : IJob
                         int fy = y;
                         int fz = nz;
 
-                        if(fx < -2) fx = VoxelProperties.chunkWidth + 1 + x;
-                        if(fz < -2) fz = VoxelProperties.chunkWidth + 1 + z;
+                        if(fx < 0) fx = VoxelProperties.chunkWidth + x;
+                        if(fz < 0) fz = VoxelProperties.chunkWidth + z;
 
-                        if(fx < -1 || fx > VoxelProperties.chunkWidth ||
+                        if(fx < 0 || fx >= VoxelProperties.chunkWidth ||
                             fy < 0 || fy >= VoxelProperties.chunkHeight ||
-                            fz < -1 || fz > VoxelProperties.chunkWidth) {
+                            fz < 0 || fz >= VoxelProperties.chunkWidth) {
                                 continue;
                             }
 
