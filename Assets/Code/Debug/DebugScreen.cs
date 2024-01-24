@@ -10,15 +10,12 @@ public class DebugScreen : MonoBehaviour
     [SerializeField] private TMP_Text positionText;
     [SerializeField] private TMP_Text chunkCoordText;
     [SerializeField] private TMP_Text chunkCoordLongText;
+    [SerializeField] private TMP_Text regionLongText;
+    [SerializeField] private TMP_Text regionPosText;
 
     [SerializeField] private Transform playerLocation;
     [SerializeField] private float updatesPerSecond;
     [SerializeField] private GameObject debugScreenObject;
-
-    private StringBuilder fpsTextBuilder = new StringBuilder(100);
-    private StringBuilder positionTextBuilder = new StringBuilder(100);
-    private StringBuilder chunkCoordTextBuilder = new StringBuilder(100);
-    private StringBuilder chunkCoordLongTextBuilder = new StringBuilder(100);
 
     private bool debugScreenEnabled = false;
     private WaitForSeconds shortTime;
@@ -49,59 +46,49 @@ public class DebugScreen : MonoBehaviour
             UpdatePositionText();
             UpdateChunkCoordText();
             UpdateChunkCoordLongText();
+            UpdateRegionLongText();
+            UpdateRegionPosText();
         }
     }
 
     private void UpdateFPSText() {
         if(!debugScreenEnabled) return;
-        fpsTextBuilder.Clear();
-
-        fpsTextBuilder.Append(Mathf.FloorToInt(1.0f / Time.deltaTime));
-        fpsTextBuilder.Append(" FPS");
-
-        fpsText.text = fpsTextBuilder.ToString();
+        fpsText.text = Mathf.FloorToInt(1.0f / Time.deltaTime) + " FPS";
     }
 
     private void UpdatePositionText() {
         if(!debugScreenEnabled) return;
         
         Vector3Int playerPos = GetPlayerPos();
-        positionTextBuilder.Clear();
-
-        positionTextBuilder.Append("Position: ");
-        positionTextBuilder.Append(playerPos.x);
-        positionTextBuilder.Append(", ");
-        positionTextBuilder.Append(playerPos.y);
-        positionTextBuilder.Append(", ");
-        positionTextBuilder.Append(playerPos.z);
-
-        positionText.text = positionTextBuilder.ToString();
+        positionText.text = "Position: " + playerPos.x + ", " + playerPos.y + ", " + playerPos.z;
     }
 
     private void UpdateChunkCoordText() {
         if(!debugScreenEnabled) return;
 
         Vector3Int playerPos = GetPlayerPos();
-        chunkCoordTextBuilder.Clear();
+        chunkCoordText.text = "Chunk Coord: " + (playerPos.x >> VoxelProperties.chunkBitShift) + ", " + (playerPos.z >> VoxelProperties.chunkBitShift);
+    }
 
-        chunkCoordTextBuilder.Append("Chunk Coord: ");
-        chunkCoordTextBuilder.Append(playerPos.x >> VoxelProperties.chunkBitShift);
-        chunkCoordTextBuilder.Append(", ");
-        chunkCoordTextBuilder.Append(playerPos.z >> VoxelProperties.chunkBitShift);
+    private void UpdateRegionLongText() {
+        if(!debugScreenEnabled) return;
 
-        chunkCoordText.text = chunkCoordTextBuilder.ToString();
+        Vector3Int playerPos = GetPlayerPos();
+        regionLongText.text = "Region Long: " + RegionPositionHelper.GetRegionPos(playerPos.x >> VoxelProperties.regionBitShift, playerPos.z >> VoxelProperties.regionBitShift);
+    }
+
+    private void UpdateRegionPosText() {
+        if(!debugScreenEnabled) return;
+
+        Vector3Int playerPos = GetPlayerPos();
+        regionPosText.text = "Region Pos: " + (playerPos.x >> VoxelProperties.regionBitShift) + ", " + (playerPos.z >> VoxelProperties.regionBitShift);
     }
 
     private void UpdateChunkCoordLongText() {
         if(!debugScreenEnabled) return;
 
         Vector3Int playerPos = GetPlayerPos();
-        chunkCoordLongTextBuilder.Clear();
-
-        chunkCoordLongTextBuilder.Append("Chunk Long: ");
-        chunkCoordLongTextBuilder.Append(ChunkPositionHelper.GetChunkPos(playerPos.x >> VoxelProperties.chunkBitShift, playerPos.z >> VoxelProperties.chunkBitShift));
-
-        chunkCoordLongText.text = chunkCoordLongTextBuilder.ToString();
+        chunkCoordLongText.text = "Chunk Long: " + ChunkPositionHelper.GetChunkPos(playerPos.x >> VoxelProperties.chunkBitShift, playerPos.z >> VoxelProperties.chunkBitShift);
     }
 
     private Vector3Int GetPlayerPos() {

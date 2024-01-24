@@ -41,14 +41,18 @@ public class WorldHandler
         }
 
         if(!IsCurrentWorldValid()) {
-            Debug.Log("Failed to load inventory");
+            Debug.Log("Failed to load inventory.");
             return;
         }
 
         WorldInventorySaveLoad.LoadWorldInventory(currentWorld, inventory);
     }
 
-    public static void SaveCurrentWorld(object sender, EventArgs e) {
+    public static void SaveCurrentWorldQuickly(object sender, EventArgs e) {
+        SaveCurrentWorld(true);
+    }
+
+    public static void SaveCurrentWorld(bool saveQuickly) {
         Inventory inventory = Inventory.Instance;
         WorldInfoSaveLoad.SaveWorldInfo(currentWorld);
         
@@ -60,8 +64,8 @@ public class WorldHandler
             Debug.Log("Can't find a valid inventory, consider adding one to the scene. The inventory will not be saved because of this.");
         }
 
-        WorldStorage.SaveRegions(currentWorld);
-        Debug.Log("Saved world: " + currentWorld.Name);
+        WorldStorage.SaveRegions(currentWorld, saveQuickly);
+        Debug.Log("Saving world: " + currentWorld.Name);
     }
 
     public static void RenameCurrentWorld(string newName) {

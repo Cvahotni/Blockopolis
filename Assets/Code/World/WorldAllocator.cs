@@ -71,16 +71,15 @@ public class WorldAllocator : MonoBehaviour
         bool doesRegionExist = WorldStorage.DoesRegionExist(regionPos);
         bool isRegionSaved = WorldStorage.IsRegionSaved(currentWorld, regionPos);
         bool regionIsInvalid = !doesRegionExist && isRegionSaved;
+        bool isWaitingForRegion = WorldStorage.IsWaitingForLoadRegion(regionPos);
 
-        bool isWaitingForRegion = WorldStorage.IsWaitingForRegion(regionPos);
-
-        bool shouldLoadRegion = !doesRegionExist && !isWaitingForRegion && isRegionSaved;
-        bool shouldCreateRegion = !doesRegionExist && !isWaitingForRegion && !isRegionSaved;
+        bool shouldLoadRegion = !doesRegionExist && isRegionSaved && !WorldStorage.IsWaitingForAnyLoadRegion();
+        bool shouldCreateRegion = !doesRegionExist && !isRegionSaved;
 
         if(shouldLoadRegion) WorldStorage.LoadRegionToMap(currentWorld, regionPos);
         if(shouldCreateRegion) WorldStorage.CreateRegionAt(regionPos);
 
-        if(shouldCullChunk || regionIsInvalid) {
+        if(shouldCullChunk || regionIsInvalid || isWaitingForRegion) {
             queue.Enqueue(chunkPos);
             return;
         }

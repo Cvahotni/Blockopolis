@@ -6,74 +6,58 @@ using System.IO;
 
 public class WorldInventorySaveLoad
 {
+    private static readonly int inventoryEntryByteSize = 2;
+    private static readonly int inventorySlotByteSize = (inventoryEntryByteSize * 2) + 1;
+
     public static void SaveWorldInventory(World world, Inventory inventory) {
         string path = WorldSaveLoad.CheckWorldSaveFile(world, WorldStorageProperties.inventoryFileName);
+        byte[] inventoryBytes = new byte[InventoryProperties.slotCount * inventorySlotByteSize];
 
-        using (StreamWriter writer = new StreamWriter(path, append: true)) {
-            for(int i = 0; i < inventory.Slots.Length; i++) {
-                UiItemSlot uiSlot = inventory.Slots[i];
-                ItemSlot itemSlot = uiSlot.ItemSlot;
-                ItemStack stack = itemSlot.Stack;
+        for(int i = 0; i < inventory.Slots.Length; i++) {
+            UiItemSlot uiSlot = inventory.Slots[i];
+            ItemSlot itemSlot = uiSlot.ItemSlot;
+            ItemStack stack = itemSlot.Stack;
 
-                string line = GetSlotLine(i);
+            int inventoryBytesIndex = i * inventorySlotByteSize;
+            byte[] typeBytes = BitConverter.GetBytes(stack.ID);
+            byte[] amountBytes = BitConverter.GetBytes(stack.Amount);
 
-                string idLine = line + ".id." + stack.ID;
-                string amountLine = line + ".amount." + stack.Amount;
+            inventoryBytes[inventoryBytesIndex] = (byte) i;
 
-                writer.WriteLine(idLine);
-                writer.WriteLine(amountLine);
-            }
+            inventoryBytes[inventoryBytesIndex + 1] = typeBytes[0];
+            inventoryBytes[inventoryBytesIndex + 2] = typeBytes[1];
+
+            inventoryBytes[inventoryBytesIndex + 3] = amountBytes[0];
+            inventoryBytes[inventoryBytesIndex + 4] = amountBytes[1];
+        }
+
+        using (var stream = new FileStream(path, FileMode.Append)) {
+            stream.Write(inventoryBytes, 0, inventoryBytes.Length);
         }
     }
 
     public static void LoadWorldInventory(World world, Inventory inventory) {
         string loadPath = WorldSaveLoad.CheckWorldLoadFile(world.Name, WorldStorageProperties.inventoryFileName);
-        string line;
+        byte[] buffer = new byte[InventoryProperties.slotCount * 5];
 
-        int inventorySize = inventory.Slots.Length;
-        
-        bool readID = false;
-        bool readAmount = false;
-
-        ushort currentID = 0;
-        ushort currentAmount = 0;
-
-        int currentIndex = -1;
-
-        using (StreamReader reader = new StreamReader(loadPath)) while((line = reader.ReadLine()) != null) {
-            string[] splitString = line.Split(".");
-
-            int index = Int32.Parse(splitString[1]);
-            string typeData = splitString[3];
-
-            if(readID && readAmount) {
-                UiItemSlot uiSlot = inventory.Slots[currentIndex];
-                ItemSlot itemSlot = uiSlot.ItemSlot;
-
-                itemSlot.Stack = new ItemStack(currentID, currentAmount);
-                itemSlot.UpdateEmptyStatus();
-
-                uiSlot.UpdateSlot(true);
-
-                readID = false;
-                readAmount = false;
-            }
-
-            if(line.Contains("id")) {
-                currentID = UInt16.Parse(typeData);
-                readID = true;
-            }
-
-            if(line.Contains("amount")) {
-                currentAmount = UInt16.Parse(typeData);
-                readAmount = true;
-            }
-
-            currentIndex = index;
+        using (FileStream fileStream = new FileStream(loadPath, FileMode.Open, FileAccess.Read)) {
+            fileStream.Read(buffer, 0, (int) fileStream.Length);
         }
-    }
 
-    private static string GetSlotLine(int i) {
-        return "slot." + i;
+        for(int i = 0; i < buffer.Length; i += inventorySlotByteSize) {
+            byte[] typeBytes = new byte[inventoryEntryByteSize];
+            byte[] amountBytes = new byte[inventoryEntryByteSize];
+
+            typeBytes[0] = buffer[i + 1];
+            typeBytes[1] = buffer[i + 2];
+
+            amountBytes[0] = buffer[i + 3];
+            amountBytes[1] = buffer[i + 4];
+
+            ushort id = BitConverter.ToUInt16(typeBytes, 0);
+            ushort amount = BitConverter.ToUInt16(amountBytes, 0);
+
+            inventory.SetStack(i / inventorySlotByteSize, new ItemStack(id, amount));
+        }
     }
 }

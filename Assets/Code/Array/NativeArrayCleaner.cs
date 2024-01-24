@@ -10,7 +10,7 @@ public class NativeArrayCleaner : MonoBehaviour
 
     private void OnDestroy() {
         BlockRegistry.OnDestroy();
-        WorldRegionSaveLoad.OnDestroy();
         FeatureRegistry.OnDestroy();
+        NativeArrayExtension.OnDestroy();
     }
 }

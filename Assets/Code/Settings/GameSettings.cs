@@ -8,14 +8,14 @@ public class GameSettings
     private static int viewDistance = 16;
     private static int chunksPerSecond = 500;
     private static int featuresPerSecond = 500;
-    private static int chunkPoolSize = 4096;
+    private static int chunkPoolSize = 16384;
     private static int maxFramerate = 250;
     private static int chunkBuildsPerFrame = 2;
     private static bool enableVSync = true;
     private static bool fullscreen = false;
 
     private static readonly int minViewDistance = 2;
-    private static readonly int maxViewDistance = 32;
+    private static readonly int maxViewDistance = 64;
     private static readonly int minChunksPerSecond = 50;
     private static readonly int maxChunksPerSecond = 1000;
     private static readonly int minChunkBuildsPerFrame = 1;
@@ -79,7 +79,7 @@ public class GameSettings
 
     public static void SetViewDistance(int newViewDistance) {
         viewDistance = Mathf.Clamp(newViewDistance, minViewDistance, maxViewDistance);
-        chunkPoolSize = 64 * (viewDistance * 2);
+        //chunkPoolSize = 64 * (viewDistance * 2);
     }
 
     public static void SetChunksPerSecond(int newChunksPerSecond) {

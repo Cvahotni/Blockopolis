@@ -49,11 +49,11 @@ public class ChunkBuilder : MonoBehaviour
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
         NativeList<uint> indices = new NativeList<uint>(Allocator.Persistent);
 
-        NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord, 0, 0);
-        NativeArray<ushort> forwardVoxelMap = GetVoxelMap(chunkCoord, 0, 1);
-        NativeArray<ushort> backVoxelMap = GetVoxelMap(chunkCoord, 0, -1);
-        NativeArray<ushort> rightVoxelMap = GetVoxelMap(chunkCoord, 1, 0);
-        NativeArray<ushort> leftVoxelMap = GetVoxelMap(chunkCoord, -1, 0);
+        NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord);
+        NativeArray<ushort> forwardVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, 1);
+        NativeArray<ushort> backVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, -1);
+        NativeArray<ushort> rightVoxelMap = GetVoxelMapWithOffset(chunkCoord, 1, 0);
+        NativeArray<ushort> leftVoxelMap = GetVoxelMapWithOffset(chunkCoord, -1, 0);
 
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
 
@@ -82,6 +82,8 @@ public class ChunkBuilder : MonoBehaviour
 
         BuildChunkMesh(chunkBuildData, chunkVoxelBuildData);
         worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(ref vertices, ref indices, chunkPos[0]));
+
+        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
 
         chunkBuildData.Dispose();
         chunkVoxelBuildData.Dispose();
@@ -144,21 +146,20 @@ public class ChunkBuilder : MonoBehaviour
         buildChunkMeshMarker.End();
     }
 
-    public NativeArray<ushort> GetVoxelMap(long chunkCoord, int offsetX, int offsetZ) {
+    public NativeArray<ushort> GetVoxelMap(long chunkCoord) {
+        return GetVoxelMapWithOffset(chunkCoord, 0, 0);
+    }
+
+    public NativeArray<ushort> GetVoxelMapWithOffset(long chunkCoord, int offsetX, int offsetZ) {
         long chunkPos = ChunkPositionHelper.ModifyChunkPos(chunkCoord, offsetX, offsetZ);
 
-        if(DoesVoxelMapExist(chunkCoord, offsetX, offsetZ)) return WorldStorage.GetChunk(chunkPos);
+        if(WorldStorage.DoesChunkExist(chunkPos)) return WorldStorage.GetChunk(chunkPos);
         else return CreateNewVoxelMap(chunkPos);
     }
 
-    private bool DoesVoxelMapExist(long chunkCoord, int offsetX, int offsetZ) {
-        long chunkPos = ChunkPositionHelper.ModifyChunkPos(chunkCoord, offsetX, offsetZ);
-        return WorldStorage.DoesChunkExist(chunkPos);
-    }
-
     public void SaveChunkVoxelMap(long chunkCoord, NativeArray<ushort> voxelMap) {
-        if(WorldStorage.DoesChunkExist(chunkCoord)) WorldStorage.SetChunk(chunkCoord, voxelMap);
-        WorldStorage.AddChunk(chunkCoord, voxelMap);
+        if(WorldStorage.DoesChunkExist(chunkCoord)) WorldStorage.SetChunk(chunkCoord, ref voxelMap);
+        else WorldStorage.AddChunk(chunkCoord, ref voxelMap);
     }
 
     public NativeArray<ushort> CreateNewVoxelMap(long chunkCoord) {
@@ -166,7 +167,7 @@ public class ChunkBuilder : MonoBehaviour
 
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
-        NativeArray<ushort> voxelMap = new NativeArray<ushort>((VoxelProperties.chunkWidth) * VoxelProperties.chunkHeight * (VoxelProperties.chunkWidth), Allocator.Persistent);
+        NativeArray<ushort> voxelMap = CreateFreshVoxelMap();
 
         NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
         NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
@@ -183,7 +184,6 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
         BuildChunkVoxelData(chunkVoxelBuildData);
-        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
 
         chunkVoxelBuildData.Dispose();
         return voxelMap;
@@ -191,9 +191,5 @@ public class ChunkBuilder : MonoBehaviour
 
     public NativeArray<ushort> CreateFreshVoxelMap() {
         return new NativeArray<ushort>((VoxelProperties.chunkWidth) * VoxelProperties.chunkHeight * (VoxelProperties.chunkWidth), Allocator.Persistent);
-    }
-
-    public NativeArray<float> CreateNewNoiseMap() {
-        return new NativeArray<float>(((VoxelProperties.chunkWidth / 2) + 2) * (VoxelProperties.chunkHeight / 2) * ((VoxelProperties.chunkWidth / 2) + 2), Allocator.Persistent);
     }
 }

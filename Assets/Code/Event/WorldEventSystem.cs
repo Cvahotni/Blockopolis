@@ -39,9 +39,11 @@ public class WorldEventSystem : MonoBehaviour
     private event EventHandler<long> chunkRemoveEvent;
     private event EventHandler<long> chunkRemoveFinalEvent;
     private event EventHandler<long> chunkBuildEvent;
+
     private event EventHandler<int3> placeFeaturesEvent;
     private event EventHandler<int3> removeFeaturesEvent;
     private event EventHandler featurePlacingFinishedEvent;
+
     private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
     private event EventHandler<bool> loadingScreenStatusEvent;
     private event EventHandler<int> chunksGeneratedChangeEvent;

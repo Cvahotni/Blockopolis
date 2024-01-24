@@ -47,7 +47,7 @@ public class WorldModifier
         if(WorldAllocator.IsChunkOutsideOfWorld(chunk)) return;
         if(!WorldStorage.DoesChunkExist(chunk)) return;
 
-        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk, 0, 0);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, relativeY, relativeZ);
         voxelMap[voxelMapIndex] = currentBlock;
@@ -119,7 +119,7 @@ public class WorldModifier
         }
 
         if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
-        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos, 0, 0);
+        NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, worldY, relativeZ);
         if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return 0;

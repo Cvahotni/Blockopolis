@@ -6,34 +6,34 @@ using Unity.Collections;
 [System.Serializable]
 public struct WorldRegion
 {
-    private Dictionary<long, NativeArray<ushort>> voxelStorageMap;
-    public Dictionary<long, NativeArray<ushort>> VoxelStorageMap { get { return voxelStorageMap; } }
+    private NativeHashMap<long, NativeArray<ushort>> voxelStorageMap;
+    public NativeHashMap<long, NativeArray<ushort>> VoxelStorageMap { get { return voxelStorageMap; } }
 
     private bool disposed;
 
     public WorldRegion(bool debug) {
         if(debug) Debug.Log("Created WorldRegion");
+        int chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
 
-        voxelStorageMap = new Dictionary<long, NativeArray<ushort>>();
+        voxelStorageMap = new NativeHashMap<long, NativeArray<ushort>>(chunksInRegionAmount, Allocator.Persistent);
         disposed = false;
     }
 
-    public WorldRegion(Dictionary<long, NativeArray<ushort>> data) {
-        voxelStorageMap = data;
-        disposed = false;
-    }
-
-    public void AddChunk(long coord, NativeArray<ushort> voxelMap) {
+    public void AddChunk(long coord, ref NativeArray<ushort> voxelMap) {
         if(voxelStorageMap.ContainsKey(coord)) return;
         voxelStorageMap.Add(coord, voxelMap);
     }
 
-    public void SetChunk(long coord, NativeArray<ushort> voxelMap) {
+    public void SetChunk(long coord, ref NativeArray<ushort> voxelMap) {
         voxelStorageMap[coord] = voxelMap;
     }
 
     public NativeArray<ushort> GetChunk(long coord) {
         return voxelStorageMap[coord];
+    }
+
+    public void RemoveChunk(long coord) {
+        voxelStorageMap.Remove(coord);
     }
 
     public bool DoesChunkExist(long coord) {
@@ -48,6 +48,8 @@ public struct WorldRegion
             nativeArrayPair.Value.Dispose();
             destroyedCount++;
         }
+
+        voxelStorageMap.Dispose();
 
         disposed = true;
         return destroyedCount;

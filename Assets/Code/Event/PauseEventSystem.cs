@@ -29,6 +29,7 @@ public class PauseEventSystem : MonoBehaviour
     private PauseMenuToggle pauseMenuToggle;
     private PlayerHand playerHand;
     private EndlessTerrain endlessTerrain;
+    private SavingScreen savingScreen;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
@@ -49,6 +50,7 @@ public class PauseEventSystem : MonoBehaviour
         pauseMenuToggle = PauseMenuToggle.Instance;
         playerHand = PlayerHand.Instance;
         endlessTerrain = EndlessTerrain.Instance;
+        savingScreen = SavingScreen.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
@@ -82,8 +84,10 @@ public class PauseEventSystem : MonoBehaviour
 
     private void AddSaveAndQuitListeners() {
         saveAndQuitEvent += TimeLock.Unlock;
-        saveAndQuitEvent += WorldHandler.SaveCurrentWorld;
+        saveAndQuitEvent += WorldHandler.SaveCurrentWorldQuickly;
+        saveAndQuitEvent += pauseMenu.HidePauseButtons;
         saveAndQuitEvent += pauseMenu.ReturnToTitleScreen;
+        saveAndQuitEvent += savingScreen.ToggleSavingScreen;
     }
 
     public void InvokePause() {

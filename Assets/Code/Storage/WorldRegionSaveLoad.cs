@@ -3,124 +3,168 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading.Tasks;
 using Unity.Collections;
 
 public class WorldRegionSaveLoad
 {
-    private static byte[] regionBytes = new byte[65536 * 16];
-    private static byte[] chunkBytes = new byte[65536];
-    private static NativeList<EncodedVoxelMapEntry> encodedArray;
-    private static bool destroyed = false;
+    private static int chunkElementsSize = VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth;
+    private static int chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
+
+    private static byte[] chunkSaveBytes = new byte[sizeof(ushort) * chunkElementsSize];
+    private static byte[] metaSaveDataBytes = new byte[sizeof(long) * 3 * chunksInRegionAmount];
+
+    private static byte[] regionLoadBytes = new byte[sizeof(ushort) * chunkElementsSize * chunksInRegionAmount];
+    private static byte[] metaLoadDataBytes = new byte[sizeof(long) * 3 * chunksInRegionAmount];
+
+    private static byte[] chunkBuffer = new byte[sizeof(ushort) * chunkElementsSize];
+
+    //IMPORTANT PLEASE READ!
+    //Chunk saves currently finish on a set timer, setting the below values too high can cause chunks to override eachother,
+    //this was the cause of Spectral's mental pain for about 4 hours last night, so PLEASE implement a system that waits for them in-time.
+    //THANK YOU.
+
+    private static readonly float regionSavesPerSecond = 12f;
+    private static readonly float regionLoadsPerSecond = 12f;
+
+    private static WaitForSeconds regionSaveWaitForSeconds;
+    private static WaitForSeconds regionLoadWaitForSeconds;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
-        encodedArray = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
+        regionSaveWaitForSeconds = new WaitForSeconds(1.0f / regionSavesPerSecond);
+        regionLoadWaitForSeconds = new WaitForSeconds(1.0f / regionLoadsPerSecond);
     }
 
-    public static void SaveRegion(World world, string path, WorldRegion region) {
+    public static void SaveRegion(World world, string path, WorldRegion region, long regionPos) {
+        StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
+
+        if(access == null) {
+            Debug.Log("Failed to find StaticCoroutineAccess in the scene, can't save region " + path);
+            return;
+        }
+
         string directoryCheckPath = WorldStorageProperties.savesFolderName + Path.DirectorySeparatorChar + world.Name + Path.DirectorySeparatorChar + WorldStorageProperties.regionFolderName;
         string worldFolderPath = WorldStorageProperties.savesFolderName + Path.DirectorySeparatorChar + world.Name;
+        string metaDataPath = path + ".meta";
 
         if(!Directory.Exists(WorldStorageProperties.savesFolderName)) Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
         if(!Directory.Exists(worldFolderPath)) Directory.CreateDirectory(worldFolderPath);
         if(!Directory.Exists(directoryCheckPath)) Directory.CreateDirectory(directoryCheckPath);
-
-        string metaDataPath = GetMetadataPath(path);
         
         WorldSaveLoad.EraseFileContents(path);
         WorldSaveLoad.EraseFileContents(metaDataPath);
 
-        foreach(var regionPair in region.VoxelStorageMap) {
-            long key = regionPair.Key;
-            NativeArray<ushort> voxelArray = regionPair.Value;
+        WorldStorage.AddWaitingSaveRegion(regionPos);
+        access.StartCoroutine(SaveRegionCoroutine(path, metaDataPath, region, regionPos));
+    }
 
-            ChunkEncoderDecoder.Encode(voxelArray, encodedArray);
+    private static IEnumerator SaveRegionCoroutine(string path, string metaDataPath, WorldRegion region, long regionPos) {
+        NativeArray<long> keys = region.VoxelStorageMap.GetKeyArray(Allocator.Persistent);
+        NativeArray<NativeArray<ushort>> values = region.VoxelStorageMap.GetValueArray(Allocator.Persistent);
 
-            byte[] bytes = NativeArrayExtension.ToRawBytes<EncodedVoxelMapEntry>(encodedArray);
-            encodedArray.Clear();
+        for(int i = 0; i < region.VoxelStorageMap.Count; i++) {
+            long key = keys[i];
+            NativeArray<ushort> voxelArray = values[i];
+
+            NativeArrayExtension.ToRawBytes(voxelArray, chunkSaveBytes);
 
             using (var stream = new FileStream(path, FileMode.Append)) {
-                WriteRegionMetaData(metaDataPath, key, stream.Length, bytes.Length);
-                stream.Write(bytes, 0, bytes.Length);
+                using(var binaryWriter = new BinaryWriter(stream)) {
+                    SetMetaDataBytes((long) key, 0, i);
+                    SetMetaDataBytes((long) binaryWriter.BaseStream.Length, 1, i);
+                    SetMetaDataBytes((long) chunkSaveBytes.Length + binaryWriter.BaseStream.Length, 2, i);
+
+                    binaryWriter.Write(chunkSaveBytes, 0, chunkSaveBytes.Length);
+                }
             }
         }
 
-        Debug.Log("Saved region: " + path);
-    }
-
-    private static void WriteRegionMetaData(string path, long key, long currentByteCount, long bytesCount) {
-        using (StreamWriter writer = new StreamWriter(path, append: true)) writer.WriteLine(key + "." + currentByteCount + "." + bytesCount);
-    }
-
-    public static WorldRegion LoadRegion(string path) { 
-        Debug.Log("Attempting Region Load: " + path);
-        ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
-
-        if(chunkBuilder == null) {
-            Debug.LogError("The ChunkBuilder script must be present to load a region. " + path + " will not be loaded.");
-            return new WorldRegion();
-        }
-
-        Dictionary<long, NativeArray<ushort>> voxelStorageMap = new Dictionary<long, NativeArray<ushort>>();
-
-        string metadataPath = GetMetadataPath(path);
-        NativeList<EncodedChunkMeta> decodedChunkMetadata = DecodeRegionMetaData(metadataPath);
-
-        using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read)) {
-            fileStream.Read(regionBytes, 0, (int) fileStream.Length);
-
-            foreach(EncodedChunkMeta meta in decodedChunkMetadata) {
-                long key = meta.key;
-                long currentByteCount = meta.currentByteCount;
-                long bytesCount = meta.bytesCount;
-
-                Array.Copy(regionBytes, currentByteCount, chunkBytes, 0, bytesCount);
-
-                NativeArray<EncodedVoxelMapEntry> encodedVoxelMap = NativeArrayExtension.FromRawBytes<EncodedVoxelMapEntry>(chunkBytes, (int) bytesCount, Allocator.Persistent);
-                NativeList<EncodedVoxelMapEntry> encodedVoxelMapList = new NativeList<EncodedVoxelMapEntry>(Allocator.Persistent);
-
-                encodedVoxelMapList.AddRange(encodedVoxelMap);
-                NativeArray<ushort> voxelMap = ChunkEncoderDecoder.Decode(encodedVoxelMapList, ref chunkBuilder);
-
-                voxelStorageMap.Add(key, voxelMap);
-                encodedVoxelMap.Dispose();
+        using (var stream = new FileStream(metaDataPath, FileMode.Append)) {
+            using(var binaryWriter = new BinaryWriter(stream)) {
+                binaryWriter.Write(metaSaveDataBytes, 0, metaSaveDataBytes.Length);
             }
         }
 
-        decodedChunkMetadata.Dispose();
+        yield return regionSaveWaitForSeconds;
 
-        Debug.Log("Loaded region: " + path);
-        return new WorldRegion(voxelStorageMap);
+        keys.Dispose();
+        values.Dispose();
+
+        WorldStorage.IncrementRegionsSaved();
+        WorldStorage.RemoveWaitingSaveRegion(regionPos);
     }
 
-    private static NativeList<EncodedChunkMeta> DecodeRegionMetaData(string metaDataPath) {
-        NativeList<EncodedChunkMeta> metadata = new NativeList<EncodedChunkMeta>(Allocator.Persistent);
-        string line;
+    public static void LoadRegion(string path, long regionPos) {
+        string metaDataPath = path + ".meta";
+        WorldRegion region = new WorldRegion(false);
 
-        using (StreamReader reader = new StreamReader(metaDataPath)) while((line = reader.ReadLine()) != null) {
-            string[] splitString = line.Split(".");
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        var binaryReader = new BinaryReader(stream);
 
-            long key = long.Parse(splitString[0]);
-            long currentByteCount = long.Parse(splitString[1]);
-            long bytesCount = long.Parse(splitString[2]);
-
-            metadata.Add(new EncodedChunkMeta(key, currentByteCount, bytesCount));
+        using (var metaStream = new FileStream(metaDataPath, FileMode.Open, FileAccess.Read)) {
+            using (var metaBinaryReader = new BinaryReader(metaStream)) {
+                metaBinaryReader.Read(metaLoadDataBytes, 0, metaLoadDataBytes.Length);
+            }
         }
 
-        return metadata;
+        StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
+
+        if(access == null) {
+            Debug.Log("Failed to find StaticCoroutineAccess in the scene, can't load region " + path);
+            return;
+        }
+
+        WorldStorage.AddWaitingLoadRegion(regionPos);
+        access.StartCoroutine(LoadRegionCoroutine(region, stream, binaryReader, path, regionPos));
     }
 
-    private static string GetMetadataPath(string path) {
-        return path + WorldStorageProperties.metadataExtension;
+    private static IEnumerator LoadRegionCoroutine(WorldRegion region, FileStream stream, BinaryReader binaryReader, string path, long regionPos) {
+        for(int i = 0; i < chunksInRegionAmount; i++) {
+            long chunkCoord = ReadMetaDataBytes(0, i);
+            long chunkBytesStart = ReadMetaDataBytes(1, i);
+            long chunkBytesEnd = ReadMetaDataBytes(2, i);
+
+            if(chunkCoord == 0 && chunkBytesStart == 0 && chunkBytesEnd == 0) continue;
+
+            long chunkBytesSize = chunkBytesEnd - chunkBytesStart;
+            binaryReader.Read(regionLoadBytes, (int) chunkBytesStart, (int) chunkBytesSize);
+            
+            Array.Copy(regionLoadBytes, chunkBytesStart, chunkBuffer, 0, chunkBytesSize);
+            NativeArray<ushort> chunkArray = new NativeArray<ushort>(chunkElementsSize, Allocator.Persistent);
+
+            NativeArrayExtension.FromRawBytes(chunkBuffer, chunkBuffer.Length, chunkArray);
+            region.AddChunk(chunkCoord, ref chunkArray);
+        }
+
+        yield return regionLoadWaitForSeconds;
+
+        stream.Close();
+        binaryReader.Dispose();
+
+        WorldStorage.AddRegion(regionPos, ref region);
+        WorldStorage.RemoveWaitingLoadRegion(regionPos);
     }
 
-    public static void OnDestroy() {
-        if(destroyed) return;
+    private static void SetMetaDataBytes(long value, int valueOffset, int chunkOffset) {
+        int offset = ((chunkOffset * 3) + valueOffset) * 8;
+        
+        metaSaveDataBytes[offset + 0] = (byte) value;
+        metaSaveDataBytes[offset + 1] = (byte) (value >> 8);
+        metaSaveDataBytes[offset + 2] = (byte) (value >> 16);
+        metaSaveDataBytes[offset + 3] = (byte) (value >> 24);
+        metaSaveDataBytes[offset + 4] = (byte) (value >> 32);
+        metaSaveDataBytes[offset + 5] = (byte) (value >> 40);
+        metaSaveDataBytes[offset + 6] = (byte) (value >> 48);
+        metaSaveDataBytes[offset + 7] = (byte) (value >> 56);
+    }
 
-        encodedArray.Dispose();
-        destroyed = true;
+    private static long ReadMetaDataBytes(int valueOffset, int chunkOffset) {
+        int offset = ((chunkOffset * 3) + valueOffset) * 8;
+
+        return (((long) metaLoadDataBytes[offset] & 0xFF) | (((long) metaLoadDataBytes[offset + 1] & 0xFF) << 8)
+        | (((long) metaLoadDataBytes[offset + 2] & 0xFF) << 16) | (((long) metaLoadDataBytes[offset + 3] & 0xFF) << 24)
+        | (((long) metaLoadDataBytes[offset + 4] & 0xFF) << 32) | (((long) metaLoadDataBytes[offset + 5] & 0xFF) << 40)
+        | (((long) metaLoadDataBytes[offset + 6] & 0xFF) << 48) | (((long) metaLoadDataBytes[offset + 7] & 0xFF) << 56));
     }
 }

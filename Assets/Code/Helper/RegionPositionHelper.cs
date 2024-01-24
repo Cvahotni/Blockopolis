@@ -8,10 +8,11 @@ public class RegionPositionHelper
         int rx = x;
         int rz = z;
 
+        if(IsRegionOutsideOfWorldBounds(x, z)) return int.MaxValue;
+
         rx += VoxelProperties.worldSizeInRegionsHalved;
         rz += VoxelProperties.worldSizeInRegionsHalved;
 
-        if(IsRegionOutsideOfWorldBounds(x, z)) return int.MaxValue;
         return rx * VoxelProperties.worldSizeInRegions + rz;
     }
 
@@ -29,8 +30,8 @@ public class RegionPositionHelper
         int chunkPosWX = ChunkPositionHelper.GetChunkPosWX(chunkPos);
         int chunkPosWZ = ChunkPositionHelper.GetChunkPosWZ(chunkPos);
 
-        int regionPosX = chunkPosWX / VoxelProperties.regionWidth;
-        int regionPosZ = chunkPosWZ / VoxelProperties.regionWidth;
+        int regionPosX = chunkPosWX >> VoxelProperties.regionBitShift;
+        int regionPosZ = chunkPosWZ >> VoxelProperties.regionBitShift;
 
         return GetRegionPos(regionPosX, regionPosZ);
     }

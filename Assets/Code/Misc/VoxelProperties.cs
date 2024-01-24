@@ -23,7 +23,9 @@ public class VoxelProperties {
 	public static readonly int worldSizeInChunks = worldSize / chunkWidth;
 	public static readonly int worldSizeInChunksHalved = worldSizeInChunks / 2;
 
-	public static readonly int regionWidth = 64;
+	public static readonly int regionWidth = 256;
 	public static readonly int worldSizeInRegions = worldSize / regionWidth;
 	public static readonly int worldSizeInRegionsHalved = worldSizeInRegions / 2;
+
+	public static readonly int regionBitShift = 8;
 }

@@ -3,30 +3,38 @@ using Unity.Collections.LowLevel.Unsafe;
 
 public static class NativeArrayExtension 
 {
-    public static byte[] ToRawBytes<T>(this NativeArray<T> arr) where T : struct {
-        var slice = new NativeSlice<T>(arr).SliceConvert<byte>();
-        var bytes = new byte[slice.Length];
-        
-        slice.CopyTo(bytes);
-        return bytes;
+    private static readonly int chunkElementsSize = VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth;
+
+    private static NativeArray<ushort> chunkArray = new NativeArray<ushort>(chunkElementsSize, Allocator.Persistent);
+    private static NativeSlice<byte> chunkBytes = new NativeSlice<ushort>(chunkArray).SliceConvert<byte>();
+
+    private static NativeArray<byte> byteArr = new NativeArray<byte>(chunkElementsSize * sizeof(ushort), Allocator.Persistent);
+    private static bool disposed = false;
+
+    public static void ToRawBytes(this NativeArray<ushort> arr, byte[] rawBytes) {
+        arr.CopyTo(chunkArray);
+        chunkBytes.CopyTo(rawBytes);
     }
 
     public static void CopyFromRawBytes<T>(this NativeArray<T> arr, byte[] bytes, int bytesLength) where T : struct {
-        var byteArr = new NativeArray<byte>(bytesLength, Allocator.Persistent);
         NativeArray<byte>.Copy(bytes, byteArr, bytesLength);
 
         var slice = new NativeSlice<byte>(byteArr).SliceConvert<T>();
         slice.CopyTo(arr);
     }
 
-    public static NativeArray<T> FromRawBytes<T>(byte[] bytes, int bytesLength, Allocator allocator) where T : struct {
+    public static void FromRawBytes<T>(byte[] bytes, int bytesLength, NativeArray<T> nativeArray) where T : struct {
         int structSize = UnsafeUtility.SizeOf<T>();
         UnityEngine.Debug.Assert(bytesLength % structSize == 0);
 
         int length = bytesLength / UnsafeUtility.SizeOf<T>();
-        var arr = new NativeArray<T>(length, allocator);
+        nativeArray.CopyFromRawBytes(bytes, bytesLength);
+    }
 
-        arr.CopyFromRawBytes(bytes, bytesLength);
-        return arr;
+    public static void OnDestroy() {
+        if(disposed) return;
+
+        chunkArray.Dispose();
+        disposed = true;
     }
 }
