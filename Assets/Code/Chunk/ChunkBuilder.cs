@@ -60,11 +60,14 @@ public class ChunkBuilder : MonoBehaviour
         NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
         NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
 
+        BlockModelData modelData = BlockRegistry.BlockModelData;
+
         ChunkBuildData chunkBuildData = new ChunkBuildData(
             ref chunkPos, ref vertices,
             ref indices,
             ref leftVoxelMap, ref rightVoxelMap,
-            ref backVoxelMap, ref forwardVoxelMap
+            ref backVoxelMap, ref forwardVoxelMap,
+            ref modelData
         );
 
         ChunkVoxelBuildData chunkVoxelBuildData = new ChunkVoxelBuildData(
@@ -137,7 +140,11 @@ public class ChunkBuilder : MonoBehaviour
             blockTypes = BlockRegistry.BlockTypeDictionary,
 
             vertices = chunkBuildData.vertices,
-            indices = chunkBuildData.indices
+            indices = chunkBuildData.indices,
+
+            voxelVerts = chunkBuildData.modelData.voxelVerts,
+            voxelTris = chunkBuildData.modelData.voxelTris,
+            voxelUVs = chunkBuildData.modelData.voxelUVs
         };
 
         JobHandle chunkMeshJobHandle = chunkMeshJob.Schedule();

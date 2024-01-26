@@ -59,6 +59,13 @@ public class ChunkObjectBuilder : MonoBehaviour
             texCoordDescriptor
         );
 
+        if(builtChunkData.vertices.Length == 0 || builtChunkData.indices.Length == 0) {
+            Debug.Log("Tried to build empty chunk: " + builtChunkData.vertices.Length + ", " + builtChunkData.indices.Length + ", " + builtChunkData.coord);
+            chunkObjectPool.ReturnToPool(chunkGameObject);
+            
+            return;
+        }
+
         meshFilter.mesh.MarkDynamic();
         meshFilter.mesh.SetIndexBufferParams(builtChunkData.indices.Length, IndexFormat.UInt32);
 

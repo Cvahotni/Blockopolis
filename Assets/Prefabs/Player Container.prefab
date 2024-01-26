@@ -181,8 +181,8 @@ Rigidbody:
   m_GameObject: {fileID: 1827230553309892923}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 1
+  m_Drag: 0.25
+  m_AngularDrag: 0.25
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -728,10 +728,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c4e3614bc69d2739c59b18a454f2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5.612
+  speed: 4
   jumpHeight: 5
   gravity: -9.81
-  horizontalDragFactor: 1
   playerContainerTransform: {fileID: 461729789009755802}
   playerRigidBody: {fileID: 3321812370123416527}
 --- !u!136 &3246785994137809249

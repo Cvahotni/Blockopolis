@@ -10,8 +10,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float speed = 6.0f;
     [SerializeField] private float jumpHeight = 4.0f;
     [SerializeField] private float gravity = -9.81f;
-    [SerializeField] private float horizontalDragFactor = 0.5f;
-
+    
     [SerializeField] private Transform playerContainerTransform;
     [SerializeField] private Rigidbody playerRigidBody;
 
@@ -38,8 +37,6 @@ public class PlayerMove : MonoBehaviour
         GetInput();
 
         HandleMoveVelocity();
-        AdjustDrag();
-
         HandleJumpVelocity();
     }
 
@@ -70,7 +67,7 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleMoveVelocity() {
         Vector3 move = transform.right * x + transform.forward * z;
-        playerRigidBody.AddForce(move, ForceMode.VelocityChange);
+        playerRigidBody.velocity = new Vector3(move.x, playerRigidBody.velocity.y, move.z);
     }
 
     private void HandleJumpVelocity() {
@@ -78,14 +75,5 @@ public class PlayerMove : MonoBehaviour
             Vector3 originalVelocity = playerRigidBody.velocity;
             playerRigidBody.velocity = new Vector3(originalVelocity.x, Mathf.Sqrt(jumpHeight * -2.0f * gravity), originalVelocity.z);
         }
-    }
-
-    private void AdjustDrag() {
-        Vector3 velocity = playerRigidBody.velocity;
-
-        velocity.x *= 1.0f - horizontalDragFactor;
-        velocity.z *= 1.0f - horizontalDragFactor;
-
-        playerRigidBody.velocity = velocity;
     }
 }

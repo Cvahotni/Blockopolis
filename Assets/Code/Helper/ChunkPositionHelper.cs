@@ -34,11 +34,11 @@ public class ChunkPositionHelper
     }
 
     public static int GetChunkPosWX(long pos) {
-        return GetChunkPosX(pos) * VoxelProperties.chunkWidth;
+        return GetChunkPosX(pos) << VoxelProperties.chunkBitShift;
     }
 
     public static int GetChunkPosWZ(long pos) {
-        return GetChunkPosZ(pos) * VoxelProperties.chunkWidth;
+        return GetChunkPosZ(pos) << VoxelProperties.chunkBitShift;
     }
 
     public static string ChunkCoordToString(long coord) {

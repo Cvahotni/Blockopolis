@@ -21,6 +21,10 @@ public struct ChunkMeshBuilderJob : IJob
     public NativeList<ChunkVertex> vertices;
     public NativeList<uint> indices;
 
+    public NativeList<float3> voxelVerts;
+    public NativeList<uint> voxelTris;
+    public NativeList<float2> voxelUVs;
+
     public void Execute() {
         BuildMesh();
     }
@@ -61,15 +65,28 @@ public struct ChunkMeshBuilderJob : IJob
             }
 
             BlockType blockType = blockTypes[currentVoxel];
-            if(neighborVoxel != 0 && blockType.solid) continue;
+            if(neighborVoxel != 0 && blockType.solid || !ShouldCullFace(blockType, f)) continue;
 
             float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockType, f);
 
             Vector3 pos = new Vector3(x, y, z);
-            currentVertexIndex = MeshFace(currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset);
+            currentVertexIndex = MeshFace(blockType, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset);
         }
 
         return currentVertexIndex;
+    }
+
+    private bool ShouldCullFace(BlockType type, int f) {
+        switch(f) {
+            case 0: return type.cullBack;
+            case 1: return type.cullFront;
+            case 2: return type.cullUp;
+            case 3: return type.cullBottom;
+            case 4: return type.cullLeft;
+            case 5: return type.cullRight;
+        }
+
+        return false;
     }
 
     private uint GetNeighborVoxel(int x, int y, int z) {
@@ -106,27 +123,61 @@ public struct ChunkMeshBuilderJob : IJob
         return voxelMap[currentVoxelIndex];
     }
 
-    private uint MeshFace(uint vertexIndex, int f, Vector3 pos, Vector3 faceCheck, float2 uvOffset) {
+    private uint MeshFace(BlockType type, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset) {
+        uint currentVertexIndex = vertexIndex;
+        
+        switch(f) {
+            case 0: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.backVertsStart, type.backVertsEnd, type.backTrisStart, type.backTrisEnd);
+                break;
+            }
+
+            case 1: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.frontVertsStart, type.frontVertsEnd, type.frontTrisStart, type.frontTrisEnd);
+                break;
+            }
+
+            case 2: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.upVertsStart, type.upVertsEnd, type.upTrisStart, type.upTrisEnd);
+                break;
+            }
+
+            case 3: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.bottomVertsStart, type.bottomVertsEnd, type.bottomTrisStart, type.bottomTrisEnd);
+                break;
+            }
+
+            case 4: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.leftVertsStart, type.leftVertsEnd, type.leftTrisStart, type.leftTrisEnd);
+                break;
+            }
+
+            case 5: {
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.rightVertsStart, type.rightVertsEnd, type.rightTrisStart, type.rightTrisEnd);
+                break;
+            }
+        }
+
+        return currentVertexIndex;
+    }
+    
+    private uint BuildFace(uint vertexIndex, float3 pos, float3 faceCheck, float2 uvOffset, uint startVertexIndex, uint endVertexIndex, uint startTriIndex, uint endTriIndex) {
+        uint newVertexIndex = 0;
         float textureSize = 1.0f / VoxelProperties.textureAtlasSizeInBlocks;
 
-        Vector3 vertex0 = pos + VoxelMeshProperties.voxelVerts[VoxelMeshProperties.voxelTris[ArrayIndexHelper.GetTriangleIndex(f, 0)]];
-        Vector3 vertex1 = pos + VoxelMeshProperties.voxelVerts[VoxelMeshProperties.voxelTris[ArrayIndexHelper.GetTriangleIndex(f, 1)]];
-        Vector3 vertex2 = pos + VoxelMeshProperties.voxelVerts[VoxelMeshProperties.voxelTris[ArrayIndexHelper.GetTriangleIndex(f, 2)]];
-        Vector3 vertex3 = pos + VoxelMeshProperties.voxelVerts[VoxelMeshProperties.voxelTris[ArrayIndexHelper.GetTriangleIndex(f, 3)]];
+        for(uint v = startVertexIndex; v < endVertexIndex; v++) {
+            float3 vertex = pos + voxelVerts[(int) v];
+            float3 uv = new float3((uvOffset.x + voxelUVs[(int) v].x) * textureSize, (uvOffset.y + voxelUVs[(int) v].y) * textureSize, 0);
 
-        vertices.Add(new ChunkVertex(vertex0, faceCheck, new Vector3((uvOffset.x + VoxelMeshProperties.voxelUvs[0].x) * textureSize, (uvOffset.y + VoxelMeshProperties.voxelUvs[0].y) * textureSize, 0.0f)));
-        vertices.Add(new ChunkVertex(vertex1, faceCheck, new Vector3((uvOffset.x + VoxelMeshProperties.voxelUvs[1].x) * textureSize, (uvOffset.y + VoxelMeshProperties.voxelUvs[1].y) * textureSize, 0.0f)));
-        vertices.Add(new ChunkVertex(vertex2, faceCheck, new Vector3((uvOffset.x + VoxelMeshProperties.voxelUvs[2].x) * textureSize, (uvOffset.y + VoxelMeshProperties.voxelUvs[2].y) * textureSize, 0.0f)));
-        vertices.Add(new ChunkVertex(vertex3, faceCheck, new Vector3((uvOffset.x + VoxelMeshProperties.voxelUvs[3].x) * textureSize, (uvOffset.y + VoxelMeshProperties.voxelUvs[3].y) * textureSize, 0.0f)));
+            vertices.Add(new ChunkVertex(vertex, faceCheck, uv));
+            newVertexIndex++;
+        }
 
-        indices.Add(vertexIndex);
-        indices.Add(vertexIndex + 1);
-        indices.Add(vertexIndex + 2);
-        indices.Add(vertexIndex + 2);
-        indices.Add(vertexIndex + 1);
-        indices.Add(vertexIndex + 3);
+        for(uint t = startTriIndex; t < endTriIndex; t++) {
+            indices.Add(vertexIndex + voxelTris[(int) t]);
+        }
 
-        return vertexIndex + 4;
+        return vertexIndex + newVertexIndex;
     }
 
     private float2 GetBlockFaceUVOffset(BlockType blockType, int f) {

@@ -11,6 +11,6 @@ public class WorldStorageProperties
     public static readonly string regionFolderName = "region";
     public static readonly string worldInfoFileName = Path.DirectorySeparatorChar + "info.txt";
     public static readonly string inventoryFileName = Path.DirectorySeparatorChar + "inventory.dat";
-    public static readonly int worldNameLimit = 27;
-    public static readonly int worldSeedLimit = 27;
+    public static readonly int worldNameLimit = 32;
+    public static readonly int worldSeedLimit = 32;
 }

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   solid: 1
+  material: 0
   hardness: 0.9
   backTexture: {x: 0, y: 0}
   frontTexture: {x: 0, y: 0}
@@ -21,3 +22,10 @@ MonoBehaviour:
   downTexture: {x: 1, y: 0}
   leftTexture: {x: 0, y: 0}
   rightTexture: {x: 0, y: 0}
+  faces:
+  - {fileID: 11400000, guid: 0483f52e932c46d1992289c26f78fdea, type: 2}
+  - {fileID: 11400000, guid: 7c7a85061ac15b21d9e108b9c77354d2, type: 2}
+  - {fileID: 11400000, guid: 2a1c253c10fedd7e3a3aeace031de977, type: 2}
+  - {fileID: 11400000, guid: af706c7437f3f5326a8d6ca1db254ea9, type: 2}
+  - {fileID: 11400000, guid: 80ee210eb149c9de4a2a729ed5c7f1d6, type: 2}
+  - {fileID: 11400000, guid: 89ec66cc9ed98e916a0f8996d0976dbc, type: 2}
