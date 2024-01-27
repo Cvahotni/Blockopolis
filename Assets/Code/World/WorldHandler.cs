@@ -101,21 +101,28 @@ public class WorldHandler
         return directoryExists && worldInfoExists;
     }
 
-    private static bool IsCurrentWorldValid() {
+    public static bool IsCurrentWorldValid() {
         return IsWorldValid(currentWorld.Name);
     }
 
+    public static bool IsCurrentWorldInfoValid() {
+        return IsWorldInfoValid(currentWorld.Name);
+    }
+
     public static bool IsWorldValid(string name) {
-        if(name == null) {
-            Debug.LogError("A world must be selected before the game scene can run.");
-            return false;
-        }
+        if(name == null) return false;
+        bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
+        
+        return IsWorldInfoValid(name) && !directoryInvalid;
+    }
+
+    public static bool IsWorldInfoValid(string name) {
+        if(name == null) return false;
 
         bool nameInvalid = name == "";
         bool nameTooLong = name.Length > WorldStorageProperties.worldNameLimit;
-        bool directoryInvalid = !Directory.Exists(WorldStorageProperties.savesFolderName + name);
 
-        return !nameInvalid && !nameTooLong && !directoryInvalid;
+        return !nameInvalid && !nameTooLong;
     }
 
     private static int HashStringSeed(string seed) {

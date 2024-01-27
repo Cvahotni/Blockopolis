@@ -8,6 +8,7 @@ TagManager:
   - DroppedItem
   - WorldListing
   - Ground
+  - UIItemSlot
   layers:
   - Default
   - TransparentFX

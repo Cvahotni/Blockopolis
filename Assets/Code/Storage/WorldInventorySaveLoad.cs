@@ -14,7 +14,7 @@ public class WorldInventorySaveLoad
         byte[] inventoryBytes = new byte[InventoryProperties.slotCount * inventorySlotByteSize];
 
         for(int i = 0; i < inventory.Slots.Length; i++) {
-            UiItemSlot uiSlot = inventory.Slots[i];
+            UIItemSlot uiSlot = inventory.Slots[i];
             ItemSlot itemSlot = uiSlot.ItemSlot;
             ItemStack stack = itemSlot.Stack;
 

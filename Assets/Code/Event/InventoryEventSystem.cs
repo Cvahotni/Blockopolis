@@ -27,11 +27,15 @@ public class InventoryEventSystem : MonoBehaviour
     private Inventory inventory;
     private Hotbar hotbar;
     private WorldAudioPlayer worldAudioPlayer;
+    private MouseLook mouseLook;
+    private PlayerMove playerMove;
 
     private event EventHandler<ushort> targetSlotUpdateEvent;
     private event EventHandler<SwitchedItemStack> modifyHeldSlotEvent;
     private event EventHandler<ItemPickupData> itemPickupEvent;
     private event EventHandler<ItemSlotIndex> hotbarUpdateEvent;
+    private event EventHandler inventoryScreenOpenEvent;
+    private event EventHandler inventoryScreenCloseEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -44,11 +48,15 @@ public class InventoryEventSystem : MonoBehaviour
         inventory = Inventory.Instance;
         hotbar = Hotbar.Instance;
         worldAudioPlayer = WorldAudioPlayer.Instance;
+        mouseLook = MouseLook.Instance;
+        playerMove = PlayerMove.Instance;
 
         AddTargetSlotUpdateListeners();
         AddModifyHeldSlotListeners();
         AddItemPickupListeners();
         AddHotbarUpdateListeners();
+        AddInventoryScreenOpenListners();
+        AddInventoryScreenCloseListeners();
     }
 
     private void AddTargetSlotUpdateListeners() {
@@ -69,6 +77,22 @@ public class InventoryEventSystem : MonoBehaviour
         hotbarUpdateEvent += hotbar.UpdateHeldItem;
     }
 
+    private void AddInventoryScreenOpenListners() {
+        inventoryScreenOpenEvent += inventory.ActivateInUI;
+        inventoryScreenOpenEvent += mouseLook.ReleaseCursor;
+        inventoryScreenOpenEvent += mouseLook.Disable;
+        inventoryScreenOpenEvent += playerMove.DenyInput;
+        inventoryScreenOpenEvent += playerBuild.Disable;
+    }
+
+    private void AddInventoryScreenCloseListeners() {
+        inventoryScreenCloseEvent += inventory.DeactivateInUI;
+        inventoryScreenCloseEvent += mouseLook.LockCursor;
+        inventoryScreenCloseEvent += mouseLook.Enable;
+        inventoryScreenCloseEvent += playerMove.AllowInput;
+        inventoryScreenCloseEvent += playerBuild.Enable;
+    }
+
     public void InvokeTargetSlotUpdate(ushort id) {
         targetSlotUpdateEvent.Invoke(this, id);
     }
@@ -83,5 +107,13 @@ public class InventoryEventSystem : MonoBehaviour
 
     public void InvokeHotbarUpdate(ItemSlotIndex data) {
         hotbarUpdateEvent.Invoke(this, data);
+    }
+
+    public void InvokeInventoryScreenOpen() {
+        inventoryScreenOpenEvent.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeInventoryScreenClose() {
+        inventoryScreenCloseEvent.Invoke(this, EventArgs.Empty);
     }
 }

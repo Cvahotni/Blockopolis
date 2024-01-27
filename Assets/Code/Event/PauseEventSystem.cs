@@ -30,6 +30,8 @@ public class PauseEventSystem : MonoBehaviour
     private PlayerHand playerHand;
     private EndlessTerrain endlessTerrain;
     private SavingScreen savingScreen;
+    private Inventory inventory;
+    private InventoryScreen inventoryScreen;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
@@ -51,6 +53,8 @@ public class PauseEventSystem : MonoBehaviour
         playerHand = PlayerHand.Instance;
         endlessTerrain = EndlessTerrain.Instance;
         savingScreen = SavingScreen.Instance;
+        inventory = Inventory.Instance;
+        inventoryScreen = InventoryScreen.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
@@ -66,6 +70,8 @@ public class PauseEventSystem : MonoBehaviour
         pauseEvent += mouseLook.Disable;
         pauseEvent += playerBuild.Disable;
         pauseEvent += hotbar.Disable;
+        pauseEvent += inventory.DeactivateInUI;
+        pauseEvent += inventoryScreen.Disable;
     }
 
     private void AddUnpauseListeners() {
@@ -76,6 +82,8 @@ public class PauseEventSystem : MonoBehaviour
         unpauseEvent += mouseLook.Enable;
         unpauseEvent += playerBuild.Enable;
         unpauseEvent += hotbar.Enable;
+        unpauseEvent += inventory.DeactivateInUI;
+        unpauseEvent += inventoryScreen.Enable;
     }
 
     private void AddPauseToggleListeners() {

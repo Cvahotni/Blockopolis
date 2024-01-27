@@ -9,7 +9,7 @@ public struct ItemStack
 
     public ushort ID {
         get { return id; }
-        set { ID = value; }
+        set { id = value; }
     }
 
     public ushort Amount {
@@ -22,9 +22,9 @@ public struct ItemStack
         this.amount = amount;
     }
 
-    public bool Add(ushort count, int maxStackSize) {
+    public bool Add(ushort count) {
         int totalAmount = amount + count;
-        if(totalAmount > maxStackSize) return false;
+        if(totalAmount > InventoryProperties.maxStackSize) return false;
 
         amount += count;
         return true;

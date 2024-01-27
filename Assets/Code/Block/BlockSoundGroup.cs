@@ -5,11 +5,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Block Sound Group", menuName = "Voxel Engine/Block Sound Group")]
 public class BlockSoundGroup : ScriptableObject
 {
+    [Header("Basic Information")]
     public BlockMaterial material;
 
+    [Header("Sounds")]
     public AudioClip[] breakSounds;
-    public float breakSoundVolume = 1.0f;
-
     public AudioClip[] placeSounds;
+
+    [Header("Volume")]
+    public float breakSoundVolume = 1.0f;
     public float placeSoundVolume = 1.0f;
 }

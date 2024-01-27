@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef1a6f3f8d2d517f69285301318b57a5, type: 3}
+  m_Script: {fileID: 11500000, guid: dc8b3f747213c0eb38931249d55abc66, type: 3}
   m_Name: Leaves Block Item
   m_EditorClassIdentifier: 
   id: 8
-  itemForm: 0
-  mineableMaterial: 5
-  speedMultiplier: 1
   sprite: {fileID: 21300000, guid: 3ca6e9a2e8fec6f15bcbf075c7e9db18, type: 3}
-  brokenSprite: {fileID: 21300000, guid: e76db1c867f67b9f498b01678efcef78, type: 3}
-  brokenMaterial: {fileID: 2100000, guid: a1d13529608c0df3aa8ec6a4fd267a37, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: 0ce738843935f9ee0816d792da551059, type: 2}
   heldItemPrefab: {fileID: 7949245008419684630, guid: 81e4ac3dbfb9eb5b6abf5b719748d535, type: 3}
   droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
+  mineableMaterial: 5
+  speedMultiplier: 0
+  brokenSprite: {fileID: 21300000, guid: e76db1c867f67b9f498b01678efcef78, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: a1d13529608c0df3aa8ec6a4fd267a37, type: 2}

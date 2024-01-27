@@ -5,7 +5,6 @@ using UnityEngine;
 public class DroppedItem : MonoBehaviour
 {
     [SerializeField] private Transform itemTransform;
-    [SerializeField] private ItemForm itemForm;
 
     private ItemStack itemStack;
     private DroppedItemTextureHandler droppedItemTextureHandler;
@@ -45,8 +44,8 @@ public class DroppedItem : MonoBehaviour
         droppedItemTextureHandler.SetMaterials(material);
     }
 
-    public bool Add(ushort amount, int maxStackSize) {
-        return itemStack.Add(amount, maxStackSize);
+    public bool Add(ushort amount) {
+        return itemStack.Add(amount);
     }
 
     private void OnTriggerStay(Collider other) {
@@ -65,7 +64,7 @@ public class DroppedItem : MonoBehaviour
         if(droppedItem.ItemStack.ID != itemStack.ID) return;
         if(droppedItem.Destroyed) return;
 
-        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount, InventoryProperties.maxStackSize);
+        bool addedToOtherItemStack = droppedItem.Add(itemStack.Amount);
         if(!addedToOtherItemStack) return;
     
         destroyed = true;

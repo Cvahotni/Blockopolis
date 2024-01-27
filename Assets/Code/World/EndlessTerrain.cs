@@ -43,6 +43,13 @@ public class EndlessTerrain : MonoBehaviour
         worldEventSystem = WorldEventSystem.Instance;
         shortWait = new WaitForSeconds(1.0f / GameSettings.ChunksPerSecond);
 
+        if(!WorldHandler.IsCurrentWorldInfoValid()) {
+            Debug.LogError("Invalid world detected: " + WorldHandler.CurrentWorld.Name);
+            this.enabled = false;
+
+            return;
+        }
+
         noiseOffset = GetTerrainNoiseOffset();
 
         MovePlayerToSpawn();

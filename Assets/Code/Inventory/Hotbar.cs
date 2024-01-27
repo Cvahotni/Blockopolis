@@ -159,10 +159,10 @@ public class Hotbar : MonoBehaviour
     }
 
     private ItemSlot GetSlot(int index) {
-        return inventory.Slots[index].ItemSlot;
+        return inventory.HotbarSlots[index].ItemSlot;
     } 
 
     private Image GetSlotIcon(int index) {
-        return inventory.Slots[index].SlotIcon;
+        return inventory.HotbarSlots[index].SlotIcon;
     }
 }

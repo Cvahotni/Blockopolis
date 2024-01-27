@@ -4,16 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UiItemSlot : MonoBehaviour
+public class UIItemSlot : MonoBehaviour
 {
     [SerializeField] private Image slotIcon;
-
     [SerializeField] private TMP_Text slotAmount;
 
     private ItemSlot itemSlot;
 
+    private Color fullColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+    private Color emptyColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
     public bool HasItem {
-        get { return itemSlot == null ? false : true; }
+        get { return !itemSlot.Empty; }
     }
 
     public Image SlotIcon {
@@ -27,6 +29,11 @@ public class UiItemSlot : MonoBehaviour
 
     public void Link(ItemSlot itemSlot) {
         this.itemSlot = itemSlot;
+        UpdateSlot(true);
+    }
+
+    public void UpdateItemSlot(bool value) {
+        itemSlot.UpdateSlot(value);
     }
 
     public void UpdateSlot(bool check) {
@@ -37,8 +44,7 @@ public class UiItemSlot : MonoBehaviour
             slotIcon.sprite = ItemRegistry.Instance.GetSpriteForID(stack.ID);
             slotAmount.text = stack.Amount.ToString();
 
-            slotIcon.enabled = true;
-
+            slotIcon.color = fullColor;
             slotAmount.enabled = true;
         }
 
@@ -46,7 +52,7 @@ public class UiItemSlot : MonoBehaviour
             slotIcon.sprite = null;
             slotAmount.text = "";
         
-            slotIcon.enabled = false;
+            slotIcon.color = emptyColor;
             slotAmount.enabled = false;
         }
 

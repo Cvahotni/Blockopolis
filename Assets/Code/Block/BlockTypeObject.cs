@@ -9,6 +9,7 @@ public class BlockTypeObject : ScriptableObject
     [Header("Basic Information")]
     public ushort id;
     public bool solid;
+    public bool transparent;
 
     [Header("Material Information")]
     public BlockMaterial material;

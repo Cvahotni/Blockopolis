@@ -9,16 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef1a6f3f8d2d517f69285301318b57a5, type: 3}
+  m_Script: {fileID: 11500000, guid: dc8b3f747213c0eb38931249d55abc66, type: 3}
   m_Name: Air Block Item
   m_EditorClassIdentifier: 
   id: 0
-  itemForm: 0
-  mineableMaterial: 5
-  speedMultiplier: 1
-  sprite: {fileID: 21300000, guid: 24554f5695f8db9dda316b8f46c670de, type: 3}
-  brokenSprite: {fileID: 21300000, guid: b972032981f0e0ea8948908687454142, type: 3}
-  brokenMaterial: {fileID: 2100000, guid: fde23088b24b6a11e91f33e1876e586d, type: 2}
+  sprite: {fileID: 21300000, guid: df0103521e5deeacdaa9c6fdf855589b, type: 3}
   droppedItemMaterial: {fileID: 2100000, guid: 8b32a726feee3fe7caba0d44584c1524, type: 2}
   heldItemPrefab: {fileID: 2021011214142289611, guid: c1d9d46491e86b316aac418268dccf2a, type: 3}
-  droppedItemPrefab: {fileID: 8740044613620937322, guid: 41ab2d015321920bcaa5dfd0b5fc2c85, type: 3}
+  droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
+  brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: 10193253aaa40773b99a83e62e0f71c3, type: 2}

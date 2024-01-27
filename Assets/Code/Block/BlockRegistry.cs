@@ -12,6 +12,7 @@ public class BlockRegistry
     private static NativeParallelHashMap<ushort, BlockType> blockTypeDictionary;
     private static BlockModelData blockModelData;
 
+    private static Dictionary<int, BlockFaceIndexEntry> blockFaceEntries = new Dictionary<int, BlockFaceIndexEntry>();
     private static bool disposed = false;
 
     public static NativeParallelHashMap<ushort, BlockType> BlockTypeDictionary {
@@ -51,14 +52,12 @@ public class BlockRegistry
         uint trisStart = 0;
         uint trisEnd = 0;
 
-        uint uvsStart = 0;
-        uint uvsEnd = 0;
-
         foreach(BlockTypeObject blockTypeObject in blockTypeObjects) {
             BlockType blockType = new BlockType();
 
             blockType.id = blockTypeObject.id;
             blockType.solid = blockTypeObject.solid;
+            blockType.transparent = blockTypeObject.transparent;
 
             blockType.material = blockTypeObject.material;
             blockType.hardness = blockTypeObject.hardness;
@@ -78,20 +77,30 @@ public class BlockRegistry
 
                 vertsEnd = vertsStart + (uint) face.faceVerts.Count;
                 trisEnd = trisStart + (uint) face.faceTris.Count;
-                uvsEnd = uvsStart + (uint) face.faceUVs.Count;
 
-                blockType = RegisterBlockFaceModel(f, direction, blockType, face, vertsStart, vertsEnd, trisStart, trisEnd);
+                if(blockFaceEntries.ContainsKey(face.id)) {
+                    BlockFaceIndexEntry entry = blockFaceEntries[face.id];
+                    blockType = RegisterBlockFaceModel(f, direction, blockType, face, entry.vertsStart, entry.vertsEnd, entry.trisStart, entry.trisEnd, false);
+                }
+
+                else {
+                    blockType = RegisterBlockFaceModel(f, direction, blockType, face, vertsStart, vertsEnd, trisStart, trisEnd, true);
+                }
+
+                BlockFaceIndexEntry foundEntry = new BlockFaceIndexEntry(vertsStart, vertsEnd, trisStart, trisEnd);
 
                 vertsStart += (uint) face.faceVerts.Count;
                 trisStart += (uint) face.faceTris.Count;
-                uvsStart += (uint) face.faceUVs.Count;
+
+                if(blockFaceEntries.ContainsKey(face.id)) continue;
+                blockFaceEntries.Add(face.id, foundEntry);
             }
 
             blockTypes.Add(blockType);
         }
     }
 
-    private static BlockType RegisterBlockFaceModel(int f, BlockFaceDirection direction, BlockType blockType, BlockFace face, uint vertsStart, uint vertsEnd, uint trisStart, uint trisEnd) {
+    private static BlockType RegisterBlockFaceModel(int f, BlockFaceDirection direction, BlockType blockType, BlockFace face, uint vertsStart, uint vertsEnd, uint trisStart, uint trisEnd, bool addModelData) {
         BlockType newBlockType = blockType;
 
         switch(direction) {
@@ -162,16 +171,18 @@ public class BlockRegistry
             }
         }
 
-        foreach(float3 vertex in face.faceVerts) {
-            blockModelData.voxelVerts.Add(vertex);
-        }
+        if(addModelData) {
+            foreach(float3 vertex in face.faceVerts) {
+                blockModelData.voxelVerts.Add(vertex);
+            }
 
-        foreach(uint tri in face.faceTris) {
-            blockModelData.voxelTris.Add(tri);
-        }
+            foreach(uint tri in face.faceTris) {
+                blockModelData.voxelTris.Add(tri);
+            }
 
-        foreach(float2 uv in face.faceUVs) {
-            blockModelData.voxelUVs.Add(uv);
+            foreach(float2 uv in face.faceUVs) {
+                blockModelData.voxelUVs.Add(uv);
+            }
         }
         
         return newBlockType;

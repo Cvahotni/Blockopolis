@@ -9,16 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef1a6f3f8d2d517f69285301318b57a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 8b4d060900afb6014b4d9acd757763ac, type: 3}
   m_Name: Iron Shovel
   m_EditorClassIdentifier: 
   id: 1013
-  itemForm: 1
-  mineableMaterial: 0
-  speedMultiplier: 5
   sprite: {fileID: 21300000, guid: c5872cc39e9294ef3adb7c6db7d53061, type: 3}
-  brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
-  brokenMaterial: {fileID: 2100000, guid: 10193253aaa40773b99a83e62e0f71c3, type: 2}
   droppedItemMaterial: {fileID: 2100000, guid: b303a3fc1e71ee6c3bdb36b88ddb8991, type: 2}
   heldItemPrefab: {fileID: 7949245008419684630, guid: 73770792f3dba9accab08a64b3cd9ccb, type: 3}
   droppedItemPrefab: {fileID: 8845799518492459054, guid: 6927084878d09cbfea583643d950b62e, type: 3}
+  mineableMaterials: 00000000
+  speedMultiplier: 5

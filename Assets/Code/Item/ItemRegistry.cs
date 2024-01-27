@@ -39,7 +39,13 @@ public class ItemRegistry : MonoBehaviour
     }
 
     public Material GetBreakMaterialForID(ushort id) {
-        foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.BrokenMaterial;
+        foreach(ItemType itemType in itemTypes) {
+            if(itemType.ID == id && itemType is BlockItemType) {
+                BlockItemType blockItemType = itemType as BlockItemType;
+                return blockItemType.BrokenMaterial;
+            }
+        }
+        
         throw new NullReferenceException("Break material not found for item ID: " + id);
     }
     
@@ -49,13 +55,19 @@ public class ItemRegistry : MonoBehaviour
     }
 
     public Sprite GetBreakSpriteForID(ushort id) {
-        foreach(ItemType itemType in itemTypes) if(itemType.ID == id) return itemType.BrokenSprite;
+        foreach(ItemType itemType in itemTypes) {
+            if(itemType.ID == id && itemType is BlockItemType) {
+                BlockItemType blockItemType = itemType as BlockItemType;
+                return blockItemType.BrokenSprite;
+            }
+        }
+
         return emptyItemSprite;
     }
 
-    public bool IsItemForm(ushort id, ItemForm form) {
+    public bool IsItemBlockItem(ushort id) {
         foreach(ItemType itemType in itemTypes) {
-            if(itemType.ID == id && itemType.ItemForm == form) return true;
+            if(itemType.ID == id && itemType is BlockItemType) return true;
         }
         
         return false;
@@ -63,18 +75,19 @@ public class ItemRegistry : MonoBehaviour
 
     public float GetItemMineMultiplier(ushort id, ushort blockId) {
         BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(blockId);
-        BlockMaterial mineMaterial = BlockMaterial.Unknown;
-
         float mineSpeed = 1.0f;
         
         foreach(ItemType itemType in itemTypes) {
-            if(itemType.ID == id) {
-                mineMaterial = itemType.MineableMaterial;
-                mineSpeed = itemType.SpeedMultiplier;
+            if(itemType.ID == id && itemType is ToolItemType) {
+                ToolItemType toolItemType = itemType as ToolItemType;
+
+                if(toolItemType.MineableMaterials.Contains(blockMaterial)) {
+                    mineSpeed = toolItemType.SpeedMultiplier;
+                    return mineSpeed;
+                }
             }
         }
 
-        if(blockMaterial == mineMaterial) return mineSpeed;
         return 1.0f;
     }
 

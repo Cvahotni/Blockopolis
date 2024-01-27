@@ -8,6 +8,7 @@ public struct BlockType
 {
     public ushort id;
     public bool solid;
+    public bool transparent;
 
     public BlockMaterial material;
     public float hardness;

@@ -181,7 +181,7 @@ public class PlayerBuild : MonoBehaviour
         if(targetBlock == 0) return;
 
         if(itemRegistry != null) {
-            if(!itemRegistry.IsItemForm(targetBlock, ItemForm.BlockItem)) return;
+            if(!itemRegistry.IsItemBlockItem(targetBlock)) return;
         }
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
