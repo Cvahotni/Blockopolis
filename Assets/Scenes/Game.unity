@@ -7806,6 +7806,7 @@ GameObject:
   - component: {fileID: 934557355}
   - component: {fileID: 934557354}
   - component: {fileID: 934557356}
+  - component: {fileID: 934557357}
   m_Layer: 0
   m_Name: Backup Camera
   m_TagString: Untagged
@@ -7923,6 +7924,14 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!81 &934557357
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934557352}
+  m_Enabled: 1
 --- !u!1 &940433870
 GameObject:
   m_ObjectHideFlags: 0
@@ -10845,6 +10854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrainMaterial: {fileID: 2100000, guid: 7852ea3f6c24e1fc5859e4542788cdcb, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: f863b4feefafcd2bdb2fae1b55ff6753, type: 2}
   physicsMaterial: {fileID: 13400000, guid: d86c8a6694dcee93dabdf3469e23dbf3, type: 2}
 --- !u!114 &1258926992
 MonoBehaviour:

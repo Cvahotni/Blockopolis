@@ -20,6 +20,7 @@ public struct ChunkMeshBuilderJob : IJob
 
     public NativeList<ChunkVertex> vertices;
     public NativeList<uint> indices;
+    public NativeList<uint> transparentIndices;
 
     public NativeList<float3> voxelVerts;
     public NativeList<uint> voxelTris;
@@ -58,19 +59,24 @@ public struct ChunkMeshBuilderJob : IJob
             bool yOutOfRange = y + faceDirection.y < 0 || y + faceDirection.y >= VoxelProperties.chunkHeight;
 			bool isVerticalFace = faceDirection.y <= -1.0f || faceDirection.y >= 1.0f;
 
-            uint neighborVoxel = 0;
+            ushort neighborVoxel = 0;
 
             if(!yOutOfRange || !isVerticalFace) {
                 neighborVoxel = GetNeighborVoxel(neighborX, neighborY, neighborZ);
             }
 
             BlockType blockType = blockTypes[currentVoxel];
-            if(neighborVoxel != 0 && blockType.solid || !ShouldCullFace(blockType, f)) continue;
+            BlockType neighborBlockType = blockTypes[neighborVoxel];
+
+            bool shouldCullFace = ShouldCullFace(blockType, f);
+
+            if(blockType.transparent && neighborBlockType.solid && shouldCullFace) continue;
+            if(neighborBlockType.solid && !neighborBlockType.transparent && blockType.solid && shouldCullFace) continue;
 
             float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockType, f);
 
             Vector3 pos = new Vector3(x, y, z);
-            currentVertexIndex = MeshFace(blockType, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset);
+            currentVertexIndex = MeshFace(blockType, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset, blockType.transparent);
         }
 
         return currentVertexIndex;
@@ -89,7 +95,7 @@ public struct ChunkMeshBuilderJob : IJob
         return false;
     }
 
-    private uint GetNeighborVoxel(int x, int y, int z) {
+    private ushort GetNeighborVoxel(int x, int y, int z) {
         int neighborX = x;
         int neighborZ = z;
 
@@ -123,37 +129,37 @@ public struct ChunkMeshBuilderJob : IJob
         return voxelMap[currentVoxelIndex];
     }
 
-    private uint MeshFace(BlockType type, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset) {
+    private uint MeshFace(BlockType type, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset, bool transparent) {
         uint currentVertexIndex = vertexIndex;
         
         switch(f) {
             case 0: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.backVertsStart, type.backVertsEnd, type.backTrisStart, type.backTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.backVertsStart, type.backVertsEnd, type.backTrisStart, type.backTrisEnd, transparent);
                 break;
             }
 
             case 1: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.frontVertsStart, type.frontVertsEnd, type.frontTrisStart, type.frontTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.frontVertsStart, type.frontVertsEnd, type.frontTrisStart, type.frontTrisEnd, transparent);
                 break;
             }
 
             case 2: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.upVertsStart, type.upVertsEnd, type.upTrisStart, type.upTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.upVertsStart, type.upVertsEnd, type.upTrisStart, type.upTrisEnd, transparent);
                 break;
             }
 
             case 3: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.bottomVertsStart, type.bottomVertsEnd, type.bottomTrisStart, type.bottomTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.bottomVertsStart, type.bottomVertsEnd, type.bottomTrisStart, type.bottomTrisEnd, transparent);
                 break;
             }
 
             case 4: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.leftVertsStart, type.leftVertsEnd, type.leftTrisStart, type.leftTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.leftVertsStart, type.leftVertsEnd, type.leftTrisStart, type.leftTrisEnd, transparent);
                 break;
             }
 
             case 5: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.rightVertsStart, type.rightVertsEnd, type.rightTrisStart, type.rightTrisEnd);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.rightVertsStart, type.rightVertsEnd, type.rightTrisStart, type.rightTrisEnd, transparent);
                 break;
             }
         }
@@ -161,7 +167,7 @@ public struct ChunkMeshBuilderJob : IJob
         return currentVertexIndex;
     }
     
-    private uint BuildFace(uint vertexIndex, float3 pos, float3 faceCheck, float2 uvOffset, uint startVertexIndex, uint endVertexIndex, uint startTriIndex, uint endTriIndex) {
+    private uint BuildFace(uint vertexIndex, float3 pos, float3 faceCheck, float2 uvOffset, uint startVertexIndex, uint endVertexIndex, uint startTriIndex, uint endTriIndex, bool transparent) {
         uint newVertexIndex = 0;
         float textureSize = 1.0f / VoxelProperties.textureAtlasSizeInBlocks;
 
@@ -174,7 +180,8 @@ public struct ChunkMeshBuilderJob : IJob
         }
 
         for(uint t = startTriIndex; t < endTriIndex; t++) {
-            indices.Add(vertexIndex + voxelTris[(int) t]);
+            if(transparent) transparentIndices.Add(vertexIndex + voxelTris[(int) t]);
+            else indices.Add(vertexIndex + voxelTris[(int) t]);
         }
 
         return vertexIndex + newVertexIndex;

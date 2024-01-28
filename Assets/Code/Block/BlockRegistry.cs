@@ -80,27 +80,26 @@ public class BlockRegistry
 
                 if(blockFaceEntries.ContainsKey(face.id)) {
                     BlockFaceIndexEntry entry = blockFaceEntries[face.id];
-                    blockType = RegisterBlockFaceModel(f, direction, blockType, face, entry.vertsStart, entry.vertsEnd, entry.trisStart, entry.trisEnd, false);
+                    blockType = RegisterBlockFaceModel(direction, blockType, face, entry.vertsStart, entry.vertsEnd, entry.trisStart, entry.trisEnd, false);
                 }
 
                 else {
-                    blockType = RegisterBlockFaceModel(f, direction, blockType, face, vertsStart, vertsEnd, trisStart, trisEnd, true);
+                    blockType = RegisterBlockFaceModel(direction, blockType, face, vertsStart, vertsEnd, trisStart, trisEnd, true);
+                    BlockFaceIndexEntry foundEntry = new BlockFaceIndexEntry(vertsStart, vertsEnd, trisStart, trisEnd);
+
+                    if(blockFaceEntries.ContainsKey(face.id)) continue;
+                    blockFaceEntries.Add(face.id, foundEntry);
+
+                    vertsStart += (uint) face.faceVerts.Count;
+                    trisStart += (uint) face.faceTris.Count;
                 }
-
-                BlockFaceIndexEntry foundEntry = new BlockFaceIndexEntry(vertsStart, vertsEnd, trisStart, trisEnd);
-
-                vertsStart += (uint) face.faceVerts.Count;
-                trisStart += (uint) face.faceTris.Count;
-
-                if(blockFaceEntries.ContainsKey(face.id)) continue;
-                blockFaceEntries.Add(face.id, foundEntry);
             }
 
             blockTypes.Add(blockType);
         }
     }
 
-    private static BlockType RegisterBlockFaceModel(int f, BlockFaceDirection direction, BlockType blockType, BlockFace face, uint vertsStart, uint vertsEnd, uint trisStart, uint trisEnd, bool addModelData) {
+    private static BlockType RegisterBlockFaceModel(BlockFaceDirection direction, BlockType blockType, BlockFace face, uint vertsStart, uint vertsEnd, uint trisStart, uint trisEnd, bool addModelData) {
         BlockType newBlockType = blockType;
 
         switch(direction) {

@@ -13,8 +13,12 @@ public class WorldUtil
         return VoxelProperties.chunkHeight;
     }
 
-    public static bool IsBelowSeaLevel(int y) {
+    public static bool IsBelowBeachLevel(int y) {
         return y < 66;
+    }
+
+    public static bool IsBelowSeaLevel(int y) {
+        return y < 64;
     }
     
     public static float GetRealWorldX(int x) {

@@ -48,6 +48,7 @@ public class ChunkBuilder : MonoBehaviour
 
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
         NativeList<uint> indices = new NativeList<uint>(Allocator.Persistent);
+        NativeList<uint> transparentIndices = new NativeList<uint>(Allocator.Persistent);
 
         NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord);
         NativeArray<ushort> forwardVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, 1);
@@ -67,7 +68,7 @@ public class ChunkBuilder : MonoBehaviour
             ref indices,
             ref leftVoxelMap, ref rightVoxelMap,
             ref backVoxelMap, ref forwardVoxelMap,
-            ref modelData
+            ref modelData, ref transparentIndices
         );
 
         ChunkVoxelBuildData chunkVoxelBuildData = new ChunkVoxelBuildData(
@@ -83,8 +84,10 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.noiseOffset[0] = terrainNoiseOffset.x;
         chunkVoxelBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
+        BuiltChunkData builtChunkData = new BuiltChunkData(ref vertices, ref indices, ref transparentIndices, chunkPos[0]);
+
         BuildChunkMesh(chunkBuildData, chunkVoxelBuildData);
-        worldEventSystem.InvokeChunkObjectBuild(new BuiltChunkData(ref vertices, ref indices, chunkPos[0]));
+        worldEventSystem.InvokeChunkObjectBuild(builtChunkData);
 
         SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
 
@@ -141,6 +144,7 @@ public class ChunkBuilder : MonoBehaviour
 
             vertices = chunkBuildData.vertices,
             indices = chunkBuildData.indices,
+            transparentIndices = chunkBuildData.transparentIndices,
 
             voxelVerts = chunkBuildData.modelData.voxelVerts,
             voxelTris = chunkBuildData.modelData.voxelTris,

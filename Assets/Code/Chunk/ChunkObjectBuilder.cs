@@ -15,9 +15,13 @@ public class ChunkObjectBuilder : MonoBehaviour
     public static ChunkObjectBuilder Instance { get; private set; }
 
     private ChunkObjectPool chunkObjectPool;
+    private Material[] materials = new Material[2];
     
     [SerializeField]
     private Material terrainMaterial;
+
+    [SerializeField]
+    private Material transparentMaterial;
     
     [SerializeField]
     private PhysicMaterial physicsMaterial;
@@ -31,11 +35,18 @@ public class ChunkObjectBuilder : MonoBehaviour
 
     private void Start() {
         chunkObjectPool = ChunkObjectPool.Instance;
+        
         SetLayer();
+        SetMaterials();
     }
 
     private void SetLayer() {
         groundLayer = LayerMask.NameToLayer("Ground");
+    }
+
+    private void SetMaterials() {
+        materials[0] = terrainMaterial;
+        materials[1] = transparentMaterial;
     }
 
     public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
@@ -66,18 +77,27 @@ public class ChunkObjectBuilder : MonoBehaviour
             return;
         }
 
+        int originalIndicesLength = builtChunkData.indices.Length;
+        int transparentIndicesLength = builtChunkData.transparentIndices.Length;
+
+        builtChunkData.indices.AddRange(builtChunkData.transparentIndices);
+
         meshFilter.mesh.MarkDynamic();
         meshFilter.mesh.SetIndexBufferParams(builtChunkData.indices.Length, IndexFormat.UInt32);
 
         meshFilter.mesh.SetVertexBufferData<ChunkVertex>(builtChunkData.vertices, 0, 0, builtChunkData.vertices.Length, 0, MeshUpdateFlags.DontValidateIndices);
         meshFilter.mesh.SetIndexBufferData<uint>(builtChunkData.indices, 0, 0, builtChunkData.indices.Length, MeshUpdateFlags.DontValidateIndices);
 
-        meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, builtChunkData.indices.Length));
+        meshFilter.mesh.subMeshCount = 2;
+
+        meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, originalIndicesLength));
+        meshFilter.mesh.SetSubMesh(1, new SubMeshDescriptor(originalIndicesLength, transparentIndicesLength));
+
         meshFilter.mesh.RecalculateBounds();
 
         MeshRenderer meshRenderer = chunkGameObject.GetComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = terrainMaterial;
 
+        meshRenderer.materials = materials;
         MeshCollider meshCollider = chunkGameObject.AddComponent<MeshCollider>();
         
         meshCollider.sharedMesh = meshFilter.mesh;

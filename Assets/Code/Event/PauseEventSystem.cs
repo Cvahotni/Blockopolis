@@ -67,6 +67,7 @@ public class PauseEventSystem : MonoBehaviour
         pauseEvent += pauseMenu.DisplayPauseMenu;
         pauseEvent += mouseLook.ReleaseCursor;
         pauseEvent += playerMove.Disable;
+        pauseEvent += playerMove.DenyInput;
         pauseEvent += mouseLook.Disable;
         pauseEvent += playerBuild.Disable;
         pauseEvent += hotbar.Disable;
@@ -79,6 +80,7 @@ public class PauseEventSystem : MonoBehaviour
         unpauseEvent += pauseMenu.HidePauseMenu;
         unpauseEvent += mouseLook.LockCursor;
         unpauseEvent += playerMove.Enable;
+        unpauseEvent += playerMove.AllowInput;
         unpauseEvent += mouseLook.Enable;
         unpauseEvent += playerBuild.Enable;
         unpauseEvent += hotbar.Enable;

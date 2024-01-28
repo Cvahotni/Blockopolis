@@ -39,7 +39,9 @@ public struct ChunkVoxelBuilderJob : IJob
                     int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
 
                     if(y == yLevel && yLevel > seaLevel) voxelMap[voxelMapArrayIndex] = 1;
-                    else if(y == yLevel && WorldUtil.IsBelowSeaLevel(yLevel)) voxelMap[voxelMapArrayIndex] = 5;
+
+                    else if(y == yLevel && WorldUtil.IsBelowBeachLevel(yLevel)) voxelMap[voxelMapArrayIndex] = 5;
+                    else if(WorldUtil.IsBelowSeaLevel(y) && y > yLevel) voxelMap[voxelMapArrayIndex] = 10;
 
                     else if(y == 0) voxelMap[voxelMapArrayIndex] = 4;
 
