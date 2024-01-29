@@ -69,8 +69,10 @@ public struct ChunkMeshBuilderJob : IJob
             BlockType neighborBlockType = blockTypes[neighborVoxel];
 
             bool shouldCullFace = ShouldCullFace(blockType, f);
+            bool neighborCheck1 = (blockType.transparent && neighborBlockType.solid && shouldCullFace);
+            bool neighborCheck2 = (blockType.transparent && neighborBlockType.transparent && !shouldCullFace);
 
-            if(blockType.transparent && neighborBlockType.solid && shouldCullFace) continue;
+            if(neighborCheck1 || neighborCheck2) continue;
             if(neighborBlockType.solid && !neighborBlockType.transparent && blockType.solid && shouldCullFace) continue;
 
             float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockType, f);

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 8
   solid: 0
-  transparent: 1
+  transparent: 0
   material: 3
   hardness: 0.25
   backTexture: {x: 9, y: 0}
