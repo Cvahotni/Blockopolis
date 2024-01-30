@@ -22,9 +22,9 @@ public struct ChunkMeshBuilderJob : IJob
     public NativeList<uint> indices;
     public NativeList<uint> transparentIndices;
 
-    public NativeList<float3> voxelVerts;
-    public NativeList<uint> voxelTris;
-    public NativeList<float2> voxelUVs;
+    public NativeArray<float3> voxelVerts;
+    public NativeArray<uint> voxelTris;
+    public NativeArray<float2> voxelUVs;
 
     public void Execute() {
         BuildMesh();

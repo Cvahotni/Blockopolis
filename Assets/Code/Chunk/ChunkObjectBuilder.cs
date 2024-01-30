@@ -16,7 +16,7 @@ public class ChunkObjectBuilder : MonoBehaviour
 
     private ChunkObjectPool chunkObjectPool;
     private Material[] materials = new Material[2];
-    
+
     [SerializeField]
     private Material terrainMaterial;
 
@@ -89,24 +89,27 @@ public class ChunkObjectBuilder : MonoBehaviour
         meshFilter.mesh.SetIndexBufferData<uint>(builtChunkData.indices, 0, 0, builtChunkData.indices.Length, MeshUpdateFlags.DontValidateIndices);
 
         meshFilter.mesh.subMeshCount = 2;
-
         meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, originalIndicesLength));
+
+        CreateChunkObjectCollider(chunkGameObject, meshFilter);
         meshFilter.mesh.SetSubMesh(1, new SubMeshDescriptor(originalIndicesLength, transparentIndicesLength));
 
         meshFilter.mesh.RecalculateBounds();
 
         MeshRenderer meshRenderer = chunkGameObject.GetComponent<MeshRenderer>();
-
         meshRenderer.materials = materials;
-        MeshCollider meshCollider = chunkGameObject.AddComponent<MeshCollider>();
-        
-        meshCollider.sharedMesh = meshFilter.mesh;
-        meshCollider.sharedMaterial = physicsMaterial;
 
         chunkGameObject.layer = groundLayer;
         chunkGameObject.tag = chunkTagName;
 
         chunkGameObject.SetActive(true);
+    }
+
+    private void CreateChunkObjectCollider(GameObject chunkGameObject, MeshFilter meshFilter) {
+        MeshCollider meshCollider = chunkGameObject.AddComponent<MeshCollider>();
+
+        meshCollider.sharedMesh = meshFilter.mesh;
+        meshCollider.sharedMaterial = physicsMaterial;
     }
 
     private void RemoveExistingChunkObject(long coord) {

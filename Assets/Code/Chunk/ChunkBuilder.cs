@@ -86,13 +86,8 @@ public class ChunkBuilder : MonoBehaviour
 
         BuiltChunkData builtChunkData = new BuiltChunkData(ref vertices, ref indices, ref transparentIndices, chunkPos[0]);
 
-        BuildChunkMesh(chunkBuildData, chunkVoxelBuildData);
-        worldEventSystem.InvokeChunkObjectBuild(builtChunkData);
-
-        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
-
-        chunkBuildData.Dispose();
-        chunkVoxelBuildData.Dispose();
+        StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
+        access.StartCoroutine(BuildChunkMesh(chunkCoord, chunkBuildData, chunkVoxelBuildData, builtChunkData));
     }
 
     private void BuildChunkVoxelData(ChunkVoxelBuildData chunkVoxelBuildData) {
@@ -129,8 +124,13 @@ public class ChunkBuilder : MonoBehaviour
         placeChunkFeaturesMarker.End();
     }
 
-    private void BuildChunkMesh(ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData) {
-        buildChunkMeshMarker.Begin();
+    private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {
+        NativeArray<float3> voxelVerts = new NativeArray<float3>(chunkBuildData.modelData.voxelVerts, Allocator.Persistent);
+        NativeArray<uint> voxelTris = new NativeArray<uint>(chunkBuildData.modelData.voxelTris, Allocator.Persistent);
+        NativeArray<float2> voxelUVs = new NativeArray<float2>(chunkBuildData.modelData.voxelUVs, Allocator.Persistent);
+
+        NativeParallelHashMap<ushort, BlockType> blockTypeDictionary = new NativeParallelHashMap<ushort, BlockType>(1, Allocator.Persistent);
+        foreach(var pair in BlockRegistry.BlockTypeDictionary) blockTypeDictionary.Add(pair.Key, pair.Value);
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
             voxelMap = chunkVoxelBuildData.voxelMap,
@@ -140,21 +140,36 @@ public class ChunkBuilder : MonoBehaviour
             backVoxelMap = chunkBuildData.backVoxelMap,
             forwardVoxelMap = chunkBuildData.forwardVoxelMap,
 
-            blockTypes = BlockRegistry.BlockTypeDictionary,
+            blockTypes = blockTypeDictionary,
 
             vertices = chunkBuildData.vertices,
             indices = chunkBuildData.indices,
             transparentIndices = chunkBuildData.transparentIndices,
 
-            voxelVerts = chunkBuildData.modelData.voxelVerts,
-            voxelTris = chunkBuildData.modelData.voxelTris,
-            voxelUVs = chunkBuildData.modelData.voxelUVs
+            voxelVerts = voxelVerts,
+            voxelTris = voxelTris,
+            voxelUVs = voxelUVs
         };
 
         JobHandle chunkMeshJobHandle = chunkMeshJob.Schedule();
+
+        yield return new WaitUntil(() => {
+            return chunkMeshJobHandle.IsCompleted;
+        });
+
         chunkMeshJobHandle.Complete();
 
-        buildChunkMeshMarker.End();
+        worldEventSystem.InvokeChunkObjectBuild(builtChunkData);
+        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
+
+        chunkBuildData.Dispose();
+        chunkVoxelBuildData.Dispose();
+
+        voxelVerts.Dispose();
+        voxelTris.Dispose();
+        voxelUVs.Dispose();
+
+        blockTypeDictionary.Dispose();
     }
 
     public NativeArray<ushort> GetVoxelMap(long chunkCoord) {

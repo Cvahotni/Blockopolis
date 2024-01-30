@@ -9079,7 +9079,7 @@ MonoBehaviour:
   regionLongText: {fileID: 2072628897}
   regionPosText: {fileID: 71221021}
   playerLocation: {fileID: 49181542}
-  updatesPerSecond: 1
+  updatesPerSecond: 4
   debugScreenObject: {fileID: 893198186}
 --- !u!1 &1072194996
 GameObject:
