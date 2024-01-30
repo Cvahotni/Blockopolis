@@ -125,6 +125,12 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {
+        NativeArray<ushort> voxelMap = new NativeArray<ushort>(chunkVoxelBuildData.voxelMap, Allocator.Persistent);
+        NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkBuildData.forwardVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> backVoxelMap = new NativeArray<ushort>(chunkBuildData.backVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> rightVoxelMap = new NativeArray<ushort>(chunkBuildData.rightVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> leftVoxelMap = new NativeArray<ushort>(chunkBuildData.leftVoxelMap, Allocator.Persistent);
+
         NativeArray<float3> voxelVerts = new NativeArray<float3>(chunkBuildData.modelData.voxelVerts, Allocator.Persistent);
         NativeArray<uint> voxelTris = new NativeArray<uint>(chunkBuildData.modelData.voxelTris, Allocator.Persistent);
         NativeArray<float2> voxelUVs = new NativeArray<float2>(chunkBuildData.modelData.voxelUVs, Allocator.Persistent);
@@ -133,12 +139,12 @@ public class ChunkBuilder : MonoBehaviour
         foreach(var pair in BlockRegistry.BlockTypeDictionary) blockTypeDictionary.Add(pair.Key, pair.Value);
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
-            voxelMap = chunkVoxelBuildData.voxelMap,
+            voxelMap = voxelMap,
 
-            leftVoxelMap = chunkBuildData.leftVoxelMap,
-            rightVoxelMap = chunkBuildData.rightVoxelMap,
-            backVoxelMap = chunkBuildData.backVoxelMap,
-            forwardVoxelMap = chunkBuildData.forwardVoxelMap,
+            leftVoxelMap = leftVoxelMap,
+            rightVoxelMap = rightVoxelMap,
+            backVoxelMap = backVoxelMap,
+            forwardVoxelMap = forwardVoxelMap,
 
             blockTypes = blockTypeDictionary,
 
@@ -164,6 +170,12 @@ public class ChunkBuilder : MonoBehaviour
 
         chunkBuildData.Dispose();
         chunkVoxelBuildData.Dispose();
+
+        voxelMap.Dispose();
+        forwardVoxelMap.Dispose();
+        backVoxelMap.Dispose();
+        rightVoxelMap.Dispose();
+        leftVoxelMap.Dispose();
 
         voxelVerts.Dispose();
         voxelTris.Dispose();
