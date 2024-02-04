@@ -14500,6 +14500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   despawnTime: 10
+  muteTime: 0.0025
   itemPickupSound: {fileID: 8300000, guid: 848118f7e0bcb225680188cd5aecee6c, type: 3}
   itemPickupSoundVolume: 0.25
 --- !u!1 &1775236018

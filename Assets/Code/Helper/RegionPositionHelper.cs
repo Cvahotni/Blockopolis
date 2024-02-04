@@ -36,6 +36,13 @@ public class RegionPositionHelper
         return GetRegionPos(regionPosX, regionPosZ);
     }
 
+    public static long ModifyRegionPos(long regionPos, int x, int z) {
+        int regionX = GetRegionPosX(regionPos) + x;
+        int regionZ = GetRegionPosZ(regionPos) + z;
+
+        return GetRegionPos(regionX, regionZ);
+    }
+
     private static bool IsRegionOutsideOfWorldBounds(int x, int z) {
         return x < -VoxelProperties.worldSizeInRegionsHalved || x > VoxelProperties.worldSizeInRegionsHalved ||
             z < -VoxelProperties.worldSizeInRegionsHalved || z > VoxelProperties.worldSizeInRegionsHalved;

@@ -50,7 +50,7 @@ public struct ChunkMeshBuilderJob : IJob
         uint currentVertexIndex = vertexIndex;
 
         for(int f = 0; f < 6; f++) {
-            Vector3 faceDirection = VoxelMeshProperties.faceChecks[f];
+            Vector3 faceDirection = VoxelProperties.faceChecks[f];
 
             int neighborX = x + Mathf.FloorToInt(faceDirection.x);
             int neighborY = y + Mathf.FloorToInt(faceDirection.y);

@@ -24,6 +24,11 @@ public class SettingUICheckbox : MonoBehaviour
                 break;
             }
 
+            case SettingType.EnableShaders: {
+                toggle.isOn = GameSettings.EnableShaders;
+                break;
+            }
+
             default: { break; }
         }
     }

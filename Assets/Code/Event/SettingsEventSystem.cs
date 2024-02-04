@@ -28,6 +28,7 @@ public class SettingsEventSystem : MonoBehaviour
     private UnityEvent<int> maxFramerateChangeEvent = new UnityEvent<int>();
     private UnityEvent<bool> enableVSyncChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> fullscreenChangeEvent = new UnityEvent<bool>();
+    private UnityEvent<bool> enableShadersChangeEvent = new UnityEvent<bool>();
     private UnityEvent applyChangesEvent = new UnityEvent();
 
     private void Awake() {
@@ -43,6 +44,7 @@ public class SettingsEventSystem : MonoBehaviour
         AddMaxFramerateChangeListeners();
         AddEnableVSyncChangeEventListeners();
         AddFullscreenChangeEventListeners();
+        AddEnableShadersChangeEventListeners();
         AddApplyChangesListeners();
     }
 
@@ -72,6 +74,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     private void AddFullscreenChangeEventListeners() {
         fullscreenChangeEvent.AddListener(GameSettings.SetFullscreen);
+    }
+
+    private void AddEnableShadersChangeEventListeners() {
+        enableShadersChangeEvent.AddListener(GameSettings.SetEnableShaders);
     }
 
     private void AddApplyChangesListeners() {
@@ -105,6 +111,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     public void InvokeFullscreenChange(bool value) {
         fullscreenChangeEvent.Invoke(value);
+    }
+
+    public void InvokeEnableShadersChange(bool value) {
+        enableShadersChangeEvent.Invoke(value);
     }
 
     public void InvokeApplyChanges() {

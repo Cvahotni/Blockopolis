@@ -11,8 +11,10 @@ public class BlockSoundGroup : ScriptableObject
     [Header("Sounds")]
     public AudioClip[] breakSounds;
     public AudioClip[] placeSounds;
+    public AudioClip[] miningSounds;
 
     [Header("Volume")]
     public float breakSoundVolume = 1.0f;
     public float placeSoundVolume = 1.0f;
+    public float miningSoundVolume = 1.0f;
 }

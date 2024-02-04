@@ -8,11 +8,12 @@ public class GameSettings
     private static int viewDistance = 16;
     private static int chunksPerSecond = 500;
     private static int featuresPerSecond = 500;
-    private static int chunkPoolSize = 16384;
+    private static int chunkPoolSize = 0;
     private static int maxFramerate = 250;
     private static int chunkBuildsPerFrame = 2;
     private static bool enableVSync = true;
     private static bool fullscreen = false;
+    private static bool enableShaders = true;
 
     private static readonly int minViewDistance = 2;
     private static readonly int maxViewDistance = 64;
@@ -67,6 +68,11 @@ public class GameSettings
         set { fullscreen = value; }
     }
 
+    public static bool EnableShaders {
+        get { return enableShaders; }
+        set { enableShaders = value; }
+    }
+
     public static int ChunksPerSecondMultiplier {
         get { return chunksPerSecondMultiplier; }
     }
@@ -74,12 +80,14 @@ public class GameSettings
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Start() {
         GameSettingsStorage.Load();
+        
         ApplyChangesToUnity();
+        UpdateChunkPoolSize();
     }
 
     public static void SetViewDistance(int newViewDistance) {
         viewDistance = Mathf.Clamp(newViewDistance, minViewDistance, maxViewDistance);
-        //chunkPoolSize = 64 * (viewDistance * 2);
+        UpdateChunkPoolSize();
     }
 
     public static void SetChunksPerSecond(int newChunksPerSecond) {
@@ -108,9 +116,20 @@ public class GameSettings
         ApplyChangesToUnity();
     }
 
+    public static void SetEnableShaders(bool newEnableShaders) {
+        enableShaders = newEnableShaders;
+        ApplyChangesToUnity();
+    }
+
+    private static void UpdateChunkPoolSize() {
+        chunkPoolSize = 64 * (viewDistance * 2);
+    }
+
     public static void ApplyChangesToUnity() {
         Application.targetFrameRate = maxFramerate;
         Screen.fullScreen = fullscreen;
+
         QualitySettings.vSyncCount = enableVSync ? 1 : 0;
+        QualitySettings.SetQualityLevel(enableShaders ? 0 : 1, true);
     }
 }

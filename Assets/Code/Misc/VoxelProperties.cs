@@ -24,8 +24,18 @@ public class VoxelProperties {
 	public static readonly int worldSizeInChunksHalved = worldSizeInChunks / 2;
 
 	public static readonly int regionWidth = 256;
+	public static readonly int regionWidthInChunks = regionWidth >> chunkBitShift;
 	public static readonly int worldSizeInRegions = worldSize / regionWidth;
 	public static readonly int worldSizeInRegionsHalved = worldSizeInRegions / 2;
 
 	public static readonly int regionBitShift = 8;
+
+	public static readonly Vector3[] faceChecks = new Vector3[6] {
+		new Vector3(0.0f, 0.0f, -1.0f),
+		new Vector3(0.0f, 0.0f, 1.0f),
+		new Vector3(0.0f, 1.0f, 0.0f),
+		new Vector3(0.0f, -1.0f, 0.0f),
+		new Vector3(-1.0f, 0.0f, 0.0f),
+		new Vector3(1.0f, 0.0f, 0.0f)
+	};
 }

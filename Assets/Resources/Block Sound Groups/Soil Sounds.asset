@@ -17,9 +17,12 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c3237a9623730e490affa39cbb351252, type: 3}
   - {fileID: 8300000, guid: 1f3b7457cc34b80e281645ef8b947c1d, type: 3}
   - {fileID: 8300000, guid: a40b7599f851873239e3b7e7d223a159, type: 3}
-  breakSoundVolume: 1
   placeSounds:
   - {fileID: 8300000, guid: a2390a84ba1b3b9239f3e8771db9a629, type: 3}
   - {fileID: 8300000, guid: 5737f1ed4ffb59a629365ec6c49c79aa, type: 3}
   - {fileID: 8300000, guid: 0b3863f8db7eb984f80e12f0e4598eb1, type: 3}
+  miningSounds:
+  - {fileID: 8300000, guid: 138d4f081df78f46cb5462b7f3146a72, type: 3}
+  breakSoundVolume: 1
   placeSoundVolume: 0.9
+  miningSoundVolume: 1

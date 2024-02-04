@@ -65,9 +65,37 @@ public class WorldAllocator : MonoBehaviour
 
         long chunkPos = queue.Dequeue();
         bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
-
+        
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
 
+        int chunkX = ChunkPositionHelper.GetChunkPosX(chunkPos);
+        int chunkZ = ChunkPositionHelper.GetChunkPosZ(chunkPos);
+
+        int relativeChunkX = WorldPositionHelper.GetRelativeChunkX(chunkX);
+        int relativeChunkZ = WorldPositionHelper.GetRelativeChunkZ(chunkZ);
+
+        Border.BorderDirection borderDirection = WorldPositionHelper.GetBorderDirection(relativeChunkX, relativeChunkZ, VoxelProperties.regionWidthInChunks);
+        Vector2Int axis = Border.Axes[(int) borderDirection];
+
+        int x = WorldPositionHelper.IsChunkOnRegionEdge(relativeChunkX, relativeChunkZ) ? axis.x : 0;
+        int z = WorldPositionHelper.IsChunkOnRegionEdge(relativeChunkX, relativeChunkZ) ? axis.y : 0;
+
+        bool skipChunkX = HandleRegionAllocation(RegionPositionHelper.ModifyRegionPos(regionPos, x, z));
+        bool skipChunkZ = HandleRegionAllocation(RegionPositionHelper.ModifyRegionPos(regionPos, x, z));
+        bool skipCurrentChunk = HandleRegionAllocation(regionPos);
+        
+        if(shouldCullChunk || skipChunkX || skipChunkZ || skipCurrentChunk) {
+            queue.Enqueue(chunkPos);
+            return;
+        }
+
+        worldEventSystem.InvokeChunkBuild(chunkPos);
+
+        chunksGenerated++;
+        worldEventSystem.InvokeChunksGeneratedChange(chunksGenerated);
+    }
+
+    private bool HandleRegionAllocation(long regionPos) {
         bool doesRegionExist = WorldStorage.DoesRegionExist(regionPos);
         bool isRegionSaved = WorldStorage.IsRegionSaved(currentWorld, regionPos);
         bool regionIsInvalid = !doesRegionExist && isRegionSaved;
@@ -79,15 +107,7 @@ public class WorldAllocator : MonoBehaviour
         if(shouldLoadRegion) WorldStorage.LoadRegionToMap(currentWorld, regionPos);
         if(shouldCreateRegion) WorldStorage.CreateRegionAt(regionPos);
 
-        if(shouldCullChunk || regionIsInvalid || isWaitingForRegion) {
-            queue.Enqueue(chunkPos);
-            return;
-        }
-
-        worldEventSystem.InvokeChunkBuild(chunkPos);
-
-        chunksGenerated++;
-        worldEventSystem.InvokeChunksGeneratedChange(chunksGenerated);
+        return regionIsInvalid || isWaitingForRegion;
     }
 
     public static bool IsChunkOutsideOfWorld(long coord) {

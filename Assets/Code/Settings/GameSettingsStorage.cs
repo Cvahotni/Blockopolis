@@ -16,6 +16,7 @@ public class GameSettingsStorage
             writer.WriteLine("maxFramerate: " + GameSettings.MaxFramerate);
             writer.WriteLine("enableVSync: " + GameSettings.EnableVSync);
             writer.WriteLine("fullscreen: " + GameSettings.Fullscreen);
+            writer.WriteLine("enableShaders: " + GameSettings.EnableShaders);
         }
     }
 
@@ -38,6 +39,7 @@ public class GameSettingsStorage
             if(line.Contains("maxFramerate")) GameSettings.MaxFramerate = int.Parse(splitStringValue);
             if(line.Contains("enableVSync")) GameSettings.EnableVSync = bool.Parse(splitStringValue);
             if(line.Contains("fullscreen")) GameSettings.Fullscreen = bool.Parse(splitStringValue);
+            if(line.Contains("enableShaders")) GameSettings.EnableShaders = bool.Parse(splitStringValue);
         }
     }
 }

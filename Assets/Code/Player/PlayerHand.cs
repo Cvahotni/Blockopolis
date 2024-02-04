@@ -66,7 +66,11 @@ public class PlayerHand : MonoBehaviour
         StartCoroutine(SwingItemHandReset());
     }
 
-    public void SwingHeldItemRepeating(object sender, EventArgs e) {
+    public void SwingHeldItemRepeating(object sender, BlockModifyData data) {
+        SwingHeldItemRepeating();
+    }
+
+    private void SwingHeldItemRepeating() {
         AssignAnimator();
 
         handObjectAnimator.SetBool("isSwinging", false);

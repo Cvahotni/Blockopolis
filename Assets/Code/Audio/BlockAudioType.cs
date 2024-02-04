@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum BlockAudioType
 {
-    Break, Place
+    Break, Place, Mining
 }

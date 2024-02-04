@@ -24,7 +24,6 @@ public class PlayerBuild : MonoBehaviour
     private Camera playerCamera;
 
     private Vector3Int targetPos;
-    private Vector3Int previousTargetPos;
     private Vector3Int highlightPos;
 
     private WaitForSeconds mineDelayWaitForSeconds;
@@ -39,12 +38,7 @@ public class PlayerBuild : MonoBehaviour
     private bool isEnabled = true;
     private bool canMine = true;
 
-    private RaycastHit[] raycastHit;
-
-    private RaycastHit HitData {
-        get { return raycastHit[0]; }
-        set { raycastHit[0] = value; }
-    }
+    private RaycastHit[] raycastHits;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -53,7 +47,7 @@ public class PlayerBuild : MonoBehaviour
 
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;
-        raycastHit = new RaycastHit[1];
+        raycastHits = new RaycastHit[2];
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
@@ -65,12 +59,17 @@ public class PlayerBuild : MonoBehaviour
     private void Update() {
         if(!isEnabled) return;
 
-        RaycastIntoWorld();
         UpdateBlockOutline();
         UpdateBlockCrackOutline();
-
         AdjustBlockCrackAnimatorSpeed();
-        GetInputs();
+        GetPlaceInputs();
+    }
+
+    private void FixedUpdate() {
+        if(!isEnabled) return;
+
+        RaycastIntoWorld();
+        GetMineInputs();
     }
 
     public void Enable(object sender, EventArgs e) {
@@ -83,30 +82,42 @@ public class PlayerBuild : MonoBehaviour
         blockCrackAnimator.enabled = false;
     }
 
-    private void GetInputs() {
+    private void GetMineInputs() {
         isMining = Input.GetButton("Click");
 
         if(isMining) MineCurrentBlock();
         else ResetMiningProgress(true);
+    }
 
+    private void GetPlaceInputs() {
         if(Input.GetButtonDown("Click2")) PlaceTargetBlock();
     }
 
     private void MineCurrentBlock() {
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
-        if(!CanModifyAt(offsetTargetPos)) return;
+        if(!CanModifyAt(offsetTargetPos)) {
+            ResetMiningProgress(true);
+            return;
+        }
+
         if(!blockCrackOutline.activeSelf) return;
         if(!canMine) return;
 
         if(currentBlockBreakProgress == 0.0f) {
+            ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
+            
+            BlockModifyData blockBreakStartData = new BlockModifyData(
+                offsetTargetPos.x, offsetTargetPos.y, offsetTargetPos.z,
+            block, 1);
+
             blockCrackAnimator.enabled = true;
 
             blockCrackAnimator.Rebind();
             blockCrackAnimator.Update(0.0f);
 
             blockCrackAnimator.Play("blockcrack");
-            playerEventSystem.InvokeBlockBreakStart();
+            playerEventSystem.InvokeBlockBreakStart(blockBreakStartData);
         }
 
         currentBlockBreakProgress += Time.deltaTime * Time.timeScale * GetBlockBreakSpeed();
@@ -196,10 +207,48 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void RaycastIntoWorld() {
-        if(previousTargetPos != null) previousTargetPos = targetPos;
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        ResetRaycastPositions();
 
-        float step = checkIncrement;
+        int closestHitIndex = -1;
+        RaycastHit closestHit = new RaycastHit();
+
+        if(Physics.RaycastNonAlloc(ray, raycastHits, reach, chunkMask) != 0) {
+            Array.Sort(raycastHits, delegate(RaycastHit hit1, RaycastHit hit2) { return hit1.distance.CompareTo(hit2.distance); } );
+
+            foreach(RaycastHit hit in raycastHits) {
+                if(hit.point == Vector3.zero || hit.normal == Vector3.zero) continue;
+                closestHit = closestHitIndex >= 0 ? raycastHits[closestHitIndex] : raycastHits[0];
+            }
+
+            Vector3 targetPoint = closestHit.point - closestHit.normal * 0.01f;
+            Vector3 targetHighlightPoint = closestHit.point + closestHit.normal * 0.01f;
+        
+            int targetPosX = Mathf.FloorToInt(targetPoint.x);
+            int targetPosY = Mathf.FloorToInt(targetPoint.y);
+            int targetPosZ = Mathf.FloorToInt(targetPoint.z);
+
+            int targetHighlightPosX = Mathf.FloorToInt(targetHighlightPoint.x);
+            int targetHighlightPosY = Mathf.FloorToInt(targetHighlightPoint.y);
+            int targetHighlightPosZ = Mathf.FloorToInt(targetHighlightPoint.z);
+
+            ushort currentTargetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
+
+            if(currentTargetRaycastBlock != 0) {
+                targetPos.x = targetPosX;
+                targetPos.y = targetPosY;
+                targetPos.z = targetPosZ;
+
+                highlightPos.x = targetHighlightPosX;
+                highlightPos.y = targetHighlightPosY;
+                highlightPos.z = targetHighlightPosZ;
+
+                targetRaycastBlock = currentTargetRaycastBlock;
+            }
+        }
+    }
+
+    private void ResetRaycastPositions() {
         Vector3 playerPosition = playerCamera.transform.position;
 
         int positionX = Mathf.FloorToInt(playerPosition.x);
@@ -210,31 +259,6 @@ public class PlayerBuild : MonoBehaviour
 
         targetPos = playerPositionFloored;
         highlightPos = playerPositionFloored;
-
-        if(Physics.RaycastNonAlloc(ray, raycastHit, reach, chunkMask) != 0) {
-            Vector3 targetPoint = HitData.point - HitData.normal * 0.1f;
-            Vector3 targetHighlightPoint = HitData.point + HitData.normal * 0.1f;
-        
-            int targetPosX = Mathf.FloorToInt(targetPoint.x);
-            int targetPosY = Mathf.FloorToInt(targetPoint.y);
-            int targetPosZ = Mathf.FloorToInt(targetPoint.z);
-
-            int targetHighlightPosX = Mathf.FloorToInt(targetHighlightPoint.x);
-            int targetHighlightPosY = Mathf.FloorToInt(targetHighlightPoint.y);
-            int targetHighlightPosZ = Mathf.FloorToInt(targetHighlightPoint.z);
-
-            targetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
-
-            if(targetRaycastBlock != 0) {
-                targetPos.x = targetPosX;
-                targetPos.y = targetPosY;
-                targetPos.z = targetPosZ;
-
-                highlightPos.x = targetHighlightPosX;
-                highlightPos.y = targetHighlightPosY;
-                highlightPos.z = targetHighlightPosZ;
-            }
-        }
     }
 
     private bool CanModifyAt(Vector3 position) {
@@ -248,18 +272,20 @@ public class PlayerBuild : MonoBehaviour
     private void UpdateBlockOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
 
-        blockOutline.SetActive(CanModifyAt(blockOutlinePosition));
+        blockOutline.SetActive(CanModifyAt(blockOutlinePosition) && !IsAir(blockOutlinePosition));
         blockOutline.transform.position = blockOutlinePosition;
     }
 
     private void UpdateBlockCrackOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
-        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition) && isMining;
+        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition) && isMining && !IsAir(blockOutlinePosition);
 
-        blockCrackOutline.SetActive(CanModifyAt(blockOutlinePosition) && isMining);
+        blockCrackOutline.SetActive(shouldCrackOutlineBeActive);
         blockCrackOutline.transform.position = blockOutlinePosition;
+    }
 
-        if(previousTargetPos != targetPos) ResetMiningProgress(false);
+    private bool IsAir(Vector3 position) {
+        return WorldModifier.GetBlockAt(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)) == 0;
     }
 
     private Vector3 GetOffsetTargetPos() {
