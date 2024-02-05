@@ -22,7 +22,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 520604deccb1aa73f9ebbf4effcdf1d3, type: 3}
   - {fileID: 8300000, guid: 132d0b3d0f7c3a4bdba979d84975cae4, type: 3}
   miningSounds:
-  - {fileID: 8300000, guid: b2878463a7efc810b9a3529338b3487f, type: 3}
+  - {fileID: 8300000, guid: 6b7f7d2c84110723a83183169936e1fc, type: 3}
+  - {fileID: 8300000, guid: b875902b3dae14002990041a884be7d9, type: 3}
+  - {fileID: 8300000, guid: 3ad133564a47b2a6aace68bc6ebd433a, type: 3}
   breakSoundVolume: 0.75
   placeSoundVolume: 1
-  miningSoundVolume: 0.15
+  miningSoundVolume: 0.3

@@ -10,6 +10,7 @@ public class PlayerBuild : MonoBehaviour
     [SerializeField] private float reach = 5.0f;
     [SerializeField] private float checkIncrement = 0.5f;
     [SerializeField] private float breakDelay = 0.1f;
+    [SerializeField] private float progressDelay = 0.25f;
 
     [SerializeField] private GameObject blockOutline;
     [SerializeField] private GameObject blockCrackOutline;
@@ -39,6 +40,7 @@ public class PlayerBuild : MonoBehaviour
     private bool canMine = true;
 
     private RaycastHit[] raycastHits;
+    private BlockModifyData blockBreakStartData;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -51,9 +53,10 @@ public class PlayerBuild : MonoBehaviour
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
-    
         itemRegistry = ItemRegistry.Instance;
+
         mineDelayWaitForSeconds = new WaitForSeconds(breakDelay);
+        InvokeRepeating("PlayMiningSound", 0.0f, progressDelay);
     }
 
     private void Update() {
@@ -93,6 +96,10 @@ public class PlayerBuild : MonoBehaviour
         if(Input.GetButtonDown("Click2")) PlaceTargetBlock();
     }
 
+    private void PlayMiningSound() {
+        if(isMining) playerEventSystem.InvokeBlockBreakProgress(blockBreakStartData);
+    }
+
     private void MineCurrentBlock() {
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
@@ -104,13 +111,13 @@ public class PlayerBuild : MonoBehaviour
         if(!blockCrackOutline.activeSelf) return;
         if(!canMine) return;
 
-        if(currentBlockBreakProgress == 0.0f) {
-            ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
-            
-            BlockModifyData blockBreakStartData = new BlockModifyData(
-                offsetTargetPos.x, offsetTargetPos.y, offsetTargetPos.z,
-            block, 1);
+        ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
+        blockBreakStartData = new BlockModifyData(
+            offsetTargetPos.x, offsetTargetPos.y, offsetTargetPos.z,
+        block, 1);
+
+        if(currentBlockBreakProgress == 0.0f) {
             blockCrackAnimator.enabled = true;
 
             blockCrackAnimator.Rebind();

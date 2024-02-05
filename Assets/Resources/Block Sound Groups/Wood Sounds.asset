@@ -20,7 +20,10 @@ MonoBehaviour:
   placeSounds:
   - {fileID: 8300000, guid: 730b58f1fa2ba56e19c94a2af2a40b56, type: 3}
   - {fileID: 8300000, guid: 47664647842b6d5808e0ce8075d7e779, type: 3}
-  miningSounds: []
+  miningSounds:
+  - {fileID: 8300000, guid: 5841990f9aa7f5fa38ff1924f4d02516, type: 3}
+  - {fileID: 8300000, guid: cd007595d63b98d08b83920c78d60e13, type: 3}
+  - {fileID: 8300000, guid: 78ad050db3902009bbf07691585d9db2, type: 3}
   breakSoundVolume: 0.725
-  placeSoundVolume: 1
-  miningSoundVolume: 0.75
+  placeSoundVolume: 0.35
+  miningSoundVolume: 0.075

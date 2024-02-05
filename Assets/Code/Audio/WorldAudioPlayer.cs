@@ -2,22 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class WorldAudioPlayer : MonoBehaviour
 {
     public static WorldAudioPlayer Instance { get; private set; }
 
     [SerializeField] private float despawnTime = 10.0f;
-    [SerializeField] private float muteTime = 0.25f;
+    [SerializeField] private float deleteTime = 0.15f;
 
     [SerializeField] private AudioClip itemPickupSound;
     [SerializeField] private float itemPickupSoundVolume = 0.5f;
     
     private WaitForSeconds despawnShortTime;
-    private WaitForSeconds muteShortTime;
+    private WaitForSeconds deleteShortTime;
 
-    private Dictionary<AudioSource, float> audioObjects = new Dictionary<AudioSource, float>();
-    private List<GameObject> interuptableObjects = new List<GameObject>();
+    private Dictionary<AudioSource, float> audioSourceMap = new Dictionary<AudioSource, float>();
+    private int miningSoundIndex = 0;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -26,7 +27,7 @@ public class WorldAudioPlayer : MonoBehaviour
 
     private void Start() {
         despawnShortTime = new WaitForSeconds(despawnTime);
-        muteShortTime = new WaitForSeconds(muteTime);
+        deleteShortTime = new WaitForSeconds(deleteTime);
     }
 
     public void PlayBlockBreak(object sender, BlockModifyData data) {
@@ -42,7 +43,7 @@ public class WorldAudioPlayer : MonoBehaviour
     }
 
     public void PlayItemPickup(object sender, ItemPickupData data) {
-        PlayWorldAudio(data.position, itemPickupSound, itemPickupSoundVolume, false, false);
+        PlayWorldAudio(data.position, itemPickupSound, itemPickupSoundVolume, false);
     }
 
     private void PlayBlockAudio(BlockModifyData data, BlockAudioType type) {
@@ -59,7 +60,7 @@ public class WorldAudioPlayer : MonoBehaviour
                 if(breakSoundsSize == 0) return;
 
                 int breakRandom = UnityEngine.Random.Range(0, breakSoundsSize);
-                PlayWorldAudio(position, blockSoundGroup.breakSounds[breakRandom], blockSoundGroup.breakSoundVolume, false, false);
+                PlayWorldAudio(position, blockSoundGroup.breakSounds[breakRandom], blockSoundGroup.breakSoundVolume, false);
 
                 break;
             }
@@ -69,18 +70,19 @@ public class WorldAudioPlayer : MonoBehaviour
                 if(placeSoundsSize == 0) return;
 
                 int placeRandom = UnityEngine.Random.Range(0, placeSoundsSize);
-                PlayWorldAudio(position, blockSoundGroup.placeSounds[placeRandom], blockSoundGroup.placeSoundVolume, false, false);
+                PlayWorldAudio(position, blockSoundGroup.placeSounds[placeRandom], blockSoundGroup.placeSoundVolume, false);
 
                 break;
             }
 
             case BlockAudioType.Mining: {
                 int miningSoundsSize = blockSoundGroup.miningSounds.Length;
-                if(miningSoundsSize == 0) return;
 
-                for(int i = 0; i < miningSoundsSize; i++) {
-                    PlayWorldAudio(position, blockSoundGroup.miningSounds[i], blockSoundGroup.miningSoundVolume, true, true);
-                }
+                if(miningSoundsSize == 0) return;
+                if(miningSoundIndex >= miningSoundsSize) miningSoundIndex = 0;
+
+                PlayWorldAudio(position, blockSoundGroup.miningSounds[miningSoundIndex], blockSoundGroup.miningSoundVolume, true);
+                miningSoundIndex++;
 
                 break;
             }
@@ -89,7 +91,20 @@ public class WorldAudioPlayer : MonoBehaviour
         }
     }
 
-    private void PlayWorldAudio(Vector3 position, AudioClip sound, float volume, bool interuptable, bool loop) {
+    public void RemoveInterruptableAudioSources(object sender, EventArgs e) {
+        for(int i = audioSourceMap.Count - 1; i >= 0; i--) {
+            AudioSource source = audioSourceMap.Keys.ElementAt(i);
+            if(source == null) continue;
+            if(source.volume == 0.0f) continue;
+
+            source.volume = 0.0f;
+            StartCoroutine(DestroyAudioSourceCoroutine(source.gameObject, true));
+        }
+
+        audioSourceMap.Clear();
+    }
+
+    private void PlayWorldAudio(Vector3 position, AudioClip sound, float volume, bool interrupt) {
         GameObject audioSourceObject = new GameObject("World Audio Source");
         audioSourceObject.transform.position = position;
 
@@ -97,70 +112,15 @@ public class WorldAudioPlayer : MonoBehaviour
 
         audioSource.volume = volume;
         audioSource.clip = sound;
-        audioSource.loop = loop;
 
-        if(interuptable) {
-            interuptableObjects.Add(audioSourceObject);
-        }
-
-        audioObjects.Add(audioSource, volume);
-
+        if(interrupt) audioSourceMap.Add(audioSource, volume);
         audioSource.Play();
-        StartCoroutine(DestroyAudioSourceCoroutine(audioSourceObject));
+
+        StartCoroutine(DestroyAudioSourceCoroutine(audioSourceObject, false));
     }
 
-    public void DestroyExistingMiningSounds(object sender, EventArgs e) {
-        DestroyExistingMiningSounds();
-    }
-
-    public void DestroyExistingMiningSounds(object sender, BlockModifyData data) {
-        DestroyExistingMiningSounds();
-    }
-
-    public void MuteAllWorldAudio(object sender, EventArgs e) {
-        SetAudioMute(true);
-    }
-
-    public void UnmuteAllWorldAudio(object sender, EventArgs e) {
-        SetAudioMute(false);
-        audioObjects.Clear();
-    }
-
-    private void SetAudioMute(bool mute) {
-        foreach(var pair in audioObjects) {
-            AudioSource audioSource = pair.Key;
-            float volume = pair.Value;
-
-            if(audioSource == null) continue;
-
-            if(mute) audioSource.volume = 0.0f;
-            else audioSource.volume = volume;
-        }
-    }
-
-    private void DestroyExistingMiningSounds() {
-        foreach(GameObject interruptableGameObject in interuptableObjects) {
-            if(interruptableGameObject == null) continue;
-
-            AudioSource audioSource = interruptableGameObject.GetComponent<AudioSource>();
-            StartCoroutine(MuteAudioSourceCoroutine(interruptableGameObject, audioSource));
-        }
-    }
-
-    private IEnumerator MuteAudioSourceCoroutine(GameObject sourceObject, AudioSource source) {
-        for(int i = 0; i < 20; i++) {
-            yield return muteShortTime;
-
-            if(source == null) break;
-            source.volume -= 0.05f;
-        }
-
-        interuptableObjects.Remove(sourceObject);
-        Destroy(sourceObject);
-    }
-
-    private IEnumerator DestroyAudioSourceCoroutine(GameObject audioObject) {
-        yield return despawnShortTime;
+    private IEnumerator DestroyAudioSourceCoroutine(GameObject audioObject, bool delete) {
+        yield return delete ? deleteShortTime : despawnShortTime;
         Destroy(audioObject);
     }
 }

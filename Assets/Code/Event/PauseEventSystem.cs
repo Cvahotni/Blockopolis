@@ -32,7 +32,6 @@ public class PauseEventSystem : MonoBehaviour
     private SavingScreen savingScreen;
     private Inventory inventory;
     private InventoryScreen inventoryScreen;
-    private WorldAudioPlayer worldAudioPlayer;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
@@ -56,7 +55,6 @@ public class PauseEventSystem : MonoBehaviour
         savingScreen = SavingScreen.Instance;
         inventory = Inventory.Instance;
         inventoryScreen = InventoryScreen.Instance;
-        worldAudioPlayer = WorldAudioPlayer.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
@@ -75,8 +73,6 @@ public class PauseEventSystem : MonoBehaviour
         pauseEvent += hotbar.Disable;
         pauseEvent += inventory.DeactivateInUI;
         pauseEvent += inventoryScreen.Disable;
-        pauseEvent += worldAudioPlayer.DestroyExistingMiningSounds;
-        pauseEvent += worldAudioPlayer.MuteAllWorldAudio;
     }
 
     private void AddUnpauseListeners() {
@@ -90,8 +86,6 @@ public class PauseEventSystem : MonoBehaviour
         unpauseEvent += hotbar.Enable;
         unpauseEvent += inventory.DeactivateInUI;
         unpauseEvent += inventoryScreen.Enable;
-        unpauseEvent += worldAudioPlayer.DestroyExistingMiningSounds;
-        unpauseEvent += worldAudioPlayer.UnmuteAllWorldAudio;
     }
 
     private void AddPauseToggleListeners() {

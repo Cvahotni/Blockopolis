@@ -33,6 +33,7 @@ public class PlayerEventSystem : MonoBehaviour
 
     private event EventHandler<bool> groundCheckEvent;
     private event EventHandler<BlockModifyData> blockBreakStartEvent;
+    private event EventHandler<BlockModifyData> blockBreakProgressEvent;
     private event EventHandler blockBreakEndEvent;
     private event EventHandler<BlockModifyData> blockBreakEvent;
     private event EventHandler<BlockModifyData> blockPlaceEvent;
@@ -59,6 +60,7 @@ public class PlayerEventSystem : MonoBehaviour
 
         AddGroundCheckListeners();
         AddBlockBreakStartListeners();
+        AddBlockBreakProgressListeners();
         AddBlockBreakEndListeners();
         AddBlockBreakListeners();
         AddBlockPlaceListeners();
@@ -71,13 +73,15 @@ public class PlayerEventSystem : MonoBehaviour
 
     private void AddBlockBreakStartListeners() {
         blockBreakStartEvent += playerHand.SwingHeldItemRepeating;
-        blockBreakStartEvent += worldAudioPlayer.DestroyExistingMiningSounds;
-        blockBreakStartEvent += worldAudioPlayer.PlayBlockMining;
     }
 
     private void AddBlockBreakEndListeners() {
         blockBreakEndEvent += playerHand.ResetHandSwing;
-        blockBreakEndEvent += worldAudioPlayer.DestroyExistingMiningSounds;
+        blockBreakEndEvent += worldAudioPlayer.RemoveInterruptableAudioSources;
+    }
+
+    private void AddBlockBreakProgressListeners() {
+        blockBreakProgressEvent += worldAudioPlayer.PlayBlockMining;
     }
 
     private void AddBlockBreakListeners() {
@@ -104,6 +108,10 @@ public class PlayerEventSystem : MonoBehaviour
 
     public void InvokeBlockBreakStart(BlockModifyData data) {
         blockBreakStartEvent.Invoke(this, data);
+    }
+
+    public void InvokeBlockBreakProgress(BlockModifyData data) {
+        blockBreakProgressEvent.Invoke(this, data);
     }
 
     public void InvokeBlockBreakEnd() {
