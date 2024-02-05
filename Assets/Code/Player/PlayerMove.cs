@@ -22,6 +22,8 @@ public class PlayerMove : MonoBehaviour
     private bool allowsInput = true;
     private bool isEnabled = true;
 
+    private Vector3 lastPosition;
+
     public bool IsWalking {
         get { return isWalking; }
     }
@@ -34,6 +36,9 @@ public class PlayerMove : MonoBehaviour
         else Instance = this;
     }
 
+    private void Start() {
+        lastPosition = transform.position;
+    }
 
     private void Update() {
         if(!isEnabled) return;
@@ -44,6 +49,7 @@ public class PlayerMove : MonoBehaviour
         }
 
         HandleMoveVelocity();
+        lastPosition = transform.position;
     }
 
     public void Enable(object sender, EventArgs e) {
@@ -80,7 +86,7 @@ public class PlayerMove : MonoBehaviour
         x = Input.GetAxis("Horizontal") * speed;
         z = Input.GetAxis("Vertical") * speed;
         
-        isWalking = x != 0.0f || z != 0.0f && isGrounded;
+        isWalking = x != 0.0f || z != 0.0f && isGrounded && Vector3.Distance(lastPosition, transform.position) >= 1.0f / (Time.frameCount / Time.time);
     }
 
     private void HandleMoveVelocity() {

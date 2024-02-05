@@ -8,9 +8,10 @@ public class MouseLook : MonoBehaviour
     public static MouseLook Instance { get; private set; }
     private PauseEventSystem pauseEventSystem;
 
-    [SerializeField] private float sensitivity = 100.0f;
     [SerializeField] private float blendRate = 1.0f;
     [SerializeField] private Transform playerBody;
+
+    private Camera camera;
 
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
@@ -30,6 +31,11 @@ public class MouseLook : MonoBehaviour
 
     private void Start() {
         pauseEventSystem = PauseEventSystem.Instance;
+        camera = GetComponent<Camera>();
+    }
+
+    private void FixedUpdate() {
+        UpdateCameraFOV();
     }
 
     private void LateUpdate() {
@@ -38,6 +44,10 @@ public class MouseLook : MonoBehaviour
 
         GetMouseInput();
         RotatePlayer();
+    }
+
+    private void UpdateCameraFOV() {
+        camera.fieldOfView = GameSettings.FOV;
     }
 
     public void Enable(object sender, EventArgs e) {
@@ -61,8 +71,8 @@ public class MouseLook : MonoBehaviour
     }
 
     private void GetMouseInput() {
-        mouseX = Input.GetAxis("Mouse X") * sensitivity;
-        mouseY = Input.GetAxis("Mouse Y") * sensitivity;
+        mouseX = Input.GetAxis("Mouse X") * (1.0f + (3.0f * ((GameSettings.Sensitivity / 100.0f))));
+        mouseY = Input.GetAxis("Mouse Y") * (1.0f + (3.0f * ((GameSettings.Sensitivity / 100.0f))));
     }
 
     private void RotatePlayer() {

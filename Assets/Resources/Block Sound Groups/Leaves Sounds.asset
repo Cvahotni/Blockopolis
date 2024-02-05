@@ -23,5 +23,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 94f8b93a3c06d3e238538679a49f4613, type: 3}
   - {fileID: 8300000, guid: 8e9dafe4c83940b828d601d53c168ab4, type: 3}
   breakSoundVolume: 0.5
-  placeSoundVolume: 0.4875
-  miningSoundVolume: 1
+  placeSoundVolume: 0.4
+  miningSoundVolume: 0.1

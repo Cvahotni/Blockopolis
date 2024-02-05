@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using System;
 using System.Linq;
 
@@ -13,6 +14,8 @@ public class WorldAudioPlayer : MonoBehaviour
 
     [SerializeField] private AudioClip itemPickupSound;
     [SerializeField] private float itemPickupSoundVolume = 0.5f;
+
+    [SerializeField] private AudioMixerGroup audioMixerGroup;
     
     private WaitForSeconds despawnShortTime;
     private WaitForSeconds deleteShortTime;
@@ -112,6 +115,7 @@ public class WorldAudioPlayer : MonoBehaviour
 
         audioSource.volume = volume;
         audioSource.clip = sound;
+        audioSource.outputAudioMixerGroup = audioMixerGroup;
 
         if(interrupt) audioSourceMap.Add(audioSource, volume);
         audioSource.Play();

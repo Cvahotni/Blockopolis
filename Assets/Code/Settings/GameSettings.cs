@@ -11,6 +11,9 @@ public class GameSettings
     private static int chunkPoolSize = 0;
     private static int maxFramerate = 250;
     private static int chunkBuildsPerFrame = 2;
+    private static int fov = 90;
+    private static int sensitivity = 50;
+    private static int volume = 50;
     private static bool enableVSync = true;
     private static bool fullscreen = false;
     private static bool enableShaders = true;
@@ -25,6 +28,12 @@ public class GameSettings
     private static readonly int maxFeaturesPerSecond = 1500;
     private static readonly int minFramerate = 10;
     private static readonly int maxFramerateLimit = 250;
+    private static readonly int minFOV = 30;
+    private static readonly int maxFOV = 120;
+    private static readonly int minSensitivity = 1;
+    private static readonly int maxSensitivity = 200;
+    private static readonly int minVolume = 0;
+    private static readonly int maxVolume = 100;
 
     private static readonly int chunksPerSecondMultiplier = 8;
 
@@ -56,6 +65,21 @@ public class GameSettings
     public static int MaxFramerate {
         get { return maxFramerate; }
         set { maxFramerate = value; }
+    }
+
+    public static int FOV {
+        get { return fov; }
+        set { fov = value; }
+    }
+
+    public static int Sensitivity {
+        get { return sensitivity; }
+        set { sensitivity = value; }
+    }
+
+    public static int Volume {
+        get { return volume; }
+        set { volume = value; }
     }
 
     public static bool EnableVSync {
@@ -104,6 +128,18 @@ public class GameSettings
 
     public static void SetMaxFramerate(int newMaxFramerate) {
         maxFramerate = Mathf.Clamp(newMaxFramerate, minFramerate, maxFramerateLimit);
+    }
+
+    public static void SetFOV(int newFov) {
+        fov = Mathf.Clamp(newFov, minFOV, maxFOV);
+    }
+
+    public static void SetSensitivity(int newSensitivity) {
+        sensitivity = Mathf.Clamp(newSensitivity, minSensitivity, maxSensitivity);
+    }
+
+    public static void SetVolume(int newVolume) {
+        volume = Mathf.Clamp(newVolume, minVolume, maxVolume);
     }
 
     public static void SetEnableVSync(bool newEnableVSync) {

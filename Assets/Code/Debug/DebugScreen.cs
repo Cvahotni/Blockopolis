@@ -53,7 +53,7 @@ public class DebugScreen : MonoBehaviour
 
     private void UpdateFPSText() {
         if(!debugScreenEnabled) return;
-        fpsText.text = Mathf.FloorToInt(1.0f / Time.deltaTime) + " FPS";
+        fpsText.text = Mathf.FloorToInt(1.0f / Time.unscaledDeltaTime) + " FPS";
     }
 
     private void UpdatePositionText() {

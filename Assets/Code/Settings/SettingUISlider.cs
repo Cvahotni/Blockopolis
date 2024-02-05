@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SettingUISlider : MonoBehaviour
 {
     [SerializeField] private Slider slider;
-    [SerializeField] private int multiplier;
+    [SerializeField] private float multiplier;
     [SerializeField] private SettingType settingType;
 
     private void Start() {
@@ -37,6 +37,21 @@ public class SettingUISlider : MonoBehaviour
 
             case SettingType.ChunkBuildsPerFrame: {
                 slider.value = GameSettings.ChunkBuildsPerFrame / multiplier;
+                break;
+            }
+
+            case SettingType.FOV: {
+                slider.value = GameSettings.FOV / multiplier;
+                break;
+            }
+
+            case SettingType.Sensitivity: {
+                slider.value = GameSettings.Sensitivity / multiplier;
+                break;
+            }
+
+            case SettingType.Volume: {
+                slider.value = GameSettings.Volume / multiplier;
                 break;
             }
 

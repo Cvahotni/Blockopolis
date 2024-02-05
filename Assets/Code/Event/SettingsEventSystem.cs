@@ -26,6 +26,9 @@ public class SettingsEventSystem : MonoBehaviour
     private UnityEvent<int> featuresPerSecondChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> chunkBuildsPerFrameChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> maxFramerateChangeEvent = new UnityEvent<int>();
+    private UnityEvent<int> fovChangeEvent = new UnityEvent<int>();
+    private UnityEvent<int> sensitivityChangeEvent = new UnityEvent<int>();
+    private UnityEvent<int> volumeChangeEvent = new UnityEvent<int>();
     private UnityEvent<bool> enableVSyncChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> fullscreenChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> enableShadersChangeEvent = new UnityEvent<bool>();
@@ -42,6 +45,9 @@ public class SettingsEventSystem : MonoBehaviour
         AddFeaturesPerSecondChangeListeners();
         AddChunkBuildsPerFrameChangeListener();
         AddMaxFramerateChangeListeners();
+        AddFOVChangeListeners();
+        AddSensitivityChangeListeners();
+        AddVolumeChangeListeners();
         AddEnableVSyncChangeEventListeners();
         AddFullscreenChangeEventListeners();
         AddEnableShadersChangeEventListeners();
@@ -66,6 +72,18 @@ public class SettingsEventSystem : MonoBehaviour
 
     private void AddMaxFramerateChangeListeners() {
         maxFramerateChangeEvent.AddListener(GameSettings.SetMaxFramerate);
+    }
+
+    private void AddFOVChangeListeners() {
+        fovChangeEvent.AddListener(GameSettings.SetFOV);
+    }
+
+    private void AddSensitivityChangeListeners() {
+        sensitivityChangeEvent.AddListener(GameSettings.SetSensitivity);
+    }
+
+    private void AddVolumeChangeListeners() {
+        volumeChangeEvent.AddListener(GameSettings.SetVolume);
     }
 
     private void AddEnableVSyncChangeEventListeners() {
@@ -98,11 +116,23 @@ public class SettingsEventSystem : MonoBehaviour
     }
 
     public void InvokeChunkBuildsPerFrameChange(float amount) {
-        chunkBuildsPerFrameChangeEvent.Invoke((int) amount * 1);
+        chunkBuildsPerFrameChangeEvent.Invoke((int) amount);
     }
 
     public void InvokeMaxFramerateChange(float amount) {
         maxFramerateChangeEvent.Invoke((int) amount * 10);
+    }
+
+    public void InvokeFOVChange(float amount) {
+        fovChangeEvent.Invoke((int) amount * 5);
+    }
+
+    public void InvokeSensitivityChange(float amount) {
+        sensitivityChangeEvent.Invoke((int) amount);
+    }
+
+    public void InvokeVolumeChange(float amount) {
+        volumeChangeEvent.Invoke((int) amount);
     }
 
     public void InvokeEnableVSyncChange(bool value) {

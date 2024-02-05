@@ -14500,9 +14500,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   despawnTime: 10
-  muteTime: 0.0025
+  deleteTime: 0.15
   itemPickupSound: {fileID: 8300000, guid: 848118f7e0bcb225680188cd5aecee6c, type: 3}
   itemPickupSoundVolume: 0.25
+  audioMixerGroup: {fileID: 24300002, guid: e3ee23aa9da619d218e5ea09a3ca00cc, type: 2}
 --- !u!1 &1775236018
 GameObject:
   m_ObjectHideFlags: 0

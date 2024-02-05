@@ -14,6 +14,9 @@ public class GameSettingsStorage
             writer.WriteLine("featuresPerSecond: " + GameSettings.FeaturesPerSecond);
             writer.WriteLine("chunkBuildsPerFrame: " + GameSettings.ChunkBuildsPerFrame);
             writer.WriteLine("maxFramerate: " + GameSettings.MaxFramerate);
+            writer.WriteLine("fov: " + GameSettings.FOV);
+            writer.WriteLine("sensitivity: " + GameSettings.Sensitivity);
+            writer.WriteLine("volume: " + GameSettings.Volume);
             writer.WriteLine("enableVSync: " + GameSettings.EnableVSync);
             writer.WriteLine("fullscreen: " + GameSettings.Fullscreen);
             writer.WriteLine("enableShaders: " + GameSettings.EnableShaders);
@@ -37,6 +40,9 @@ public class GameSettingsStorage
             if(line.Contains("featuresPerSecond")) GameSettings.FeaturesPerSecond = int.Parse(splitStringValue);
             if(line.Contains("chunkBuildsPerFrame")) GameSettings.ChunkBuildsPerFrame = int.Parse(splitStringValue);
             if(line.Contains("maxFramerate")) GameSettings.MaxFramerate = int.Parse(splitStringValue);
+            if(line.Contains("fov")) GameSettings.FOV = int.Parse(splitStringValue);
+            if(line.Contains("sensitivity")) GameSettings.Sensitivity = int.Parse(splitStringValue);
+            if(line.Contains("volume")) GameSettings.Volume = int.Parse(splitStringValue);
             if(line.Contains("enableVSync")) GameSettings.EnableVSync = bool.Parse(splitStringValue);
             if(line.Contains("fullscreen")) GameSettings.Fullscreen = bool.Parse(splitStringValue);
             if(line.Contains("enableShaders")) GameSettings.EnableShaders = bool.Parse(splitStringValue);

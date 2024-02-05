@@ -8,7 +8,7 @@ public class SettingsSliderDisplay : MonoBehaviour
 {
     [SerializeField] private TMP_Text displayText;
     [SerializeField] private Slider slider;
-    [SerializeField] private int multiplier;
+    [SerializeField] private float multiplier;
 
     private void Start() {
         UpdateDisplayText();
