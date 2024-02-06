@@ -35,11 +35,27 @@ public class Inventory : MonoBehaviour
         inventoryEventSystem = InventoryEventSystem.Instance;
 
         WorldHandler.LoadWorldInventory();
+
+        DebugPopulate();
         UpdateInventoryScreen();
+    }
+
+    private void DebugPopulate() {
+        if(!IsEmpty()) return;
 
         SetStack(0, new ItemStack(1005, 1));
         SetStack(1, new ItemStack(1010, 1));
         SetStack(2, new ItemStack(1015, 1));
+        SetStack(3, new ItemStack(1, 999));
+        SetStack(4, new ItemStack(2, 999));
+        SetStack(5, new ItemStack(3, 999));
+        SetStack(6, new ItemStack(4, 999));
+        SetStack(7, new ItemStack(5, 999));
+        SetStack(8, new ItemStack(6, 999));
+        SetStack(9, new ItemStack(7, 999));
+        SetStack(10, new ItemStack(8, 999));
+        SetStack(11, new ItemStack(9, 999));
+        SetStack(12, new ItemStack(10, 999));
     }
 
     private void InitItemSlots() {
@@ -111,5 +127,18 @@ public class Inventory : MonoBehaviour
 
     private void UpdateInventoryScreen() {
         inventoryScreen.SetActive(inUI);
+    }
+
+    private bool IsEmpty() {
+        bool found = false;
+
+        foreach(UIItemSlot slot in slots) {
+            ItemSlot itemSlot = slot.ItemSlot;
+            ItemStack stack = itemSlot.Stack;
+
+            if(!found && stack.ID != 0) found = true; 
+        }
+
+        return !found;
     }
 }
