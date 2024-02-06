@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   sprite: {fileID: 21300000, guid: df0103521e5deeacdaa9c6fdf855589b, type: 3}
-  droppedItemMaterial: {fileID: 2100000, guid: 8b32a726feee3fe7caba0d44584c1524, type: 2}
+  droppedItemMaterial: {fileID: 2100000, guid: c5087393cdbd086ad8c71fad89460639, type: 2}
   heldItemPrefab: {fileID: 2021011214142289611, guid: c1d9d46491e86b316aac418268dccf2a, type: 3}
   droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
   brokenSprite: {fileID: 21300000, guid: 4f9a910b3f6890812a4ab3a0e743cd5b, type: 3}
