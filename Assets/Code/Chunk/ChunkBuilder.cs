@@ -135,8 +135,11 @@ public class ChunkBuilder : MonoBehaviour
         NativeArray<uint> voxelTris = new NativeArray<uint>(chunkBuildData.modelData.voxelTris, Allocator.Persistent);
         NativeArray<float2> voxelUVs = new NativeArray<float2>(chunkBuildData.modelData.voxelUVs, Allocator.Persistent);
 
-        NativeParallelHashMap<ushort, BlockType> blockTypeDictionary = new NativeParallelHashMap<ushort, BlockType>(1, Allocator.Persistent);
-        foreach(var pair in BlockRegistry.BlockTypeDictionary) blockTypeDictionary.Add(pair.Key, pair.Value);
+        NativeParallelHashMap<ushort, BlockState> blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(1, Allocator.Persistent);
+        foreach(var pair in BlockRegistry.BlockStateDictionary) blockStateDictionary.Add(pair.Key, pair.Value);
+
+        NativeParallelHashMap<byte, BlockStateModel> blockModelDictionary = new NativeParallelHashMap<byte, BlockStateModel>(1, Allocator.Persistent);
+        foreach(var pair in BlockRegistry.BlockModelDictionary) blockModelDictionary.Add(pair.Key, pair.Value);
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
             voxelMap = voxelMap,
@@ -146,7 +149,8 @@ public class ChunkBuilder : MonoBehaviour
             backVoxelMap = backVoxelMap,
             forwardVoxelMap = forwardVoxelMap,
 
-            blockTypes = blockTypeDictionary,
+            blockStates = blockStateDictionary,
+            blockModels = blockModelDictionary,
 
             vertices = chunkBuildData.vertices,
             indices = chunkBuildData.indices,
@@ -181,7 +185,8 @@ public class ChunkBuilder : MonoBehaviour
         voxelTris.Dispose();
         voxelUVs.Dispose();
 
-        blockTypeDictionary.Dispose();
+        blockStateDictionary.Dispose();
+        blockModelDictionary.Dispose();
     }
 
     public NativeArray<ushort> GetVoxelMap(long chunkCoord) {

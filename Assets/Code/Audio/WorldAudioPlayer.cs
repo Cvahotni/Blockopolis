@@ -52,7 +52,7 @@ public class WorldAudioPlayer : MonoBehaviour
     private void PlayBlockAudio(BlockModifyData data, BlockAudioType type) {
         Vector3 position = new Vector3(data.x, data.y, data.z);
 
-        BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(data.block);
+        BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(data.block.id);
         BlockSoundGroup blockSoundGroup = BlockSoundGroupRegistry.GetBlockSound(blockMaterial);
 
         if(blockSoundGroup.breakSounds == null || blockSoundGroup.placeSounds == null || blockSoundGroup.miningSounds == null) return;

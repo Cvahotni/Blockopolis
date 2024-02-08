@@ -8,19 +8,19 @@ public struct VoxelModification
     private int y;
     private int z;
 
-    private ushort id;
+    private BlockID id;
 
     public int X { get { return x; }}
     public int Y { get { return y; }}
     public int Z { get { return z; }}
 
-    public ushort ID { get { return id; }}
+    public BlockID ID { get { return id; }}
 
-    public VoxelModification(int x, int y, int z, ushort id) {
+    public VoxelModification(int x, int y, int z, BlockID blockID) {
         this.x = x;
         this.y = y;
         this.z = z;
 
-        this.id = id;
+        this.id = blockID;
     }
 }

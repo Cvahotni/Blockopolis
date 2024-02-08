@@ -6,17 +6,30 @@ using Unity.Mathematics;
 
 public class BlockRegistry
 {
-    private static List<BlockTypeObject> blockTypeObjects = new List<BlockTypeObject>();
-    private static List<BlockType> blockTypes = new List<BlockType>();
+    private static List<BlockStateObject> blockStateObjects = new List<BlockStateObject>();
+    private static List<BlockState> blockStates = new List<BlockState>();
 
-    private static NativeParallelHashMap<ushort, BlockType> blockTypeDictionary;
+    private static NativeParallelHashMap<ushort, BlockState> blockStateDictionary;
     private static BlockModelData blockModelData;
 
     private static Dictionary<int, BlockFaceIndexEntry> blockFaceEntries = new Dictionary<int, BlockFaceIndexEntry>();
+    private static NativeParallelHashMap<byte, BlockStateModel> blockModelDictionary;
+
+    private static List<byte> addedBlockModels = new List<byte>();
     private static bool disposed = false;
 
-    public static NativeParallelHashMap<ushort, BlockType> BlockTypeDictionary {
-        get { return blockTypeDictionary; }
+    private static uint vertsStart = 0;
+    private static uint vertsEnd = 0;
+
+    private static uint trisStart = 0;
+    private static uint trisEnd = 0;
+
+    public static NativeParallelHashMap<ushort, BlockState> BlockStateDictionary {
+        get { return blockStateDictionary; }
+    }
+
+    public static NativeParallelHashMap<byte, BlockStateModel> BlockModelDictionary {
+        get { return blockModelDictionary; }
     }
 
     public static BlockModelData BlockModelData {
@@ -26,13 +39,15 @@ public class BlockRegistry
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
         CreateNativeCollections();
-        LoadBlockTypesFromFolder();
-        PopulateBlockTypes();
-        PopulateBlockTypeDictionary();
+        LoadBlockStatesFromFolder();
+        PopulateBlockStates();
+        PopulateBlockStateDictionary();
+        RegisterBlockStateModels();
     }
 
     private static void CreateNativeCollections() {
-        blockTypeDictionary = new NativeParallelHashMap<ushort, BlockType>(blockTypes.Count, Allocator.Persistent);
+        blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(1, Allocator.Persistent);
+        blockModelDictionary = new NativeParallelHashMap<byte, BlockStateModel>(1, Allocator.Persistent);
 
         blockModelData = new BlockModelData();
         blockModelData.voxelVerts = new NativeList<float3>(Allocator.Persistent);
@@ -40,132 +55,141 @@ public class BlockRegistry
         blockModelData.voxelUVs = new NativeList<float2>(Allocator.Persistent);
     }
 
-    private static void LoadBlockTypesFromFolder() {
-        Object[] objects = Resources.LoadAll("Block Types");
-        foreach(Object currentObject in objects) blockTypeObjects.Add((BlockTypeObject) currentObject);
+    private static void LoadBlockStatesFromFolder() {
+        Object[] objects = Resources.LoadAll("Block States");
+        foreach(Object currentObject in objects) blockStateObjects.Add((BlockStateObject) currentObject);
     }
 
-    private static void PopulateBlockTypes() {
-        uint vertsStart = 0;
-        uint vertsEnd = 0;
+    private static void PopulateBlockStates() {
+        foreach(BlockStateObject blockStateObject in blockStateObjects) {
+            BlockState blockState = new BlockState();
 
-        uint trisStart = 0;
-        uint trisEnd = 0;
+            blockState.id = blockStateObject.id;
+            blockState.variant = blockStateObject.variant;
 
-        foreach(BlockTypeObject blockTypeObject in blockTypeObjects) {
-            BlockType blockType = new BlockType();
+            blockState.solid = blockStateObject.solid;
+            blockState.transparent = blockStateObject.transparent;
 
-            blockType.id = blockTypeObject.id;
-            blockType.solid = blockTypeObject.solid;
-            blockType.transparent = blockTypeObject.transparent;
+            blockState.material = blockStateObject.material;
+            blockState.hardness = blockStateObject.hardness;
 
-            blockType.material = blockTypeObject.material;
-            blockType.hardness = blockTypeObject.hardness;
+            blockState.model = blockStateObject.model.id;
 
-            blockType.frontTexture = new float2(blockTypeObject.frontTexture.x, blockTypeObject.frontTexture.y);
-            blockType.backTexture = new float2(blockTypeObject.backTexture.x, blockTypeObject.backTexture.y);
-            blockType.upTexture = new float2(blockTypeObject.upTexture.x, blockTypeObject.upTexture.y);
-            blockType.downTexture = new float2(blockTypeObject.downTexture.x, blockTypeObject.downTexture.y);
-            blockType.leftTexture = new float2(blockTypeObject.leftTexture.x, blockTypeObject.leftTexture.y);
-            blockType.rightTexture = new float2(blockTypeObject.rightTexture.x, blockTypeObject.rightTexture.y);
+            blockState.frontTexture = new float2(blockStateObject.frontTexture.x, blockStateObject.frontTexture.y);
+            blockState.backTexture = new float2(blockStateObject.backTexture.x, blockStateObject.backTexture.y);
+            blockState.upTexture = new float2(blockStateObject.upTexture.x, blockStateObject.upTexture.y);
+            blockState.downTexture = new float2(blockStateObject.downTexture.x, blockStateObject.downTexture.y);
+            blockState.leftTexture = new float2(blockStateObject.leftTexture.x, blockStateObject.leftTexture.y);
+            blockState.rightTexture = new float2(blockStateObject.rightTexture.x, blockStateObject.rightTexture.y);
 
-            for(int f = 0; f < 6; f++) {
-                if(f >= blockTypeObject.faces.Count) continue;
-
-                BlockFace face = blockTypeObject.faces[f];
-                BlockFaceDirection direction = face.direction;
-
-                vertsEnd = vertsStart + (uint) face.faceVerts.Count;
-                trisEnd = trisStart + (uint) face.faceTris.Count;
-
-                if(blockFaceEntries.ContainsKey(face.id)) {
-                    BlockFaceIndexEntry entry = blockFaceEntries[face.id];
-                    blockType = RegisterBlockFaceModel(direction, blockType, face, entry.vertsStart, entry.vertsEnd, entry.trisStart, entry.trisEnd, false);
-                }
-
-                else {
-                    blockType = RegisterBlockFaceModel(direction, blockType, face, vertsStart, vertsEnd, trisStart, trisEnd, true);
-                    BlockFaceIndexEntry foundEntry = new BlockFaceIndexEntry(vertsStart, vertsEnd, trisStart, trisEnd);
-
-                    if(blockFaceEntries.ContainsKey(face.id)) continue;
-                    blockFaceEntries.Add(face.id, foundEntry);
-
-                    vertsStart += (uint) face.faceVerts.Count;
-                    trisStart += (uint) face.faceTris.Count;
-                }
-            }
-
-            blockTypes.Add(blockType);
+            blockStates.Add(blockState);
         }
     }
 
-    private static BlockType RegisterBlockFaceModel(BlockFaceDirection direction, BlockType blockType, BlockFace face, uint vertsStart, uint vertsEnd, uint trisStart, uint trisEnd, bool addModelData) {
-        BlockType newBlockType = blockType;
+    private static void RegisterBlockStateModels() {
+        foreach(BlockStateObject blockStateObject in blockStateObjects) {
+            byte id = blockStateObject.model.id;
+            if(addedBlockModels.Contains(id)) continue;
 
+            BlockStateModel model = RegisterBlockModel(blockStateObject.model);
+
+            blockModelDictionary.Add(id, model);
+            addedBlockModels.Add(id);
+        }
+    } 
+
+    private static BlockStateModel RegisterBlockModel(BlockStateModelObject model) {
+        BlockStateModel blockModel = new BlockStateModel();
+
+        for(int f = 0; f < 6; f++) {
+            if(f >= model.faces.Count) continue;
+
+            BlockFace face = model.faces[f];
+            BlockFaceDirection direction = face.direction;
+
+            vertsEnd = vertsStart + (uint) face.faceVerts.Count;
+            trisEnd = trisStart + (uint) face.faceTris.Count;
+
+            blockModel = RegisterBlockFaceModel(direction, blockModel, face, vertsStart, vertsEnd, trisStart, trisEnd, true);
+            BlockFaceIndexEntry foundEntry = new BlockFaceIndexEntry(vertsStart, vertsEnd, trisStart, trisEnd);
+
+            if(blockFaceEntries.ContainsKey(face.id)) continue;
+            blockFaceEntries.Add(face.id, foundEntry);
+
+            vertsStart += (uint) face.faceVerts.Count;
+            trisStart += (uint) face.faceTris.Count;
+        }
+
+        return blockModel;
+    }
+
+    private static BlockStateModel RegisterBlockFaceModel(BlockFaceDirection direction, BlockStateModel blockModel, BlockFace face, uint currentVertsStart, uint currentVertsEnd, uint currentTrisStart, uint currentTrisEnd, bool addModelData) {
+        BlockStateModel blockStateModel = blockModel;
+        
         switch(direction) {
             case BlockFaceDirection.Front: {
-                newBlockType.frontVertsStart = vertsStart;
-                newBlockType.frontVertsEnd = vertsEnd;
+                blockStateModel.frontVertsStart = currentVertsStart;
+                blockStateModel.frontVertsEnd = currentVertsEnd;
 
-                newBlockType.frontTrisStart = trisStart;
-                newBlockType.frontTrisEnd = trisEnd;
+                blockStateModel.frontTrisStart = currentTrisStart;
+                blockStateModel.frontTrisEnd = currentTrisEnd;
 
-                newBlockType.cullFront = face.cullFace;
+                blockStateModel.cullFront = face.cullFace;
                 break;
             }
 
             case BlockFaceDirection.Back: {
-                newBlockType.backVertsStart = vertsStart;
-                newBlockType.backVertsEnd = vertsEnd;
+                blockStateModel.backVertsStart = currentVertsStart;
+                blockStateModel.backVertsEnd = currentVertsEnd;
 
-                newBlockType.backTrisStart = trisStart;
-                newBlockType.backTrisEnd = trisEnd;
+                blockStateModel.backTrisStart = currentTrisStart;
+                blockStateModel.backTrisEnd = currentTrisEnd;
 
-                newBlockType.cullBack = face.cullFace;
+                blockStateModel.cullBack = face.cullFace;
                 break;
             }
 
             case BlockFaceDirection.Up: {
-                newBlockType.upVertsStart = vertsStart;
-                newBlockType.upVertsEnd = vertsEnd;
+                blockStateModel.upVertsStart = currentVertsStart;
+                blockStateModel.upVertsEnd = currentVertsEnd;
 
-                newBlockType.upTrisStart = trisStart;
-                newBlockType.upTrisEnd = trisEnd;
+                blockStateModel.upTrisStart = currentTrisStart;
+                blockStateModel.upTrisEnd = currentTrisEnd;
                 
-                newBlockType.cullUp = face.cullFace;
+                blockStateModel.cullUp = face.cullFace;
                 break;
             }
 
             case BlockFaceDirection.Down: {
-                newBlockType.bottomVertsStart = vertsStart;
-                newBlockType.bottomVertsEnd = vertsEnd;
+                blockStateModel.bottomVertsStart = currentVertsStart;
+                blockStateModel.bottomVertsEnd = currentVertsEnd;
 
-                newBlockType.bottomTrisStart = trisStart;
-                newBlockType.bottomTrisEnd = trisEnd;
+                blockStateModel.bottomTrisStart = currentTrisStart;
+                blockStateModel.bottomTrisEnd = currentTrisEnd;
 
-                newBlockType.cullBottom = face.cullFace;
+                blockStateModel.cullBottom = face.cullFace;
                 break;
             }
 
             case BlockFaceDirection.Left: {
-                newBlockType.leftVertsStart = vertsStart;
-                newBlockType.leftVertsEnd = vertsEnd;
+                blockStateModel.leftVertsStart = currentVertsStart;
+                blockStateModel.leftVertsEnd = currentVertsEnd;
 
-                newBlockType.leftTrisStart = trisStart;
-                newBlockType.leftTrisEnd = trisEnd;
+                blockStateModel.leftTrisStart = currentTrisStart;
+                blockStateModel.leftTrisEnd = currentTrisEnd;
 
-                newBlockType.cullLeft = face.cullFace;
+                blockStateModel.cullLeft = face.cullFace;
                 break;
             }
 
             case BlockFaceDirection.Right: {
-                newBlockType.rightVertsStart = vertsStart;
-                newBlockType.rightVertsEnd = vertsEnd;
+                blockStateModel.rightVertsStart = currentVertsStart;
+                blockStateModel.rightVertsEnd = currentVertsEnd;
 
-                newBlockType.rightTrisStart = trisStart;
-                newBlockType.rightTrisEnd = trisEnd;
+                blockStateModel.rightTrisStart = currentTrisStart;
+                blockStateModel.rightTrisEnd = currentTrisEnd;
 
-                newBlockType.cullRight = face.cullFace;
+                blockStateModel.cullRight = face.cullFace;
                 break;
             }
         }
@@ -183,27 +207,28 @@ public class BlockRegistry
                 blockModelData.voxelUVs.Add(uv);
             }
         }
-        
-        return newBlockType;
+
+        return blockStateModel;
     }
 
-    private static void PopulateBlockTypeDictionary() {
-        foreach(BlockType blockType in blockTypes) blockTypeDictionary.Add(blockType.id, blockType);
+    private static void PopulateBlockStateDictionary() {
+        foreach(BlockState blockState in blockStates) blockStateDictionary.Add(BlockIDHelper.Pack(blockState.id, blockState.variant), blockState);
     }
 
-    private static void DestroyBlockTypeDictionary() {
-        blockTypeDictionary.Dispose();
+    private static void DestroyDictionaries() {
+        blockStateDictionary.Dispose();
         blockModelData.Dispose();
+        blockModelDictionary.Dispose();
 
         disposed = true;
     }
 
-    public static BlockMaterial GetMaterialForBlock(ushort id) {
-        return blockTypeDictionary[id].material;
+    public static BlockMaterial GetMaterialForBlock(byte id) {
+        return blockStateDictionary[BlockIDHelper.Pack(id, 0)].material;
     }
 
     public static void OnDestroy() {
         if(disposed) return;
-        DestroyBlockTypeDictionary();
+        DestroyDictionaries();
     }
 }

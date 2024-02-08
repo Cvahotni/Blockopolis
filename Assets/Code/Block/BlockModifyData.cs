@@ -8,10 +8,10 @@ public struct BlockModifyData
     public float y;
     public float z;
 
-    public ushort block;
+    public BlockID block;
     public ushort amount;
 
-    public BlockModifyData(float x, float y, float z, ushort block, ushort amount) {
+    public BlockModifyData(float x, float y, float z, BlockID block, ushort amount) {
         this.x = x;
         this.y = y;
         this.z = z;

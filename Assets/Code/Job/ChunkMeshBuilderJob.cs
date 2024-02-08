@@ -16,7 +16,8 @@ public struct ChunkMeshBuilderJob : IJob
     public NativeArray<ushort> forwardVoxelMap;
     public NativeArray<ushort> backVoxelMap;
 
-    public NativeParallelHashMap<ushort, BlockType> blockTypes; 
+    public NativeParallelHashMap<ushort, BlockState> blockStates; 
+    public NativeParallelHashMap<byte, BlockStateModel> blockModels; 
 
     public NativeList<ChunkVertex> vertices;
     public NativeList<uint> indices;
@@ -39,7 +40,7 @@ public struct ChunkMeshBuilderJob : IJob
                     int currentVoxelIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
                     ushort currentVoxel = voxelMap[currentVoxelIndex];
 
-                    if(currentVoxel == 0) continue;
+                    if(BlockIDHelper.ID(currentVoxel) == 0) continue;
                     vertexIndex = MeshVoxel(currentVoxel, vertexIndex, x, y, z);
                 }
             }
@@ -48,6 +49,9 @@ public struct ChunkMeshBuilderJob : IJob
 
     private uint MeshVoxel(ushort currentVoxel, uint vertexIndex, int x, int y, int z) {
         uint currentVertexIndex = vertexIndex;
+
+        BlockState blockState = blockStates[currentVoxel];
+        BlockStateModel currentModel = blockModels[blockState.model];
 
         for(int f = 0; f < 6; f++) {
             Vector3 faceDirection = VoxelProperties.faceChecks[f];
@@ -59,39 +63,38 @@ public struct ChunkMeshBuilderJob : IJob
             bool yOutOfRange = y + faceDirection.y < 0 || y + faceDirection.y >= VoxelProperties.chunkHeight;
 			bool isVerticalFace = faceDirection.y <= -1.0f || faceDirection.y >= 1.0f;
 
-            ushort neighborVoxel = 0;
+            ushort neighborVoxel = BlockIDHelper.PackEmpty();
 
             if(!yOutOfRange || !isVerticalFace) {
                 neighborVoxel = GetNeighborVoxel(neighborX, neighborY, neighborZ);
             }
 
-            BlockType blockType = blockTypes[currentVoxel];
-            BlockType neighborBlockType = blockTypes[neighborVoxel];
+            BlockState neighborBlockState = blockStates[neighborVoxel];
 
-            bool shouldCullFace = ShouldCullFace(blockType, f);
-            bool neighborCheck1 = (blockType.transparent && neighborBlockType.solid && shouldCullFace);
-            bool neighborCheck2 = (blockType.transparent && neighborBlockType.transparent && !shouldCullFace);
+            bool shouldCullFace = ShouldCullFace(currentModel, f);
+            bool neighborCheck1 = (blockState.transparent && neighborBlockState.solid && shouldCullFace);
+            bool neighborCheck2 = (blockState.transparent && neighborBlockState.transparent && !shouldCullFace);
 
             if(neighborCheck1 || neighborCheck2) continue;
-            if(neighborBlockType.solid && !neighborBlockType.transparent && blockType.solid && shouldCullFace) continue;
+            if(neighborBlockState.solid && !neighborBlockState.transparent && blockState.solid && shouldCullFace) continue;
 
-            float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockType, f);
+            float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockState, f);
 
             Vector3 pos = new Vector3(x, y, z);
-            currentVertexIndex = MeshFace(blockType, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset, blockType.transparent);
+            currentVertexIndex = MeshFace(currentModel, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset, blockState.transparent);
         }
 
         return currentVertexIndex;
     }
 
-    private bool ShouldCullFace(BlockType type, int f) {
+    private bool ShouldCullFace(BlockStateModel model, int f) {
         switch(f) {
-            case 0: return type.cullBack;
-            case 1: return type.cullFront;
-            case 2: return type.cullUp;
-            case 3: return type.cullBottom;
-            case 4: return type.cullLeft;
-            case 5: return type.cullRight;
+            case 0: return model.cullBack;
+            case 1: return model.cullFront;
+            case 2: return model.cullUp;
+            case 3: return model.cullBottom;
+            case 4: return model.cullLeft;
+            case 5: return model.cullRight;
         }
 
         return false;
@@ -131,37 +134,37 @@ public struct ChunkMeshBuilderJob : IJob
         return voxelMap[currentVoxelIndex];
     }
 
-    private uint MeshFace(BlockType type, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset, bool transparent) {
+    private uint MeshFace(BlockStateModel model, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset, bool transparent) {
         uint currentVertexIndex = vertexIndex;
         
         switch(f) {
             case 0: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.backVertsStart, type.backVertsEnd, type.backTrisStart, type.backTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.backVertsStart, model.backVertsEnd, model.backTrisStart, model.backTrisEnd, transparent);
                 break;
             }
 
             case 1: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.frontVertsStart, type.frontVertsEnd, type.frontTrisStart, type.frontTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.frontVertsStart, model.frontVertsEnd, model.frontTrisStart, model.frontTrisEnd, transparent);
                 break;
             }
 
             case 2: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.upVertsStart, type.upVertsEnd, type.upTrisStart, type.upTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.upVertsStart, model.upVertsEnd, model.upTrisStart, model.upTrisEnd, transparent);
                 break;
             }
 
             case 3: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.bottomVertsStart, type.bottomVertsEnd, type.bottomTrisStart, type.bottomTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.bottomVertsStart, model.bottomVertsEnd, model.bottomTrisStart, model.bottomTrisEnd, transparent);
                 break;
             }
 
             case 4: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.leftVertsStart, type.leftVertsEnd, type.leftTrisStart, type.leftTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.leftVertsStart, model.leftVertsEnd, model.leftTrisStart, model.leftTrisEnd, transparent);
                 break;
             }
 
             case 5: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, type.rightVertsStart, type.rightVertsEnd, type.rightTrisStart, type.rightTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.rightVertsStart, model.rightVertsEnd, model.rightTrisStart, model.rightTrisEnd, transparent);
                 break;
             }
         }
@@ -189,14 +192,14 @@ public struct ChunkMeshBuilderJob : IJob
         return vertexIndex + newVertexIndex;
     }
 
-    private float2 GetBlockFaceUVOffset(BlockType blockType, int f) {
+    private float2 GetBlockFaceUVOffset(BlockState state, int f) {
         switch(f) {
-            case 0: return blockType.backTexture;
-            case 1: return blockType.frontTexture;
-            case 2: return blockType.upTexture;
-            case 3: return blockType.downTexture;
-            case 4: return blockType.leftTexture;
-            case 5: return blockType.rightTexture;
+            case 0: return state.backTexture;
+            case 1: return state.frontTexture;
+            case 2: return state.upTexture;
+            case 3: return state.downTexture;
+            case 4: return state.leftTexture;
+            case 5: return state.rightTexture;
         }
 
         return new float2(0.0f);

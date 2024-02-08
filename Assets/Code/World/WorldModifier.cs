@@ -11,7 +11,7 @@ public class WorldModifier
 
         foreach(VoxelModification modification in modifications) {
             Vector3Int position = new Vector3Int(modification.X, modification.Y, modification.Z);
-            ushort id = modification.ID;
+            BlockID id = modification.ID;
 
             long chunkPos = WorldPositionHelper.BlockPositionToChunkPos(position.x, position.z);
 
@@ -36,7 +36,7 @@ public class WorldModifier
         foreach(long chunkPos in chunksToAddToQueue) worldAllocator.AddImmidiateChunkToQueue(chunkPos);
     }
 
-    private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, ushort currentBlock) {
+    private static void ModifyChunkVoxelMap(long chunk, int relativeX, int relativeY, int relativeZ, BlockID currentBlock) {
         ChunkBuilder chunkBuilder = ChunkBuilder.Instance;
         
         if(chunkBuilder == null) {
@@ -50,7 +50,7 @@ public class WorldModifier
         NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunk);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, relativeY, relativeZ);
-        voxelMap[voxelMapIndex] = currentBlock;
+        voxelMap[voxelMapIndex] = currentBlock.Pack();
     }
 
     private static void AddNeighborChunks(long currentChunk, List<long> chunksToAddToQueue) {
@@ -67,7 +67,7 @@ public class WorldModifier
         if(!chunksToAddToQueue.Contains(chunkPosZNegative)) chunksToAddToQueue.Add(chunkPosZNegative);
     }
 
-    public static ushort GetBlockAt(Vector3 pos) {
+    public static BlockID GetBlockAt(Vector3 pos) {
         int x = (int) pos.x;
         int y = (int) pos.y;
         int z = (int) pos.z;
@@ -75,11 +75,11 @@ public class WorldModifier
         return GetBlockAt(x, y, z);
     }
 
-    public static ushort GetBlockAt(int worldX, int worldY, int worldZ) {
+    public static BlockID GetBlockAt(int worldX, int worldY, int worldZ) {
         long chunkPos = WorldPositionHelper.BlockPositionToChunkPos(worldX, worldZ);
-        if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return 0;
+        BlockID air = new BlockID(0);
 
-        if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
+        if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return air;
 
         int relativeX = WorldPositionHelper.GetRelativeX(worldX);
         int relativeZ = WorldPositionHelper.GetRelativeZ(worldZ);
@@ -88,15 +88,14 @@ public class WorldModifier
 
         if(chunkBuilder == null) {
             Debug.LogError("The ChunkBuilder script must be present in the scene to use GetBlockAt");
-            return 0;
+            return air;
         }
 
-        if(!WorldStorage.DoesChunkExist(chunkPos)) return 0;
         NativeArray<ushort> voxelMap = chunkBuilder.GetVoxelMap(chunkPos);
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, worldY, relativeZ);
-        if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return 0;
+        if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return air;
 
-        return voxelMap[voxelMapIndex];
+        return new BlockID(voxelMap[voxelMapIndex]);
     }
 }

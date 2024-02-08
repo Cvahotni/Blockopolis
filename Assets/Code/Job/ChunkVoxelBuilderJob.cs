@@ -36,22 +36,28 @@ public struct ChunkVoxelBuilderJob : IJob
                 int yLevel = (int) (noiseLevel);
 
                 for(int y = 0; y < VoxelProperties.chunkHeight; y++) {
-                    int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
+                    PutVoxel(x, y, z, 0, 0);
 
-                    if(y == yLevel && yLevel > seaLevel) voxelMap[voxelMapArrayIndex] = 1;
+                    if(y == yLevel && yLevel > seaLevel) PutVoxel(x, y, z, 1, 0);
+                    else if(y == yLevel && WorldUtil.IsBelowBeachLevel(yLevel)) PutVoxel(x, y, z, 5, 0);
 
-                    else if(y == yLevel && WorldUtil.IsBelowBeachLevel(yLevel)) voxelMap[voxelMapArrayIndex] = 5;
-                    else if(WorldUtil.IsBelowSeaLevel(y) && y > yLevel) voxelMap[voxelMapArrayIndex] = 10;
+                    else if(WorldUtil.IsAtSeaLevel(y) && y > yLevel) PutVoxel(x, y, z, 10, 0);
+                    else if(WorldUtil.IsBelowSeaLevel(y) && y > yLevel) PutVoxel(x, y, z, 10, 1);
 
-                    else if(y == 0) voxelMap[voxelMapArrayIndex] = 4;
+                    else if(y == 0) PutVoxel(x, y, z, 4, 0);
 
-                    else if(y < yLevel && y >= yLevel - soilLevel && yLevel > seaLevel) voxelMap[voxelMapArrayIndex] = 2;
-                    else if(y < yLevel && y >= yLevel - soilLevel && yLevel <= seaLevel) voxelMap[voxelMapArrayIndex] = 6;
+                    else if(y < yLevel && y >= yLevel - soilLevel && yLevel > seaLevel) PutVoxel(x, y, z, 2, 0);
+                    else if(y < yLevel && y >= yLevel - soilLevel && yLevel <= seaLevel) PutVoxel(x, y, z, 6, 0);
 
-                    else if(y < yLevel - soilLevel ) voxelMap[voxelMapArrayIndex] = 3;
+                    else if(y < yLevel - soilLevel) PutVoxel(x, y, z, 3, 0);
                 }
             }
         }
+    }
+
+    private void PutVoxel(int x, int y, int z, byte value, byte variant) {
+        int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
+        voxelMap[voxelMapArrayIndex] = BlockIDHelper.Pack(value, variant, 0);
     }
     
     private float GetWorldX(int x) {

@@ -23,7 +23,7 @@ public class DroppedItemFactory : MonoBehaviour
     }
 
     public void DropItemFromBlock(object sender, BlockModifyData data) {
-        DropItem(new Vector3(data.x, data.y, data.z), data.block, data.amount);
+        DropItem(new Vector3(data.x, data.y, data.z), data.block.id, data.amount);
     }
 
     public void DropItem(Vector3 position, ushort id, ushort amount) {

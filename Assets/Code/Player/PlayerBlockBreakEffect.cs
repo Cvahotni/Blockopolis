@@ -34,10 +34,10 @@ public class PlayerBlockBreakEffect : MonoBehaviour
         
         ParticleSystemRenderer particleSystemRenderer = particleSystem.gameObject.GetComponent<ParticleSystemRenderer>();
         
-        Material crackMaterial = itemRegistry.GetBreakMaterialForID(data.block);
+        Material crackMaterial = itemRegistry.GetBreakMaterialForID(data.block.id);
         particleSystemRenderer.material = crackMaterial;
 
-        Sprite particleSprite = itemRegistry.GetBreakSpriteForID(data.block);
+        Sprite particleSprite = itemRegistry.GetBreakSpriteForID(data.block.id);
         var shape = particleSystem.shape;
 
         shape.sprite = particleSprite;

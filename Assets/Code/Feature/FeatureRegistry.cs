@@ -39,7 +39,7 @@ public class FeatureRegistry
         for(int i = -2; i <= 2; i++) {
             for(int j = 3; j < 5; j++) {
                 for(int k = -2; k <= 2; k++) {
-                    featureData.Add(new FeaturePlacement(i, j, k, 0), 8);
+                    Set(new FeaturePlacement(i, j, k, 0), new BlockID(8, 0));
                 }
             }
         }
@@ -47,17 +47,28 @@ public class FeatureRegistry
         for(int i = -1; i <= 1; i++) {
             for(int j = 5; j <= 7; j++) {
                 for(int k = -1; k <= 1; k++) {
-                    featureData.Add(new FeaturePlacement(i, j, k, 0), 8);
+                    Set(new FeaturePlacement(i, j, k, 0), new BlockID(8, 0));
                 }
             }
         }
 
-        featureData[new FeaturePlacement(-1, 6, -1, 0)] = 0;
-        featureData[new FeaturePlacement(-1, 6, 1, 0)] = 0;
-        featureData[new FeaturePlacement(1, 6, -1, 0)] = 0;
-        featureData[new FeaturePlacement(1, 6, 1, 0)] = 0;
+        Set(new FeaturePlacement(-1, 6, -1, 0), new BlockID(0));
+        Set(new FeaturePlacement(-1, 6, 1, 0), new BlockID(0));
+        Set(new FeaturePlacement(1, 6, -1, 0), new BlockID(0));
+        Set(new FeaturePlacement(1, 6, 1, 0), new BlockID(0));
 
-        for(int i = 0; i < 5; i++) featureData[new FeaturePlacement(0, i, 0, 0)] = 7;
+        for(int i = 0; i < 5; i++) Set(new FeaturePlacement(0, i, 0, 0), new BlockID(7, 0));
+    }
+
+    private static void Set(FeaturePlacement placement, BlockID id) {
+        ushort packedID = id.Pack();
+
+        if(featureData.ContainsKey(placement)) {
+            featureData[placement] = packedID;
+            return;
+        }
+
+        featureData.Add(placement, packedID);
     }
 
     public static void OnDestroy() {

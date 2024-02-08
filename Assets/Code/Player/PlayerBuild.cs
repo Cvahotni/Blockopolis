@@ -32,8 +32,8 @@ public class PlayerBuild : MonoBehaviour
     private float currentBlockBreakProgress;
     private float maxBlockBreakProgress = 1.0f;
 
-    private ushort targetRaycastBlock;
-    private ushort targetBlock;
+    private BlockID targetRaycastBlock;
+    private ushort targetBlockID;
 
     private bool isMining = false;
     private bool isEnabled = true;
@@ -111,7 +111,7 @@ public class PlayerBuild : MonoBehaviour
         if(!blockCrackOutline.activeSelf) return;
         if(!canMine) return;
 
-        ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
+        BlockID block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         blockBreakStartData = new BlockModifyData(
             offsetTargetPos.x, offsetTargetPos.y, offsetTargetPos.z,
@@ -152,10 +152,10 @@ public class PlayerBuild : MonoBehaviour
     }
     
     private float GetBlockBreakSpeed() {
-        BlockType type = BlockRegistry.BlockTypeDictionary[targetRaycastBlock];
+        BlockState state = BlockRegistry.BlockStateDictionary[targetRaycastBlock.Pack()];
 
-        if(itemRegistry == null) return 1.0f / type.hardness;
-        return itemRegistry.GetItemMineMultiplier(targetBlock, targetRaycastBlock) / type.hardness;
+        if(itemRegistry == null) return 1.0f / state.hardness;
+        return itemRegistry.GetItemMineMultiplier(targetBlockID, targetRaycastBlock) / state.hardness;
     }
 
     public void ModifyTargetBlock(object sender, ItemPickupData data) {
@@ -163,7 +163,7 @@ public class PlayerBuild : MonoBehaviour
     }
 
     public void ModifyTargetBlock(ushort id) {
-        targetBlock = id;
+        targetBlockID = id;
     }
 
     public void ModifyTargetBlock(object sender, ushort id) {
@@ -174,10 +174,10 @@ public class PlayerBuild : MonoBehaviour
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
         if(!CanModifyAt(offsetTargetPos)) return;
-        ushort block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
+        BlockID block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
-            new VoxelModification(targetPos.x, targetPos.y, targetPos.z, 0)
+            new VoxelModification(targetPos.x, targetPos.y, targetPos.z, new BlockID(0))
         });
 
         Vector3 blockBreakParticlePosition = GetOffsetTargetPos();
@@ -196,10 +196,12 @@ public class PlayerBuild : MonoBehaviour
         Vector3 offsetHighlightPos = GetOffsetHighlightPos();
 
         if(!CanModifyAt(offsetHighlightPos)) return;
-        if(targetBlock == 0) return;
+        if(targetBlockID == 0) return;
+
+        BlockID targetBlock = BlockID.FromUShort(targetBlockID);
 
         if(itemRegistry != null) {
-            if(!itemRegistry.IsItemBlockItem(targetBlock)) return;
+            if(!itemRegistry.IsItemBlockItem(targetBlock.id)) return;
         }
 
         WorldModifier.ModifyBlocks(new List<VoxelModification>() {
@@ -239,9 +241,9 @@ public class PlayerBuild : MonoBehaviour
             int targetHighlightPosY = Mathf.FloorToInt(targetHighlightPoint.y);
             int targetHighlightPosZ = Mathf.FloorToInt(targetHighlightPoint.z);
 
-            ushort currentTargetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
+            BlockID currentTargetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
 
-            if(currentTargetRaycastBlock != 0) {
+            if(!currentTargetRaycastBlock.IsAir()) {
                 targetPos.x = targetPosX;
                 targetPos.y = targetPosY;
                 targetPos.z = targetPosZ;
@@ -292,7 +294,7 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private bool IsAir(Vector3 position) {
-        return WorldModifier.GetBlockAt(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)) == 0;
+        return WorldModifier.GetBlockAt(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)).IsAir();
     }
 
     private Vector3 GetOffsetTargetPos() {

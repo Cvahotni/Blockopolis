@@ -73,12 +73,12 @@ public class ItemRegistry : MonoBehaviour
         return false;
     }
 
-    public float GetItemMineMultiplier(ushort id, ushort blockId) {
-        BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(blockId);
+    public float GetItemMineMultiplier(ushort currentID, BlockID blockId) {
+        BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(blockId.id);
         float mineSpeed = 1.0f;
         
         foreach(ItemType itemType in itemTypes) {
-            if(itemType.ID == id && itemType is ToolItemType) {
+            if(itemType.ID == currentID && itemType is ToolItemType) {
                 ToolItemType toolItemType = itemType as ToolItemType;
 
                 if(toolItemType.MineableMaterials.Contains(blockMaterial)) {

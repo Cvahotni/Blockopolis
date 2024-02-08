@@ -6,8 +6,8 @@ public class WorldUtil
 {
     public static int GetMaxYLevelAt(int worldX, int worldZ) {
         for(int y = VoxelProperties.chunkHeight - 1; y >= 0; y--) {
-            ushort currentBlock = WorldModifier.GetBlockAt(worldX, y, worldZ);
-            if(currentBlock != 0) return y;
+            BlockID currentBlockID = WorldModifier.GetBlockAt(worldX, y, worldZ);
+            if(!currentBlockID.IsAir()) return y;
         }
 
         return VoxelProperties.chunkHeight;
@@ -17,8 +17,12 @@ public class WorldUtil
         return y < 66;
     }
 
+    public static bool IsAtSeaLevel(int y) {
+        return y == 63;
+    }
+
     public static bool IsBelowSeaLevel(int y) {
-        return y < 64;
+        return y <= 62;
     }
     
     public static float GetRealWorldX(int x) {
