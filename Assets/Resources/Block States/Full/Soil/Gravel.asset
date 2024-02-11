@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d0bc08852706ca080d37c142ec30df, type: 3}
+  m_Name: Gravel
+  m_EditorClassIdentifier: 
+  id: 16
+  variant: 0
+  solid: 1
+  transparent: 0
+  material: 0
+  hardness: 0.9
+  model: {fileID: 11400000, guid: b050645591976412ea27348ab266e8da, type: 2}
+  backTexture: {x: 0, y: 1}
+  frontTexture: {x: 0, y: 1}
+  upTexture: {x: 0, y: 1}
+  downTexture: {x: 0, y: 1}
+  leftTexture: {x: 0, y: 1}
+  rightTexture: {x: 0, y: 1}

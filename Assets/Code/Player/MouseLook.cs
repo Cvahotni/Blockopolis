@@ -71,8 +71,8 @@ public class MouseLook : MonoBehaviour
     }
 
     private void GetMouseInput() {
-        mouseX = Input.GetAxis("Mouse X") * (0.25f + (4.0f * ((GameSettings.Sensitivity / 100.0f))));
-        mouseY = Input.GetAxis("Mouse Y") * (0.25f + (4.0f * ((GameSettings.Sensitivity / 100.0f))));
+        mouseX = Input.GetAxis("Mouse X") * (0.25f + (6.0f * ((GameSettings.Sensitivity / 100.0f))));
+        mouseY = Input.GetAxis("Mouse Y") * (0.25f + (6.0f * ((GameSettings.Sensitivity / 100.0f))));
     }
 
     private void RotatePlayer() {

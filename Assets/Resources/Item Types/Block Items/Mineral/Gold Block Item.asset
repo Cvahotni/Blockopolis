@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8b3f747213c0eb38931249d55abc66, type: 3}
+  m_Name: Gold Block Item
+  m_EditorClassIdentifier: 
+  id: 18
+  sprite: {fileID: 21300000, guid: e617de57ac7d90de78789475ccace803, type: 3}
+  droppedItemMaterial: {fileID: 2100000, guid: f8caf5312fcc987769aa1e9ee6675bc3, type: 2}
+  heldItemPrefab: {fileID: 7949245008419684630, guid: 81e4ac3dbfb9eb5b6abf5b719748d535, type: 3}
+  droppedItemPrefab: {fileID: 8740044613620937322, guid: c91d7958a89992f4abc01bf0e2645bab, type: 3}
+  brokenSprite: {fileID: 21300000, guid: 663816694d92b46009cf7b597b1303bd, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: 335d5b42e188907bba7a843278e15135, type: 2}

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ad5056ad7086e45f93784fcdf0743b8, type: 3}
+  m_Name: Plant
+  m_EditorClassIdentifier: 
+  id: 2
+  faces:
+  - {fileID: 11400000, guid: ebbedd3d3bb503d0d9a778e945046077, type: 2}
+  - {fileID: 11400000, guid: 1e95f35b9445e7125b192deb1c38c232, type: 2}

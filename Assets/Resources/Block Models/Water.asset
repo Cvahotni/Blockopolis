@@ -12,13 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ad5056ad7086e45f93784fcdf0743b8, type: 3}
   m_Name: Water
   m_EditorClassIdentifier: 
-  id: 2
-  backTexture: {x: 0, y: 0}
-  frontTexture: {x: 0, y: 0}
-  upTexture: {x: 0, y: 0}
-  downTexture: {x: 0, y: 0}
-  leftTexture: {x: 0, y: 0}
-  rightTexture: {x: 0, y: 0}
+  id: 3
   faces:
   - {fileID: 11400000, guid: 2702f80ea494f99919dcfdee4b720ca9, type: 2}
   - {fileID: 11400000, guid: a0c733b99c762bba5a95c77fce8d21c2, type: 2}

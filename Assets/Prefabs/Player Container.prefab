@@ -25,11 +25,11 @@ Transform:
   m_GameObject: {fileID: 1709439504368386370}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.00075, z: 0.25}
+  m_LocalPosition: {x: -0.25, y: 0.00075000525, z: 0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 461729789009755802}
+  m_Father: {fileID: 8077345435925290133}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1827230553309892923
 GameObject:
@@ -68,10 +68,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6922647558182549191}
-  - {fileID: 4236974521622533642}
-  - {fileID: 1082263860864008897}
-  - {fileID: 7285944100124806076}
-  - {fileID: 51890349658251235}
+  - {fileID: 8077345435925290133}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4377383079276369682
@@ -112,7 +109,7 @@ MonoBehaviour:
   - {fileID: 1082263860864008897}
   - {fileID: 7285944100124806076}
   - {fileID: 51890349658251235}
-  checkDistance: 0.001
+  checkDistance: 0.01
   groundLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -224,11 +221,11 @@ Transform:
   m_GameObject: {fileID: 2938990066720982652}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0.00075, z: -0.25}
+  m_LocalPosition: {x: 0.25, y: 0.00075000525, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 461729789009755802}
+  m_Father: {fileID: 8077345435925290133}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3327376161967975986
 GameObject:
@@ -398,11 +395,11 @@ Transform:
   m_GameObject: {fileID: 3981003843023245530}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0.00075, z: 0.25}
+  m_LocalPosition: {x: 0.25, y: 0.00075000525, z: 0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 461729789009755802}
+  m_Father: {fileID: 8077345435925290133}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4506072753520580104
 GameObject:
@@ -429,11 +426,11 @@ Transform:
   m_GameObject: {fileID: 4506072753520580104}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.00075, z: -0.25}
+  m_LocalPosition: {x: -0.25, y: 0.00075000525, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 461729789009755802}
+  m_Father: {fileID: 8077345435925290133}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5085421253055869276
 GameObject:
@@ -591,6 +588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reach: 5
   checkIncrement: 0.1
+  minCheckIncrement: 1
   breakDelay: 0.2
   progressDelay: 0.25
   blockOutline: {fileID: 0}
@@ -628,6 +626,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blendRate: 1
   playerBody: {fileID: 2898816550176629650}
+--- !u!1 &6388306103593455503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8077345435925290133}
+  m_Layer: 8
+  m_Name: Ground Checks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8077345435925290133
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6388306103593455503}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4236974521622533642}
+  - {fileID: 1082263860864008897}
+  - {fileID: 7285944100124806076}
+  - {fileID: 51890349658251235}
+  m_Father: {fileID: 461729789009755802}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7943720679967217198
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8b3f747213c0eb38931249d55abc66, type: 3}
+  m_Name: Red Mushroom Block Item
+  m_EditorClassIdentifier: 
+  id: 29
+  sprite: {fileID: 21300000, guid: 0649c1aab9806d2d490040145a1eba98, type: 3}
+  droppedItemMaterial: {fileID: 2100000, guid: 3da34d21d0ce0b5fdb3061433796435d, type: 2}
+  heldItemPrefab: {fileID: 7949245008419684630, guid: 73770792f3dba9accab08a64b3cd9ccb, type: 3}
+  droppedItemPrefab: {fileID: 8845799518492459054, guid: 6927084878d09cbfea583643d950b62e, type: 3}
+  brokenSprite: {fileID: 21300000, guid: 09fb47c0e531f216a8a6e697188edf3e, type: 3}
+  brokenMaterial: {fileID: 2100000, guid: 94aa7fe4c816a39ccb7826cf099b8c96, type: 2}

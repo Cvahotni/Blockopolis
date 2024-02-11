@@ -56,6 +56,25 @@ public class Inventory : MonoBehaviour
         SetStack(10, new ItemStack(8, 999));
         SetStack(11, new ItemStack(9, 999));
         SetStack(12, new ItemStack(10, 999));
+        SetStack(13, new ItemStack(11, 999));
+        SetStack(14, new ItemStack(12, 999));
+        SetStack(15, new ItemStack(13, 999));
+        SetStack(16, new ItemStack(14, 999));
+        SetStack(17, new ItemStack(15, 999));
+        SetStack(18, new ItemStack(16, 999));
+        SetStack(19, new ItemStack(17, 999));
+        SetStack(20, new ItemStack(18, 999));
+        SetStack(21, new ItemStack(19, 999));
+        SetStack(22, new ItemStack(20, 999));
+        SetStack(23, new ItemStack(21, 999));
+        SetStack(24, new ItemStack(22, 999));
+        SetStack(25, new ItemStack(23, 999));
+        SetStack(26, new ItemStack(24, 999));
+        SetStack(27, new ItemStack(25, 999));
+        SetStack(28, new ItemStack(26, 999));
+        SetStack(29, new ItemStack(27, 999));
+        SetStack(30, new ItemStack(28, 999));
+        SetStack(31, new ItemStack(29, 999));
     }
 
     private void InitItemSlots() {

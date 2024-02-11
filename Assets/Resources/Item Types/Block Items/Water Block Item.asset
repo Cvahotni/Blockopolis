@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Water Block Item
   m_EditorClassIdentifier: 
   id: 10
-  sprite: {fileID: 21300000, guid: e781ee4e33107006ea5bbd458987a840, type: 3}
+  sprite: {fileID: 21300000, guid: eb70546716d7a8706a93ee5e7b6b71e9, type: 3}
   droppedItemMaterial: {fileID: 2100000, guid: d3a92d368429e08178ec5487e979c707, type: 2}
   heldItemPrefab: {fileID: 7949245008419684630, guid: 73770792f3dba9accab08a64b3cd9ccb, type: 3}
   droppedItemPrefab: {fileID: 8845799518492459054, guid: 6927084878d09cbfea583643d950b62e, type: 3}

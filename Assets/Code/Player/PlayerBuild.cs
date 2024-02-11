@@ -9,6 +9,8 @@ public class PlayerBuild : MonoBehaviour
 
     [SerializeField] private float reach = 5.0f;
     [SerializeField] private float checkIncrement = 0.5f;
+    [SerializeField] private float minCheckIncrement = 0.0001f;
+    [SerializeField] private float checkIncrementDivisionAmount = 8;
     [SerializeField] private float breakDelay = 0.1f;
     [SerializeField] private float progressDelay = 0.25f;
 
@@ -39,7 +41,7 @@ public class PlayerBuild : MonoBehaviour
     private bool isEnabled = true;
     private bool canMine = true;
 
-    private RaycastHit[] raycastHits;
+    private Vector3 previousTargetPos;
     private BlockModifyData blockBreakStartData;
 
     private void Awake() {
@@ -49,7 +51,6 @@ public class PlayerBuild : MonoBehaviour
 
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;
-        raycastHits = new RaycastHit[2];
 
         playerCamera = Camera.main;
         blockCrackAnimator = blockCrackOutline.GetComponent<Animator>();
@@ -216,45 +217,49 @@ public class PlayerBuild : MonoBehaviour
     }
 
     private void RaycastIntoWorld() {
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        ResetRaycastPositions();
+        if(previousTargetPos != null) previousTargetPos = targetPos;
 
-        int closestHitIndex = -1;
-        RaycastHit closestHit = new RaycastHit();
+        float stepAmount = checkIncrement;
+        float step = stepAmount;
 
-        if(Physics.RaycastNonAlloc(ray, raycastHits, reach, chunkMask) != 0) {
-            Array.Sort(raycastHits, delegate(RaycastHit hit1, RaycastHit hit2) { return hit1.distance.CompareTo(hit2.distance); } );
+        Vector3 playerPosition = playerCamera.transform.position;
 
-            foreach(RaycastHit hit in raycastHits) {
-                if(hit.point == Vector3.zero || hit.normal == Vector3.zero) continue;
-                closestHit = closestHitIndex >= 0 ? raycastHits[closestHitIndex] : raycastHits[0];
+        int positionX = Mathf.FloorToInt(playerPosition.x);
+        int positionY = Mathf.FloorToInt(playerPosition.y);
+        int positionZ = Mathf.FloorToInt(playerPosition.z);
+
+        Vector3Int playerPositionFloored = new Vector3Int(positionX, positionY, positionZ);
+        Vector3 lastPos = new Vector3();
+
+        while(step < reach) {
+            Vector3 pos = playerCamera.transform.position + (playerCamera.transform.forward * step);
+            Vector3Int posFlooredAsInt = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+
+            targetRaycastBlock = WorldModifier.GetBlockAt(posFlooredAsInt.x, posFlooredAsInt.y, posFlooredAsInt.z);
+
+            if(!targetRaycastBlock.IsAir()) {
+                if(stepAmount > minCheckIncrement) {
+                    step -= stepAmount;
+                    stepAmount /= checkIncrementDivisionAmount;
+                }
+
+                else {
+                    lastPos = pos - (playerCamera.transform.forward * checkIncrement);
+                    Vector3Int lastPosFloored = new Vector3Int(Mathf.FloorToInt(lastPos.x), Mathf.FloorToInt(lastPos.y), Mathf.FloorToInt(lastPos.z));
+
+                    highlightPos = lastPosFloored;
+                    targetPos = posFlooredAsInt;
+            
+                    return;
+                }
             }
 
-            Vector3 targetPoint = closestHit.point - closestHit.normal * 0.01f;
-            Vector3 targetHighlightPoint = closestHit.point + closestHit.normal * 0.01f;
-        
-            int targetPosX = Mathf.FloorToInt(targetPoint.x);
-            int targetPosY = Mathf.FloorToInt(targetPoint.y);
-            int targetPosZ = Mathf.FloorToInt(targetPoint.z);
-
-            int targetHighlightPosX = Mathf.FloorToInt(targetHighlightPoint.x);
-            int targetHighlightPosY = Mathf.FloorToInt(targetHighlightPoint.y);
-            int targetHighlightPosZ = Mathf.FloorToInt(targetHighlightPoint.z);
-
-            BlockID currentTargetRaycastBlock = WorldModifier.GetBlockAt(targetPosX, targetPosY, targetPosZ);
-
-            if(!currentTargetRaycastBlock.IsAir()) {
-                targetPos.x = targetPosX;
-                targetPos.y = targetPosY;
-                targetPos.z = targetPosZ;
-
-                highlightPos.x = targetHighlightPosX;
-                highlightPos.y = targetHighlightPosY;
-                highlightPos.z = targetHighlightPosZ;
-
-                targetRaycastBlock = currentTargetRaycastBlock;
-            }
+            step += stepAmount;
+            lastPos = posFlooredAsInt;
         }
+
+        targetPos = playerPositionFloored;
+        highlightPos = playerPositionFloored;
     }
 
     private void ResetRaycastPositions() {
