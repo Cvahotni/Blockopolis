@@ -61,6 +61,8 @@ public class WorldAllocator : MonoBehaviour
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
         bool shouldBuildNextChunk = shouldBuildChunks || immediate;
+        bool isSaving = WorldStorage.RegionsSaved != 0;
+
         if(queue.Count == 0 || !shouldBuildNextChunk) return;
 
         long chunkPos = queue.Dequeue();

@@ -44,7 +44,7 @@ public class EndlessTerrain : MonoBehaviour
         shortWait = new WaitForSeconds(1.0f / GameSettings.ChunksPerSecond);
 
         if(!WorldHandler.IsCurrentWorldInfoValid()) {
-            Debug.LogError("Invalid world detected: " + WorldHandler.CurrentWorld.Name);
+            Debug.LogError("Invalid world detected! " + WorldHandler.CurrentWorld.Name);
             this.enabled = false;
 
             return;

@@ -20,10 +20,17 @@ public class FeatureRegistry
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
+        var watch = new System.Diagnostics.Stopwatch();
+
         featureData = new NativeParallelHashMap<FeaturePlacement, ushort>(1, Allocator.Persistent);
         featureSettings = new NativeParallelHashMap<ushort, FeatureSettings>(1, Allocator.Persistent);
 
         AddTree();
+
+        watch.Stop();
+        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+
+        Debug.Log("Feature Registry finished: " + timeTaken + " μs");
     }
 
     private static void DestroyNativeArrays() {

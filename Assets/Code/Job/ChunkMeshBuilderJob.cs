@@ -22,6 +22,7 @@ public struct ChunkMeshBuilderJob : IJob
     public NativeList<ChunkVertex> vertices;
     public NativeList<uint> indices;
     public NativeList<uint> transparentIndices;
+    public NativeList<uint> cutoutIndices;
 
     public NativeArray<float3> voxelVerts;
     public NativeArray<uint> voxelTris;
@@ -81,7 +82,7 @@ public struct ChunkMeshBuilderJob : IJob
             float2 blockFaceUVOffset = GetBlockFaceUVOffset(blockState, f);
 
             Vector3 pos = new Vector3(x, y, z);
-            currentVertexIndex = MeshFace(currentModel, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset, blockState.transparent);
+            currentVertexIndex = MeshFace(currentModel, currentVertexIndex, f, pos, faceDirection, blockFaceUVOffset, blockState.transparent, blockState.cutout);
         }
 
         return currentVertexIndex;
@@ -134,37 +135,37 @@ public struct ChunkMeshBuilderJob : IJob
         return voxelMap[currentVoxelIndex];
     }
 
-    private uint MeshFace(BlockStateModel model, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset, bool transparent) {
+    private uint MeshFace(BlockStateModel model, uint vertexIndex, int f, float3 pos, float3 faceCheck, float2 uvOffset, bool transparent, bool cutout) {
         uint currentVertexIndex = vertexIndex;
         
         switch(f) {
             case 0: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.backVertsStart, model.backVertsEnd, model.backTrisStart, model.backTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.backVertsStart, model.backVertsEnd, model.backTrisStart, model.backTrisEnd, transparent, cutout);
                 break;
             }
 
             case 1: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.frontVertsStart, model.frontVertsEnd, model.frontTrisStart, model.frontTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.frontVertsStart, model.frontVertsEnd, model.frontTrisStart, model.frontTrisEnd, transparent, cutout);
                 break;
             }
 
             case 2: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.upVertsStart, model.upVertsEnd, model.upTrisStart, model.upTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.upVertsStart, model.upVertsEnd, model.upTrisStart, model.upTrisEnd, transparent, cutout);
                 break;
             }
 
             case 3: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.bottomVertsStart, model.bottomVertsEnd, model.bottomTrisStart, model.bottomTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.bottomVertsStart, model.bottomVertsEnd, model.bottomTrisStart, model.bottomTrisEnd, transparent, cutout);
                 break;
             }
 
             case 4: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.leftVertsStart, model.leftVertsEnd, model.leftTrisStart, model.leftTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.leftVertsStart, model.leftVertsEnd, model.leftTrisStart, model.leftTrisEnd, transparent, cutout);
                 break;
             }
 
             case 5: {
-                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.rightVertsStart, model.rightVertsEnd, model.rightTrisStart, model.rightTrisEnd, transparent);
+                currentVertexIndex = BuildFace(vertexIndex, pos, faceCheck, uvOffset, model.rightVertsStart, model.rightVertsEnd, model.rightTrisStart, model.rightTrisEnd, transparent, cutout);
                 break;
             }
         }
@@ -172,7 +173,7 @@ public struct ChunkMeshBuilderJob : IJob
         return currentVertexIndex;
     }
     
-    private uint BuildFace(uint vertexIndex, float3 pos, float3 faceCheck, float2 uvOffset, uint startVertexIndex, uint endVertexIndex, uint startTriIndex, uint endTriIndex, bool transparent) {
+    private uint BuildFace(uint vertexIndex, float3 pos, float3 faceCheck, float2 uvOffset, uint startVertexIndex, uint endVertexIndex, uint startTriIndex, uint endTriIndex, bool transparent, bool cutout) {
         uint newVertexIndex = 0;
         float textureSize = 1.0f / VoxelProperties.textureAtlasSizeInBlocks;
 
@@ -186,6 +187,7 @@ public struct ChunkMeshBuilderJob : IJob
 
         for(uint t = startTriIndex; t < endTriIndex; t++) {
             if(transparent) transparentIndices.Add(vertexIndex + voxelTris[(int) t]);
+            else if(cutout) cutoutIndices.Add(vertexIndex + voxelTris[(int) t]);
             else indices.Add(vertexIndex + voxelTris[(int) t]);
         }
 

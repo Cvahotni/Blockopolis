@@ -12,6 +12,7 @@ public class BlockStateObject : ScriptableObject
 
     public bool solid;
     public bool transparent;
+    public bool cutout;
 
     [Header("Material Information")]
     public BlockMaterial material;

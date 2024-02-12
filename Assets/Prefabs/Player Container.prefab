@@ -589,6 +589,7 @@ MonoBehaviour:
   reach: 5
   checkIncrement: 0.1
   minCheckIncrement: 1
+  checkIncrementDivisionAmount: 4
   breakDelay: 0.2
   progressDelay: 0.25
   blockOutline: {fileID: 0}

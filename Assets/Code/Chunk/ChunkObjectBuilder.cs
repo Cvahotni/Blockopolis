@@ -10,12 +10,14 @@ public class ChunkObjectBuilder : MonoBehaviour
     private VertexAttributeDescriptor positionDescriptor = new VertexAttributeDescriptor(VertexAttribute.Position);
 	private VertexAttributeDescriptor texCoordDescriptor = new VertexAttributeDescriptor(VertexAttribute.TexCoord0);
 	private VertexAttributeDescriptor normalDescriptor = new VertexAttributeDescriptor(VertexAttribute.Normal);
+
+    private readonly int subMeshCount = 3;
     private readonly string chunkTagName = "Ground";
 
     public static ChunkObjectBuilder Instance { get; private set; }
 
     private ChunkObjectPool chunkObjectPool;
-    private Material[] materials = new Material[2];
+    private Material[] materials;
 
     [SerializeField]
     private Material terrainMaterial;
@@ -35,6 +37,7 @@ public class ChunkObjectBuilder : MonoBehaviour
 
     private void Start() {
         chunkObjectPool = ChunkObjectPool.Instance;
+        materials = new Material[subMeshCount];
         
         SetLayer();
         SetMaterials();
@@ -47,6 +50,7 @@ public class ChunkObjectBuilder : MonoBehaviour
     private void SetMaterials() {
         materials[0] = terrainMaterial;
         materials[1] = transparentMaterial;
+        materials[2] = terrainMaterial;
     }
 
     public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
@@ -79,8 +83,10 @@ public class ChunkObjectBuilder : MonoBehaviour
 
         int originalIndicesLength = builtChunkData.indices.Length;
         int transparentIndicesLength = builtChunkData.transparentIndices.Length;
+        int cutoutIndicesLength = builtChunkData.cutoutIndices.Length;
 
         builtChunkData.indices.AddRange(builtChunkData.transparentIndices);
+        builtChunkData.indices.AddRange(builtChunkData.cutoutIndices);
 
         meshFilter.mesh.MarkDynamic();
         meshFilter.mesh.SetIndexBufferParams(builtChunkData.indices.Length, IndexFormat.UInt32);
@@ -88,11 +94,12 @@ public class ChunkObjectBuilder : MonoBehaviour
         meshFilter.mesh.SetVertexBufferData<ChunkVertex>(builtChunkData.vertices, 0, 0, builtChunkData.vertices.Length, 0, MeshUpdateFlags.DontValidateIndices);
         meshFilter.mesh.SetIndexBufferData<uint>(builtChunkData.indices, 0, 0, builtChunkData.indices.Length, MeshUpdateFlags.DontValidateIndices);
 
-        meshFilter.mesh.subMeshCount = 2;
+        meshFilter.mesh.subMeshCount = subMeshCount;
         meshFilter.mesh.SetSubMesh(0, new SubMeshDescriptor(0, originalIndicesLength));
 
         CreateChunkObjectCollider(chunkGameObject, meshFilter);
         meshFilter.mesh.SetSubMesh(1, new SubMeshDescriptor(originalIndicesLength, transparentIndicesLength));
+        meshFilter.mesh.SetSubMesh(2, new SubMeshDescriptor(originalIndicesLength + transparentIndicesLength, cutoutIndicesLength));
 
         meshFilter.mesh.RecalculateBounds();
 

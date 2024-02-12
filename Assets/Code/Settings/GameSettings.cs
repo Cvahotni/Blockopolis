@@ -103,10 +103,16 @@ public class GameSettings
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Start() {
+        var watch = new System.Diagnostics.Stopwatch();
         GameSettingsStorage.Load();
         
         ApplyChangesToUnity();
         UpdateChunkPoolSize();
+
+        watch.Stop();
+        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+
+        Debug.Log("Game Settings Load finished: " + timeTaken + " μs");
     }
 
     public static void SetViewDistance(int newViewDistance) {

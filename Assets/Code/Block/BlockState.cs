@@ -11,9 +11,7 @@ public struct BlockState
 
     public bool solid;
     public bool transparent;
-
-    public BlockMaterial material;
-    public float hardness;
+    public bool cutout;
 
     public byte model;
 

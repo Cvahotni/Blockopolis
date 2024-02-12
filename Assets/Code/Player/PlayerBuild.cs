@@ -112,7 +112,7 @@ public class PlayerBuild : MonoBehaviour
         if(!blockCrackOutline.activeSelf) return;
         if(!canMine) return;
 
-        BlockID block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
+        BlockID block = WorldAccess.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         blockBreakStartData = new BlockModifyData(
             offsetTargetPos.x, offsetTargetPos.y, offsetTargetPos.z,
@@ -153,10 +153,10 @@ public class PlayerBuild : MonoBehaviour
     }
     
     private float GetBlockBreakSpeed() {
-        BlockState state = BlockRegistry.BlockStateDictionary[targetRaycastBlock.Pack()];
+        BlockType type = BlockRegistry.BlockTypes[targetRaycastBlock.id];
 
-        if(itemRegistry == null) return 1.0f / state.hardness;
-        return itemRegistry.GetItemMineMultiplier(targetBlockID, targetRaycastBlock) / state.hardness;
+        if(itemRegistry == null) return 1.0f / type.hardness;
+        return itemRegistry.GetItemMineMultiplier(targetBlockID, targetRaycastBlock) / type.hardness;
     }
 
     public void ModifyTargetBlock(object sender, ItemPickupData data) {
@@ -175,9 +175,9 @@ public class PlayerBuild : MonoBehaviour
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
         if(!CanModifyAt(offsetTargetPos)) return;
-        BlockID block = WorldModifier.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
+        BlockID block = WorldAccess.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
-        WorldModifier.ModifyBlocks(new List<VoxelModification>() {
+        WorldAccess.ModifyBlocks(new List<VoxelModification>() {
             new VoxelModification(targetPos.x, targetPos.y, targetPos.z, new BlockID(0))
         });
 
@@ -205,7 +205,7 @@ public class PlayerBuild : MonoBehaviour
             if(!itemRegistry.IsItemBlockItem(targetBlock.id)) return;
         }
 
-        WorldModifier.ModifyBlocks(new List<VoxelModification>() {
+        WorldAccess.ModifyBlocks(new List<VoxelModification>() {
             new VoxelModification(highlightPos.x, highlightPos.y, highlightPos.z, targetBlock)
         });
 
@@ -235,9 +235,7 @@ public class PlayerBuild : MonoBehaviour
             Vector3 pos = playerCamera.transform.position + (playerCamera.transform.forward * step);
             Vector3Int posFlooredAsInt = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
 
-            targetRaycastBlock = WorldModifier.GetBlockAt(posFlooredAsInt.x, posFlooredAsInt.y, posFlooredAsInt.z);
-
-            if(!targetRaycastBlock.IsAir()) {
+            if(IsInteractable(pos)) {
                 if(stepAmount > minCheckIncrement) {
                     step -= stepAmount;
                     stepAmount /= checkIncrementDivisionAmount;
@@ -250,6 +248,7 @@ public class PlayerBuild : MonoBehaviour
                     highlightPos = lastPosFloored;
                     targetPos = posFlooredAsInt;
             
+                    targetRaycastBlock = WorldAccess.GetBlockAt(posFlooredAsInt);
                     return;
                 }
             }
@@ -286,20 +285,25 @@ public class PlayerBuild : MonoBehaviour
     private void UpdateBlockOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
 
-        blockOutline.SetActive(CanModifyAt(blockOutlinePosition) && !IsAir(blockOutlinePosition));
+        blockOutline.SetActive(CanModifyAt(blockOutlinePosition) && IsInteractable(blockOutlinePosition));
         blockOutline.transform.position = blockOutlinePosition;
     }
 
     private void UpdateBlockCrackOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
-        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition) && isMining && !IsAir(blockOutlinePosition);
+        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition) && isMining && IsInteractable(blockOutlinePosition);
 
         blockCrackOutline.SetActive(shouldCrackOutlineBeActive);
         blockCrackOutline.transform.position = blockOutlinePosition;
     }
 
-    private bool IsAir(Vector3 position) {
-        return WorldModifier.GetBlockAt(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z)).IsAir();
+    private bool IsInteractable(Vector3 position) {
+        BlockID block = WorldAccess.GetBlockAt(Mathf.FloorToInt(position.x), Mathf.FloorToInt(position.y), Mathf.FloorToInt(position.z));
+
+        bool notAir = !block.IsAir();
+        bool notLiquid = !BlockRegistry.BlockTypes[block.id].isLiquid;
+
+        return notAir && notLiquid;
     }
 
     private Vector3 GetOffsetTargetPos() {

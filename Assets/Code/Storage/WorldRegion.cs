@@ -22,6 +22,13 @@ public struct WorldRegion
     public void AddChunk(long coord, ref NativeArray<ushort> voxelMap) {
         if(voxelStorageMap.ContainsKey(coord)) return;
         voxelStorageMap.Add(coord, voxelMap);
+
+        if(voxelStorageMap.Count > 256) {
+            int x = ChunkPositionHelper.GetChunkPosX(coord);
+            int z = ChunkPositionHelper.GetChunkPosZ(coord);
+
+            Debug.Log("Added chunk to oversized region: " + x + ", " + z + ", " + voxelStorageMap.Count);
+        }
     }
 
     public void SetChunk(long coord, ref NativeArray<ushort> voxelMap) {

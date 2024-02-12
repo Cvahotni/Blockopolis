@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
+using System;
 
 [RequireComponent(typeof(EndlessTerrain))]
 [RequireComponent(typeof(WorldFeatures))]
@@ -32,6 +33,13 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     private void Start() {
+        if(!WorldHandler.IsCurrentWorldInfoValid()) {
+            Debug.LogError("ChunkBuilder can't find a valid world to use.");
+            this.enabled = false;
+
+            return;
+        }
+
         worldEventSystem = WorldEventSystem.Instance;
         endlessTerrain = EndlessTerrain.Instance;
         worldFeatures = WorldFeatures.Instance;
@@ -49,6 +57,7 @@ public class ChunkBuilder : MonoBehaviour
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
         NativeList<uint> indices = new NativeList<uint>(Allocator.Persistent);
         NativeList<uint> transparentIndices = new NativeList<uint>(Allocator.Persistent);
+        NativeList<uint> cutoutIndices = new NativeList<uint>(Allocator.Persistent);
 
         NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord);
         NativeArray<ushort> forwardVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, 1);
@@ -61,14 +70,15 @@ public class ChunkBuilder : MonoBehaviour
         NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
         NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
 
-        BlockModelData modelData = BlockRegistry.BlockModelData;
+        BlockModelData modelData = BlockModelRegistry.BlockModelData;
 
         ChunkBuildData chunkBuildData = new ChunkBuildData(
             ref chunkPos, ref vertices,
             ref indices,
             ref leftVoxelMap, ref rightVoxelMap,
             ref backVoxelMap, ref forwardVoxelMap,
-            ref modelData, ref transparentIndices
+            ref modelData, ref transparentIndices,
+            ref cutoutIndices
         );
 
         ChunkVoxelBuildData chunkVoxelBuildData = new ChunkVoxelBuildData(
@@ -84,7 +94,7 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.noiseOffset[0] = terrainNoiseOffset.x;
         chunkVoxelBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
-        BuiltChunkData builtChunkData = new BuiltChunkData(ref vertices, ref indices, ref transparentIndices, chunkPos[0]);
+        BuiltChunkData builtChunkData = new BuiltChunkData(ref vertices, ref indices, ref transparentIndices, ref cutoutIndices, chunkPos[0]);
 
         StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
         access.StartCoroutine(BuildChunkMesh(chunkCoord, chunkBuildData, chunkVoxelBuildData, builtChunkData));
@@ -139,7 +149,7 @@ public class ChunkBuilder : MonoBehaviour
         foreach(var pair in BlockRegistry.BlockStateDictionary) blockStateDictionary.Add(pair.Key, pair.Value);
 
         NativeParallelHashMap<byte, BlockStateModel> blockModelDictionary = new NativeParallelHashMap<byte, BlockStateModel>(1, Allocator.Persistent);
-        foreach(var pair in BlockRegistry.BlockModelDictionary) blockModelDictionary.Add(pair.Key, pair.Value);
+        foreach(var pair in BlockModelRegistry.BlockModelDictionary) blockModelDictionary.Add(pair.Key, pair.Value);
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
             voxelMap = voxelMap,
@@ -155,6 +165,7 @@ public class ChunkBuilder : MonoBehaviour
             vertices = chunkBuildData.vertices,
             indices = chunkBuildData.indices,
             transparentIndices = chunkBuildData.transparentIndices,
+            cutoutIndices = chunkBuildData.cutoutIndices,
 
             voxelVerts = voxelVerts,
             voxelTris = voxelTris,
@@ -190,6 +201,10 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     public NativeArray<ushort> GetVoxelMap(long chunkCoord) {
+        if(!this.enabled) {
+            throw new InvalidOperationException("ChunkBuilder is disabled! Cannot continue.");
+        }
+
         return GetVoxelMapWithOffset(chunkCoord, 0, 0);
     }
 
@@ -210,7 +225,7 @@ public class ChunkBuilder : MonoBehaviour
 
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
-        NativeArray<ushort> voxelMap = CreateFreshVoxelMap();
+        NativeArray<ushort> voxelMap = CreateEmptyVoxelMap();
 
         NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
         NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
@@ -232,7 +247,7 @@ public class ChunkBuilder : MonoBehaviour
         return voxelMap;
     }
 
-    public NativeArray<ushort> CreateFreshVoxelMap() {
+    public NativeArray<ushort> CreateEmptyVoxelMap() {
         return new NativeArray<ushort>((VoxelProperties.chunkWidth) * VoxelProperties.chunkHeight * (VoxelProperties.chunkWidth), Allocator.Persistent);
     }
 }

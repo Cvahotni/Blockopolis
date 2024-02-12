@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 
-public class WorldModifier
+public class WorldAccess
 {
     public static void ModifyBlocks(List<VoxelModification> modifications) {
         WorldAllocator worldAllocator = WorldAllocator.Instance;

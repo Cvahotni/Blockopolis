@@ -63,6 +63,10 @@ public class WorldRegionSaveLoad
         NativeArray<long> keys = region.VoxelStorageMap.GetKeyArray(Allocator.Persistent);
         NativeArray<NativeArray<ushort>> values = region.VoxelStorageMap.GetValueArray(Allocator.Persistent);
 
+        if(keys.Length > chunksInRegionAmount) {
+            Debug.LogError("Region is too large: " + keys.Length);
+        }
+
         for(int i = 0; i < region.VoxelStorageMap.Count; i++) {
             long key = keys[i];
             NativeArray<ushort> voxelArray = values[i];

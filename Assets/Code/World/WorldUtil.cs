@@ -6,7 +6,7 @@ public class WorldUtil
 {
     public static int GetMaxYLevelAt(int worldX, int worldZ) {
         for(int y = VoxelProperties.chunkHeight - 1; y >= 0; y--) {
-            BlockID currentBlockID = WorldModifier.GetBlockAt(worldX, y, worldZ);
+            BlockID currentBlockID = WorldAccess.GetBlockAt(worldX, y, worldZ);
             if(!currentBlockID.IsAir()) return y;
         }
 
