@@ -68,9 +68,9 @@ public class WorldAccess
     }
 
     public static BlockID GetBlockAt(Vector3 pos) {
-        int x = (int) pos.x;
-        int y = (int) pos.y;
-        int z = (int) pos.z;
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
 
         return GetBlockAt(x, y, z);
     }

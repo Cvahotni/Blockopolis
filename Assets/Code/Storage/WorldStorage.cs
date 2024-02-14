@@ -10,7 +10,6 @@ public static class WorldStorage
     private static Dictionary<long, WorldRegion> regionMap = new Dictionary<long, WorldRegion>();
     private static int regionsSaved = 0;
 
-    //See comments in WorldRegionSaveLoad
     private static float regionSavesPerSecond = 64;
     private static float regionSavesPerSecondMultiplier = 16;
 

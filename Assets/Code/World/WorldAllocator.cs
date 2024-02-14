@@ -61,8 +61,6 @@ public class WorldAllocator : MonoBehaviour
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
         bool shouldBuildNextChunk = shouldBuildChunks || immediate;
-        bool isSaving = WorldStorage.RegionsSaved != 0;
-
         if(queue.Count == 0 || !shouldBuildNextChunk) return;
 
         long chunkPos = queue.Dequeue();
@@ -86,7 +84,7 @@ public class WorldAllocator : MonoBehaviour
         bool skipChunkZ = HandleRegionAllocation(RegionPositionHelper.ModifyRegionPos(regionPos, x, z));
         bool skipCurrentChunk = HandleRegionAllocation(regionPos);
         
-        if(shouldCullChunk || skipChunkX || skipChunkZ || skipCurrentChunk) {
+        if(shouldCullChunk || skipChunkX || skipChunkZ || skipCurrentChunk && !immediate) {
             queue.Enqueue(chunkPos);
             return;
         }

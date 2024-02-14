@@ -1,0 +1,18 @@
+{
+    "id": 0,
+    "size": {
+        "x": 5,
+        "y": 7,
+        "z": 5
+    },
+    "featuresPerChunk": 4,
+    "placeType": 0,
+    "minY": 66,
+    "maxY": 255,
+    "spawnChance": 100,
+    "overrideBlock": {
+        "id": 0,
+        "variant": 0,
+        "rotation": 0
+    }
+}

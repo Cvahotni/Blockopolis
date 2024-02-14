@@ -38,6 +38,8 @@ public class PlayerEventSystem : MonoBehaviour
     private event EventHandler<BlockModifyData> blockBreakEvent;
     private event EventHandler<BlockModifyData> blockPlaceEvent;
     private event EventHandler playerSpawnEvent;
+    private event EventHandler playerEnterWaterEvent;
+    private event EventHandler playerExitWaterEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -65,6 +67,8 @@ public class PlayerEventSystem : MonoBehaviour
         AddBlockBreakListeners();
         AddBlockPlaceListeners();
         AddPlayerSpawnListeners();
+        AddPlayerEnterWaterListeners();
+        AddPlayerExitWaterListeners();
     } 
 
     private void AddGroundCheckListeners() {
@@ -102,6 +106,14 @@ public class PlayerEventSystem : MonoBehaviour
         playerSpawnEvent += hotbar.UpdateHeldItem;
     }
 
+    private void AddPlayerEnterWaterListeners() {
+        playerEnterWaterEvent += playerMove.EnterWater;
+    }
+
+    private void AddPlayerExitWaterListeners() {
+        playerExitWaterEvent += playerMove.ExitWater;
+    }
+
     public void InvokeGroundCheck(bool value) {
         groundCheckEvent.Invoke(this, value);
     }
@@ -128,5 +140,13 @@ public class PlayerEventSystem : MonoBehaviour
 
     public void InvokePlayerSpawn() {
         playerSpawnEvent.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokePlayerEnterWater() {
+        playerEnterWaterEvent.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokePlayerExitWater() {
+        playerExitWaterEvent.Invoke(this, EventArgs.Empty);
     }
 }

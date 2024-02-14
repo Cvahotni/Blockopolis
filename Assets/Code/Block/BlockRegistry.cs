@@ -29,6 +29,7 @@ public class BlockRegistry
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
 
         CreateNativeCollections();
         LoadBlockTypesFromFolder();
@@ -37,9 +38,9 @@ public class BlockRegistry
         PopulateBlockStateDictionary();
 
         watch.Stop();
-        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+        float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
-        Debug.Log("Block Registry finished: " + timeTaken + " μs");
+        Debug.Log("Block Registry finished: " + timeTaken + " ms");
     }
 
     private static void CreateNativeCollections() {

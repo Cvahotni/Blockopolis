@@ -19,11 +19,6 @@ public class WorldRegionSaveLoad
 
     private static byte[] chunkBuffer = new byte[sizeof(ushort) * chunkElementsSize];
 
-    //IMPORTANT PLEASE READ!
-    //Chunk saves currently finish on a set timer, setting the below values too high can cause chunks to override eachother,
-    //this was the cause of Spectral's mental pain for about 4 hours last night, so PLEASE implement a system that waits for them in-time.
-    //THANK YOU.
-
     private static readonly float regionSavesPerSecond = 12f;
     private static readonly float regionLoadsPerSecond = 12f;
 

@@ -31,14 +31,15 @@ public class BlockModelRegistry
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     public static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
 
         CreateNativeCollections();
         RegisterBlockStateModels();
 
         watch.Stop();
-        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+        float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
-        Debug.Log("Block Model Registry finished: " + timeTaken + " μs");
+        Debug.Log("Block Model Registry finished: " + timeTaken + " ms");
     }
 
     private static void CreateNativeCollections() {

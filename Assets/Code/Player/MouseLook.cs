@@ -11,7 +11,7 @@ public class MouseLook : MonoBehaviour
     [SerializeField] private float blendRate = 1.0f;
     [SerializeField] private Transform playerBody;
 
-    private Camera camera;
+    private Camera mouseCamera;
 
     private float xRotation = 0.0f;
     private float yRotation = 0.0f;
@@ -31,7 +31,7 @@ public class MouseLook : MonoBehaviour
 
     private void Start() {
         pauseEventSystem = PauseEventSystem.Instance;
-        camera = GetComponent<Camera>();
+        mouseCamera = GetComponent<Camera>();
     }
 
     private void FixedUpdate() {
@@ -47,7 +47,7 @@ public class MouseLook : MonoBehaviour
     }
 
     private void UpdateCameraFOV() {
-        camera.fieldOfView = GameSettings.FOV;
+        mouseCamera.fieldOfView = GameSettings.FOV;
     }
 
     public void Enable(object sender, EventArgs e) {

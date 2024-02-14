@@ -9,12 +9,13 @@ public struct WorldRegion
     private NativeHashMap<long, NativeArray<ushort>> voxelStorageMap;
     public NativeHashMap<long, NativeArray<ushort>> VoxelStorageMap { get { return voxelStorageMap; } }
 
+    private int chunksInRegionAmount;
     private bool disposed;
 
     public WorldRegion(bool debug) {
         if(debug) Debug.Log("Created WorldRegion");
-        int chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
 
+        chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
         voxelStorageMap = new NativeHashMap<long, NativeArray<ushort>>(chunksInRegionAmount, Allocator.Persistent);
         disposed = false;
     }
@@ -23,7 +24,7 @@ public struct WorldRegion
         if(voxelStorageMap.ContainsKey(coord)) return;
         voxelStorageMap.Add(coord, voxelMap);
 
-        if(voxelStorageMap.Count > 256) {
+        if(voxelStorageMap.Count > chunksInRegionAmount) {
             int x = ChunkPositionHelper.GetChunkPosX(coord);
             int z = ChunkPositionHelper.GetChunkPosZ(coord);
 

@@ -33,12 +33,16 @@ public struct ChunkVoxelBuilderJob : IJob
                 float worldZ = GetWorldZ(z);
 
                 float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + yOffset;
+                float randomNoiseLevel = Noise.Get2DNoiseAt(noiseOffset[0], noiseOffset[1], worldX, worldZ, 1.0f, 16.0f);
+
                 int yLevel = (int) (noiseLevel);
 
                 for(int y = 0; y < VoxelProperties.chunkHeight; y++) {
                     PutVoxel(x, y, z, 0, 0);
 
+                    if(y == yLevel + 1 && yLevel > seaLevel && randomNoiseLevel >= 0.7f) PutVoxel(x, y, z, 24, 0);
                     if(y == yLevel && yLevel > seaLevel) PutVoxel(x, y, z, 1, 0);
+                    
                     else if(y == yLevel && WorldUtil.IsBelowBeachLevel(yLevel)) PutVoxel(x, y, z, 5, 0);
 
                     else if(WorldUtil.IsAtSeaLevel(y) && y > yLevel) PutVoxel(x, y, z, 10, 0);

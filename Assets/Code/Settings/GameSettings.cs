@@ -10,9 +10,9 @@ public class GameSettings
     private static int featuresPerSecond = 500;
     private static int chunkPoolSize = 0;
     private static int maxFramerate = 250;
-    private static int chunkBuildsPerFrame = 2;
+    private static int chunkBuildsPerFrame = 1;
     private static int fov = 90;
-    private static int sensitivity = 50;
+    private static int sensitivity = 100;
     private static int volume = 50;
     private static bool enableVSync = true;
     private static bool fullscreen = false;
@@ -104,15 +104,17 @@ public class GameSettings
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
     private static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
+
         GameSettingsStorage.Load();
         
         ApplyChangesToUnity();
         UpdateChunkPoolSize();
 
         watch.Stop();
-        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+        float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
-        Debug.Log("Game Settings Load finished: " + timeTaken + " μs");
+        Debug.Log("Game Settings Load finished: " + timeTaken + " ms");
     }
 
     public static void SetViewDistance(int newViewDistance) {

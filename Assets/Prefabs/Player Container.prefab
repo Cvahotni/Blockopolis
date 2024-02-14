@@ -553,7 +553,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   reach: 5
   checkIncrement: 0.1
-  minCheckIncrement: 1
+  minCheckIncrement: 0.000001
   checkIncrementDivisionAmount: 4
   breakDelay: 0.2
   progressDelay: 0.25
@@ -762,8 +762,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69c4e3614bc69d2739c59b18a454f2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  jumpHeight: 5
+  walkSpeed: 4.325
+  underWaterWalkSpeed: 2.125
+  drag: 0.25
+  underWaterDrag: 12
+  jumpHeight: 4.25
+  underWaterJumpHeight: 0.35
   gravity: -9.81
   playerContainerTransform: {fileID: 461729789009755802}
   playerRigidBody: {fileID: 3321812370123416527}

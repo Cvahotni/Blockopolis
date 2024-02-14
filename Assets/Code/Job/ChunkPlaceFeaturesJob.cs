@@ -27,14 +27,14 @@ public struct ChunkPlaceFeaturesJob : IJob
         foreach(FeaturePlacement placement in featurePlacements) {
             FeatureSettings currentFeatureSettings = featureSettings[placement.id];
 
-            int minX = -(currentFeatureSettings.sizeX / 2);
-            int maxX = (currentFeatureSettings.sizeX / 2);
+            int minX = -(currentFeatureSettings.size.x / 2);
+            int maxX = (currentFeatureSettings.size.x / 2);
 
             int minY = 0;
-            int maxY = currentFeatureSettings.sizeY - 1;
+            int maxY = currentFeatureSettings.size.y - 1;
 
-            int minZ = -(currentFeatureSettings.sizeZ / 2);
-            int maxZ = (currentFeatureSettings.sizeZ / 2);
+            int minZ = -(currentFeatureSettings.size.z / 2);
+            int maxZ = (currentFeatureSettings.size.z / 2);
 
             minX += placement.x;
             maxX += placement.x;
@@ -83,8 +83,13 @@ public struct ChunkPlaceFeaturesJob : IJob
                         int dx = Mathf.Abs(placement.x - (chunkWX + fx));
                         int dz = Mathf.Abs(placement.z - (chunkWZ + fz));
 
-                        if(dx > currentFeatureSettings.sizeX) continue;
-                        if(dz > currentFeatureSettings.sizeZ) continue;
+                        if(dx > currentFeatureSettings.size.x) continue;
+                        if(dz > currentFeatureSettings.size.z) continue;
+
+                        int checkVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
+
+                        BlockID checkBlockID = new BlockID(voxelMap[checkVoxelMapArrayIndex]);
+                        if(!checkBlockID.Equals(currentFeatureSettings.overrideBlock)) continue;
 
                         FeaturePlacement newPlacement = new FeaturePlacement(npx, y - placement.y, npz, placement.id);
                         if(!featureData.ContainsKey(newPlacement)) continue;

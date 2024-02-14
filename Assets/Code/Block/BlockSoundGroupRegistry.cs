@@ -10,12 +10,14 @@ public class BlockSoundGroupRegistry
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
+
         LoadBlockSoundGroupsFromFolder();
 
         watch.Stop();
-        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+        float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
-        Debug.Log("Block Sound Registry finished: " + timeTaken + " μs");
+        Debug.Log("Block Sound Group Registry finished: " + timeTaken + " ms");
     }
 
     private static void LoadBlockSoundGroupsFromFolder() {

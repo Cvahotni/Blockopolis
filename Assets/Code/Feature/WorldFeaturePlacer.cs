@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
 
-[DefaultExecutionOrder(-50)]
+[DefaultExecutionOrder(-800)]
 [RequireComponent(typeof(WorldFeatures))]
 [RequireComponent(typeof(EndlessTerrain))]
 public class WorldFeaturePlacer : MonoBehaviour
@@ -70,7 +70,7 @@ public class WorldFeaturePlacer : MonoBehaviour
 
     private void PlaceFeaturesOfType(int x, int z, ushort type) {
         FeatureSettings settings = FeatureRegistry.FeatureSettings[type];
-        UnityEngine.Random.seed = WorldHandler.CurrentWorld.Seed + ((x + 800) * z);
+        UnityEngine.Random.seed = WorldHandler.CurrentWorld.Seed + ((x + 800) * z) + (type * 404);
 
         for(int i = 0; i < settings.featuresPerChunk; i++) {
             int wx = x * VoxelProperties.chunkWidth;
@@ -82,13 +82,14 @@ public class WorldFeaturePlacer : MonoBehaviour
             int y = 0;
 
             switch(settings.placeType) {
-                case FeaturePlaceType.Surface: { 
+                case FeaturePlaceType.Surface:
+                case FeaturePlaceType.SurfaceHeight: { 
                     y = GetSurfaceFeatureY(randomX, randomZ);
                     break;
                 }
 
                 case FeaturePlaceType.Underground: { 
-                    y = UnityEngine.Random.Range(0, VoxelProperties.chunkHeight - 1);
+                    y = UnityEngine.Random.Range(settings.minY, settings.maxY);
                     break;
                 }
 
@@ -98,7 +99,9 @@ public class WorldFeaturePlacer : MonoBehaviour
                 }
             }
 
-            if(y < settings.minY) continue;
+            if(y < settings.minY || y > settings.maxY) continue;
+            if(UnityEngine.Random.Range(0.0f, 100.0f) > settings.spawnChance) continue;
+
             worldFeatures.Add(new FeaturePlacement(randomX, y, randomZ, type));
         }
     }

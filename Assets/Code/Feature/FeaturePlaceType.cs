@@ -4,5 +4,5 @@ using UnityEngine;
 
 public enum FeaturePlaceType
 {
-    Surface, Underground
+    Surface, SurfaceHeight, Underground
 }

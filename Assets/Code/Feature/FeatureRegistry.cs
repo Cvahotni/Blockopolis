@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
+using Unity.Mathematics;
 
 public class FeatureRegistry
 {
@@ -21,16 +22,41 @@ public class FeatureRegistry
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
+        watch.Start();
 
         featureData = new NativeParallelHashMap<FeaturePlacement, ushort>(1, Allocator.Persistent);
         featureSettings = new NativeParallelHashMap<ushort, FeatureSettings>(1, Allocator.Persistent);
 
-        AddTree();
+        WorldFeatureLoad.Load();
 
         watch.Stop();
-        float timeTaken = watch.ElapsedTicks * 1000000 / System.Diagnostics.Stopwatch.Frequency;
+        float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
-        Debug.Log("Feature Registry finished: " + timeTaken + " μs");
+        Dictionary<ushort, List<WorldFeatureDataEntry>> ids = new Dictionary<ushort, List<WorldFeatureDataEntry>>();
+
+        foreach(var pair in featureData) {
+            if(!ids.ContainsKey(pair.Key.id)) {
+                List<WorldFeatureDataEntry> customFeatureData = new List<WorldFeatureDataEntry>();
+                customFeatureData.Add(new WorldFeatureDataEntry(new int3(pair.Key.x, pair.Key.y, pair.Key.z), new BlockID(pair.Value)));
+                ids.Add(pair.Key.id, customFeatureData);
+            }
+
+            else {
+                List<WorldFeatureDataEntry> customFeatureData = ids[pair.Key.id];
+                customFeatureData.Add(new WorldFeatureDataEntry(new int3(pair.Key.x, pair.Key.y, pair.Key.z), new BlockID(pair.Value)));
+            }
+        }
+
+        foreach(var pair in ids) {
+            WorldFeatureDataEntries entries = new WorldFeatureDataEntries(pair.Key, pair.Value);
+            Debug.Log("Feature Data, " + pair.Key + ": " + JsonUtility.ToJson(entries));
+        }
+
+        foreach(var pair in featureSettings) {
+            Debug.Log("Feature Settings, " + pair.Key + ": " + JsonUtility.ToJson(pair.Value));
+        }
+
+        Debug.Log("Feature Registry finished: " + timeTaken + " ms");
     }
 
     private static void DestroyNativeArrays() {
@@ -40,34 +66,7 @@ public class FeatureRegistry
         disposed = true;
     }
 
-    private static void AddTree() {
-        featureSettings.Add(0, new FeatureSettings(5, 7, 5, 4, FeaturePlaceType.Surface, 66));
-
-        for(int i = -2; i <= 2; i++) {
-            for(int j = 3; j < 5; j++) {
-                for(int k = -2; k <= 2; k++) {
-                    Set(new FeaturePlacement(i, j, k, 0), new BlockID(8, 0));
-                }
-            }
-        }
-
-        for(int i = -1; i <= 1; i++) {
-            for(int j = 5; j <= 7; j++) {
-                for(int k = -1; k <= 1; k++) {
-                    Set(new FeaturePlacement(i, j, k, 0), new BlockID(8, 0));
-                }
-            }
-        }
-
-        Set(new FeaturePlacement(-1, 6, -1, 0), new BlockID(0));
-        Set(new FeaturePlacement(-1, 6, 1, 0), new BlockID(0));
-        Set(new FeaturePlacement(1, 6, -1, 0), new BlockID(0));
-        Set(new FeaturePlacement(1, 6, 1, 0), new BlockID(0));
-
-        for(int i = 0; i < 5; i++) Set(new FeaturePlacement(0, i, 0, 0), new BlockID(7, 0));
-    }
-
-    private static void Set(FeaturePlacement placement, BlockID id) {
+    public static void Set(FeaturePlacement placement, BlockID id) {
         ushort packedID = id.Pack();
 
         if(featureData.ContainsKey(placement)) {
