@@ -2,7 +2,7 @@
 A Minecraft clone made with Unity, as a hobby project.
 
 I am currently not accepting commits from people,
-if you have any questions add me on Discord (spectralmage12).
+if you have any questions add me on Discord (cvahotni).
 
 # Requirements
 - Unity 2022.3.9f
