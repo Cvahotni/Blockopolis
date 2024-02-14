@@ -5,11 +5,11 @@
         "y": 2,
         "z": 2
     },
-    "featuresPerChunk": 2,
+    "featuresPerChunk": 3,
     "placeType": 2,
     "minY": 25,
     "maxY": 40,
-    "spawnChance": 50,
+    "spawnChance": 90,
     "overrideBlock": {
         "id": 3,
         "variant": 0,

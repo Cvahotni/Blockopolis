@@ -9,6 +9,8 @@ public class WorldFeatureDataEntries
     [SerializeField] private ushort id;
     [SerializeField] private WorldFeatureDataEntry[] data;
 
+    public ushort ID { get { return id; }}
+
     public WorldFeatureDataEntries(ushort id, List<WorldFeatureDataEntry> entries) {
         this.id = id;
         data = entries.ToArray();

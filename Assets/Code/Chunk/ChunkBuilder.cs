@@ -18,6 +18,7 @@ public class ChunkBuilder : MonoBehaviour
     private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
     private readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
     private readonly ProfilerMarker placeChunkFeaturesMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkFeatures");
+    private readonly ProfilerMarker placeChunkDecorationsMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkDecorations");
 
     private WorldEventSystem worldEventSystem;
     private EndlessTerrain endlessTerrain;
@@ -130,6 +131,21 @@ public class ChunkBuilder : MonoBehaviour
 
         JobHandle placeFeaturesJobHandle = chunkPlaceFeaturesJob.Schedule();
         placeFeaturesJobHandle.Complete();
+
+        placeChunkDecorationsMarker.Begin();
+
+        var chunkPlaceDecorationsJob = new ChunkDecorationBuilderJob() {
+            voxelMap = chunkVoxelBuildData.voxelMap,
+            coord = chunkVoxelBuildData.chunkPos,
+
+            frequencies = chunkVoxelBuildData.frequencies,
+            amplitudes = chunkVoxelBuildData.amplitudes,
+
+            noiseOffset = chunkVoxelBuildData.noiseOffset
+        };
+
+        JobHandle chunkPlaceDecorationsJobHandle = chunkPlaceDecorationsJob.Schedule();
+        chunkPlaceDecorationsJobHandle.Complete();
 
         placeChunkFeaturesMarker.End();
     }

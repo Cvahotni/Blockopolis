@@ -45,9 +45,7 @@ public class WorldFeatureLoad
             WorldFeatureDataEntries entries = JsonUtility.FromJson<WorldFeatureDataEntries>(text);
             Dictionary<FeaturePlacement, ushort> dictionary = entries.ToDictionary();
 
-            foreach(var pair in dictionary) {
-                FeatureRegistry.FeatureData.Add(pair.Key, pair.Value);
-            }
+            foreach(var pair in dictionary) FeatureRegistry.Set(pair.Key, pair.Value);
         }
     }
 }
