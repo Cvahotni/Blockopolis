@@ -80,6 +80,7 @@ public class WorldAccess
         BlockID air = new BlockID(0);
 
         if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return air;
+        if(!WorldStorage.DoesChunkExist(chunkPos)) return air;
 
         int relativeX = WorldPositionHelper.GetRelativeX(worldX);
         int relativeZ = WorldPositionHelper.GetRelativeZ(worldZ);

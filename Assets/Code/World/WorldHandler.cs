@@ -32,22 +32,6 @@ public class WorldHandler
         return true;
     }
 
-    public static void LoadWorldInventory() {
-        Inventory inventory = Inventory.Instance;
-
-        if(inventory == null) {
-            Debug.Log("Can't find a valid inventory, consider adding one to the scene.");
-            return;
-        }
-
-        if(!IsCurrentWorldValid()) {
-            Debug.Log("Failed to load inventory.");
-            return;
-        }
-
-        WorldInventorySaveLoad.LoadWorldInventory(currentWorld, inventory);
-    }
-
     public static void SaveCurrentWorldQuickly(object sender, EventArgs e) {
         SaveCurrentWorld(true);
     }

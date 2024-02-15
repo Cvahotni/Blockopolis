@@ -34,7 +34,7 @@ public class Inventory : MonoBehaviour
         InitItemSlots();
         inventoryEventSystem = InventoryEventSystem.Instance;
 
-        WorldHandler.LoadWorldInventory();
+        Load();
 
         DebugPopulate();
         UpdateInventoryScreen();
@@ -159,5 +159,14 @@ public class Inventory : MonoBehaviour
         }
 
         return !found;
+    }
+
+    private void Load() {
+        if(!WorldHandler.IsCurrentWorldValid()) {
+            Debug.Log("Failed to load inventory: Current world is not valid.");
+            return;
+        }
+
+        WorldInventorySaveLoad.LoadWorldInventory(WorldHandler.CurrentWorld, this);
     }
 }

@@ -7,6 +7,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
 using System;
+using System.Diagnostics;
 
 [RequireComponent(typeof(EndlessTerrain))]
 [RequireComponent(typeof(WorldFeatures))]
@@ -35,7 +36,7 @@ public class ChunkBuilder : MonoBehaviour
 
     private void Start() {
         if(!WorldHandler.IsCurrentWorldInfoValid()) {
-            Debug.LogError("ChunkBuilder can't find a valid world to use.");
+            UnityEngine.Debug.LogError("ChunkBuilder can't find a valid world to use.");
             this.enabled = false;
 
             return;

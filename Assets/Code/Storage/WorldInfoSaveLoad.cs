@@ -6,29 +6,22 @@ using System.IO;
 public class WorldInfoSaveLoad
 {
     public static void SaveWorldInfo(World world) {
-        string path = WorldSaveLoad.CheckWorldSaveFile(world, WorldStorageProperties.worldInfoFileName);
+        WorldSaveLoad.CheckWorldSaveFile(world, WorldStorageProperties.worldInfoFileName);
+        string path = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.worldInfoFileName);
+        
+        WorldInfoData worldInfoData = new WorldInfoData(world);
+        string json = JsonUtility.ToJson(worldInfoData);
 
-        using (StreamWriter writer = new StreamWriter(path, append: true)) {
-            writer.WriteLine("name: " + world.Name);
-            writer.WriteLine("seed: " + world.Seed);
-        }
+        File.WriteAllText(path, json);
     }
 
     public static World LoadWorldInfo(string path) {
-        string line;
+        WorldSaveLoad.CheckWorldLoadFile(path, WorldStorageProperties.worldInfoFileName);
 
-        string name = "";
-        int seed = -1;
-
-        string loadPath = WorldSaveLoad.CheckWorldLoadFile(path, WorldStorageProperties.worldInfoFileName);
-
-        using (StreamReader reader = new StreamReader(loadPath)) while((line = reader.ReadLine()) != null) {
-            string[] splitString = line.Split(": ");
-
-            if(line.Contains("name")) name = splitString[1];
-            if(line.Contains("seed")) seed = int.Parse(splitString[1]);
-        }
-
-        return new World(name, seed);
+        string loadPath = WorldSaveLoad.GetWorldFilePath(path, WorldStorageProperties.worldInfoFileName);
+        string json = File.ReadAllText(loadPath);
+    
+        WorldInfoData worldInfoData = JsonUtility.FromJson<WorldInfoData>(json);
+        return new World(worldInfoData.Name, worldInfoData.Seed);
     }
 }

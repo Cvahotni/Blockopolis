@@ -17,7 +17,6 @@ public class EndlessTerrain : MonoBehaviour
     private long lastPlayerChunkCoord = long.MaxValue;
 
     [SerializeField] private List<float> frequencies = new List<float>();
-
     [SerializeField] private List<float> amplitudes = new List<float>();
 
     public List<float> Frequencies { get { return frequencies; }}
@@ -50,10 +49,10 @@ public class EndlessTerrain : MonoBehaviour
             return;
         }
 
-        noiseOffset = GetTerrainNoiseOffset();
-
-        MovePlayerToSpawn();
         BuildNativeArrays();
+
+        noiseOffset = GetTerrainNoiseOffset();
+        MovePlayerToSpawn();
 
         worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(
             GetAmountOfChunksInViewDistance()
@@ -71,7 +70,7 @@ public class EndlessTerrain : MonoBehaviour
     }
 
     private void MovePlayerToSpawn() {
-        playerTransform.position = new Vector3(WorldSpawner.SpawnX, VoxelProperties.chunkHeight, WorldSpawner.SpawnZ);
+        playerTransform.position = WorldSpawner.GetPlayerSpawnLocation();
     }
 
     private void BuildInitialChunks() {

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
+[Serializable]
 public struct ItemStack
 {
-    private ushort id;
-    private ushort amount;
+    [SerializeField] private ushort id;
+    [SerializeField] private ushort amount;
 
     public ushort ID {
         get { return id; }

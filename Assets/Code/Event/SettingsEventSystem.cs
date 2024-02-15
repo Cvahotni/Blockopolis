@@ -40,61 +40,21 @@ public class SettingsEventSystem : MonoBehaviour
     }
 
     private void Start() {
-        AddViewDistanceChangeListeners();
-        AddChunksPerSecondChangeListeners();
-        AddFeaturesPerSecondChangeListeners();
-        AddChunkBuildsPerFrameChangeListener();
-        AddMaxFramerateChangeListeners();
-        AddFOVChangeListeners();
-        AddSensitivityChangeListeners();
-        AddVolumeChangeListeners();
-        AddEnableVSyncChangeEventListeners();
-        AddFullscreenChangeEventListeners();
-        AddEnableShadersChangeEventListeners();
+        AddSettingsListeners();
         AddApplyChangesListeners();
     }
 
-    private void AddViewDistanceChangeListeners() {
+    private void AddSettingsListeners() {
         viewDistanceChangeEvent.AddListener(GameSettings.SetViewDistance);
-    }
-
-    private void AddChunksPerSecondChangeListeners() {
         chunksPerSecondChangeEvent.AddListener(GameSettings.SetChunksPerSecond);
-    }
-
-    private void AddFeaturesPerSecondChangeListeners() {
         featuresPerSecondChangeEvent.AddListener(GameSettings.SetFeaturesPerSecond);
-    }
-
-    private void AddChunkBuildsPerFrameChangeListener() {
         chunkBuildsPerFrameChangeEvent.AddListener(GameSettings.SetChunkBuildsPerFrame);
-    }
-
-    private void AddMaxFramerateChangeListeners() {
         maxFramerateChangeEvent.AddListener(GameSettings.SetMaxFramerate);
-    }
-
-    private void AddFOVChangeListeners() {
         fovChangeEvent.AddListener(GameSettings.SetFOV);
-    }
-
-    private void AddSensitivityChangeListeners() {
         sensitivityChangeEvent.AddListener(GameSettings.SetSensitivity);
-    }
-
-    private void AddVolumeChangeListeners() {
         volumeChangeEvent.AddListener(GameSettings.SetVolume);
-    }
-
-    private void AddEnableVSyncChangeEventListeners() {
         enableVSyncChangeEvent.AddListener(GameSettings.SetEnableVSync);
-    }
-
-    private void AddFullscreenChangeEventListeners() {
         fullscreenChangeEvent.AddListener(GameSettings.SetFullscreen);
-    }
-
-    private void AddEnableShadersChangeEventListeners() {
         enableShadersChangeEvent.AddListener(GameSettings.SetEnableShaders);
     }
 

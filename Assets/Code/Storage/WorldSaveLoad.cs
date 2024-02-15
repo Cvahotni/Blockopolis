@@ -16,20 +16,18 @@ public class WorldSaveLoad
         return File.Exists(path);
     }
 
-    public static string CheckWorldSaveFile(World world, string fileName) {
-        string path = WorldStorageProperties.savesFolderName + world.Name + fileName;
+    public static void CheckWorldSaveFile(World world, string fileName) {
+        string path = GetWorldFilePath(world, fileName);
         if(DoesFileExist(path)) EraseFileContents(path);
         
         else {
             Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
             Directory.CreateDirectory(WorldStorageProperties.savesFolderName + world.Name);
         }
-
-        return path;
     }
 
-    public static string CheckWorldLoadFile(string path, string fileName) {
-        string loadPath = WorldStorageProperties.savesFolderName + path + fileName;
+    public static void CheckWorldLoadFile(string path, string fileName) {
+        string loadPath = GetWorldFilePath(path, fileName);
 
         if(!DoesFileExist(WorldStorageProperties.savesFolderName)) {
             Directory.CreateDirectory(WorldStorageProperties.savesFolderName);
@@ -39,7 +37,13 @@ public class WorldSaveLoad
         if(!File.Exists(loadPath)) {
             using (File.Create(loadPath));
         }
+    }
 
-        return loadPath;
+    public static string GetWorldFilePath(World world, string fileName) {
+        return GetWorldFilePath(world.Name, fileName);
+    }
+
+    public static string GetWorldFilePath(string path, string fileName) {
+        return WorldStorageProperties.savesFolderName + path + fileName;
     }
 }

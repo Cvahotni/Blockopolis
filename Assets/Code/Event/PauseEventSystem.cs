@@ -32,6 +32,7 @@ public class PauseEventSystem : MonoBehaviour
     private SavingScreen savingScreen;
     private Inventory inventory;
     private InventoryScreen inventoryScreen;
+    private PlayerStorage playerStorage;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
@@ -55,6 +56,7 @@ public class PauseEventSystem : MonoBehaviour
         savingScreen = SavingScreen.Instance;
         inventory = Inventory.Instance;
         inventoryScreen = InventoryScreen.Instance;
+        playerStorage = PlayerStorage.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
@@ -94,6 +96,7 @@ public class PauseEventSystem : MonoBehaviour
 
     private void AddSaveAndQuitListeners() {
         saveAndQuitEvent += TimeLock.Unlock;
+        saveAndQuitEvent += playerStorage.SavePlayer;
         saveAndQuitEvent += WorldHandler.SaveCurrentWorldQuickly;
         saveAndQuitEvent += pauseMenu.HidePauseButtons;
         saveAndQuitEvent += pauseMenu.ReturnToTitleScreen;

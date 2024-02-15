@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   direction: 0
   cullFace: 1
-  id: 17
+  id: 61
   faceVerts:
   - x: 0
     y: 0.5357142
