@@ -33,12 +33,12 @@ public struct ChunkDecorationBuilderJob : IJob
                 float worldZ = GetWorldZ(z);
 
                 float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + yOffset;
-                float randomNoiseLevel = Noise.Get2DNoiseAt(noiseOffset[0], noiseOffset[1], worldX, worldZ, 1.0f, 16.0f);
+                float randomNoiseLevel = Noise.Get2DNoiseAt(noiseOffset[0], noiseOffset[1], worldX, worldZ, 1.175f, 16.0f);
 
                 int yLevel = (int) (noiseLevel);
 
                 for(int y = 0; y < VoxelProperties.chunkHeight; y++) {
-                    if(y == yLevel + 1 && yLevel > seaLevel && randomNoiseLevel >= 0.7f) {
+                    if(y == yLevel + 1 && yLevel > seaLevel && randomNoiseLevel >= 0.785f) {
                         ushort voxel = GetVoxel(x, y, z);
                         byte id = BlockIDHelper.ID(voxel);
 

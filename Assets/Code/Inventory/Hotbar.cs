@@ -38,6 +38,7 @@ public class Hotbar : MonoBehaviour
     private void Update() {
         if(!hotbarEnabled) return;
 
+        GetHotbarButtonInputs();
         UpdateSlotIndex();
         UpdateHighlightPosition();
         UpdatePlayerTargetBlock();
@@ -59,6 +60,18 @@ public class Hotbar : MonoBehaviour
         if(!CheckIfSlotsAreSimilar(previousSlot, currentSlot)) UpdateHeldItem(scroll);
     }
 
+    private void GetHotbarButtonInputs() {
+        if(Input.GetButtonDown("Hotbar0")) UpdateHeldItem(0);
+        if(Input.GetButtonDown("Hotbar1")) UpdateHeldItem(1);
+        if(Input.GetButtonDown("Hotbar2")) UpdateHeldItem(2);
+        if(Input.GetButtonDown("Hotbar3")) UpdateHeldItem(3);
+        if(Input.GetButtonDown("Hotbar4")) UpdateHeldItem(4);
+        if(Input.GetButtonDown("Hotbar5")) UpdateHeldItem(5);
+        if(Input.GetButtonDown("Hotbar6")) UpdateHeldItem(6);
+        if(Input.GetButtonDown("Hotbar7")) UpdateHeldItem(7);
+        if(Input.GetButtonDown("Hotbar8")) UpdateHeldItem(8);
+    }
+
     public void UpdateHeldItem(ItemStack stack) {
         UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, stack.Amount));
     }
@@ -73,6 +86,11 @@ public class Hotbar : MonoBehaviour
 
     public void UpdateHeldItem(object sender, ItemSlotIndex data) {
         UpdateHeldItem(1.0f / 20f, data);
+    }
+
+    private void UpdateHeldItem(int index) {
+        slotIndex = index;
+        UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, 0));
     }
 
     private bool CheckIfSlotsAreSimilar(ItemSlot firstSlot, ItemSlot secondSlot) {

@@ -80,7 +80,7 @@ public class WorldHandler
         string path = WorldStorageProperties.savesFolderName + name;
 
         bool directoryExists = Directory.Exists(path);
-        bool worldInfoExists = File.Exists(path + Path.DirectorySeparatorChar + "info.txt");
+        bool worldInfoExists = File.Exists(path + WorldStorageProperties.worldInfoFileName);
 
         return directoryExists && worldInfoExists;
     }
