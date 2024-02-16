@@ -8,7 +8,7 @@ public class MouseLook : MonoBehaviour
     public static MouseLook Instance { get; private set; }
     private PauseEventSystem pauseEventSystem;
 
-    [SerializeField] private float blendRate = 1.0f;
+    [SerializeField] private float blendRate = 0.5f;
     [SerializeField] private Transform playerBody;
 
     private Camera mouseCamera;
@@ -34,12 +34,15 @@ public class MouseLook : MonoBehaviour
         mouseCamera = GetComponent<Camera>();
     }
 
+    private void Update() {
+        HandleLockInputs();
+    }
+
     private void FixedUpdate() {
         UpdateCameraFOV();
     }
 
     private void LateUpdate() {
-        HandleLockInputs();
         if(!isEnabled) return;
 
         GetMouseInput();
@@ -60,10 +63,12 @@ public class MouseLook : MonoBehaviour
 
     public void ReleaseCursor(object sender, EventArgs e) {
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     public void LockCursor(object sender, EventArgs e) {
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void HandleLockInputs() {

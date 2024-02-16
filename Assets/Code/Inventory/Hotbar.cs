@@ -17,12 +17,13 @@ public class Hotbar : MonoBehaviour
     private InventoryEventSystem inventoryEventSystem;
     private Inventory inventory;
 
-    private ItemSlot CurrentSlot {
+    public ItemSlot CurrentSlot {
         get { return GetSlot(slotIndex); }
     }
 
-    private Image CurrentSlotIcon {
-        get { return GetSlotIcon(slotIndex); }
+    public int SlotIndex {
+        get { return slotIndex; }
+        set { slotIndex = value; }
     }
 
     private void Awake() {
@@ -61,15 +62,23 @@ public class Hotbar : MonoBehaviour
     }
 
     private void GetHotbarButtonInputs() {
-        if(Input.GetButtonDown("Hotbar0")) UpdateHeldItem(0);
-        if(Input.GetButtonDown("Hotbar1")) UpdateHeldItem(1);
-        if(Input.GetButtonDown("Hotbar2")) UpdateHeldItem(2);
-        if(Input.GetButtonDown("Hotbar3")) UpdateHeldItem(3);
-        if(Input.GetButtonDown("Hotbar4")) UpdateHeldItem(4);
-        if(Input.GetButtonDown("Hotbar5")) UpdateHeldItem(5);
-        if(Input.GetButtonDown("Hotbar6")) UpdateHeldItem(6);
-        if(Input.GetButtonDown("Hotbar7")) UpdateHeldItem(7);
-        if(Input.GetButtonDown("Hotbar8")) UpdateHeldItem(8);
+        ItemSlot previousSlot = GetSlot(slotIndex);
+
+        if(Input.GetButtonDown("Hotbar0")) slotIndex = 0;
+        if(Input.GetButtonDown("Hotbar1")) slotIndex = 1;
+        if(Input.GetButtonDown("Hotbar2")) slotIndex = 2;
+        if(Input.GetButtonDown("Hotbar3")) slotIndex = 3;
+        if(Input.GetButtonDown("Hotbar4")) slotIndex = 4;
+        if(Input.GetButtonDown("Hotbar5")) slotIndex = 5;
+        if(Input.GetButtonDown("Hotbar6")) slotIndex = 6;
+        if(Input.GetButtonDown("Hotbar7")) slotIndex = 7;
+        if(Input.GetButtonDown("Hotbar8")) slotIndex = 8;
+
+        ItemSlot currentSlot = GetSlot(slotIndex);
+
+        if(!CheckIfSlotsAreSimilar(previousSlot, currentSlot)) {
+            UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, 0));
+        }
     }
 
     public void UpdateHeldItem(ItemStack stack) {
@@ -86,11 +95,6 @@ public class Hotbar : MonoBehaviour
 
     public void UpdateHeldItem(object sender, ItemSlotIndex data) {
         UpdateHeldItem(1.0f / 20f, data);
-    }
-
-    private void UpdateHeldItem(int index) {
-        slotIndex = index;
-        UpdateHeldItem(1.0f / 20f, new ItemSlotIndex(slotIndex, 0));
     }
 
     private bool CheckIfSlotsAreSimilar(ItemSlot firstSlot, ItemSlot secondSlot) {
@@ -115,7 +119,7 @@ public class Hotbar : MonoBehaviour
         if(data.slotIndex != slotIndex) return;
         if(data.amount != 0) return;
 
-        SwitchedItemStack switchedItemStack = new SwitchedItemStack(currentSlot.Stack, switchTime, slotIndex);
+        SwitchedItemStack switchedItemStack = new SwitchedItemStack(currentSlot.Stack, switchTime);
         inventoryEventSystem.InvokeModifyHeldSlot(switchedItemStack);
     }
 
@@ -165,7 +169,7 @@ public class Hotbar : MonoBehaviour
 
     public void RefreshHeldSlot() {
         ItemSlot itemSlot = GetCurrentSlot();
-        inventoryEventSystem.InvokeModifyHeldSlot(new SwitchedItemStack(itemSlot.Stack, 0.0f, slotIndex));
+        inventoryEventSystem.InvokeModifyHeldSlot(new SwitchedItemStack(itemSlot.Stack, 0.0f));
     }
 
     private ItemSlot GetCurrentSlot() {

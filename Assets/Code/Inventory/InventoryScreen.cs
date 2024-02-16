@@ -25,8 +25,17 @@ public class InventoryScreen : MonoBehaviour
         if(!inventoryEnabled) return;
 
         if(Input.GetButtonDown("Inventory")) {
-            if(inventoryScreen.activeSelf) inventoryEventSystem.InvokeInventoryScreenClose();
+            if(inventoryScreen.activeSelf) {
+                inventoryEventSystem.InvokeInventoryScreenClose();
+            }
+
             else inventoryEventSystem.InvokeInventoryScreenOpen();
+        }
+
+        if(Input.GetButtonDown("Cancel")) {
+            if(inventoryScreen.activeSelf) {
+                inventoryEventSystem.InvokeInventoryScreenClose();
+            }
         }
     }
 

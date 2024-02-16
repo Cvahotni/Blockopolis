@@ -35,4 +35,8 @@ public struct ItemStack
     public void Take(ushort count) {
         amount -= count;
     }
+
+    public bool Equals(ItemStack other) {
+        return other.ID == id && other.Amount == amount;
+    }
 }

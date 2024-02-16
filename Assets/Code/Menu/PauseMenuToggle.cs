@@ -9,6 +9,7 @@ public class PauseMenuToggle : MonoBehaviour
     private PauseEventSystem pauseEventSystem;
 
     [SerializeField] private GameObject pauseScreen;
+    private bool inventoryIsInUI = false;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -20,7 +21,17 @@ public class PauseMenuToggle : MonoBehaviour
     }
 
     public void TogglePause(object sender, EventArgs e) {
+        if(inventoryIsInUI) return;
+
         if(pauseScreen.activeSelf) pauseEventSystem.InvokeUnpause();
         else pauseEventSystem.InvokePause(); 
+    }
+
+    public void DisableInUI(object sender, EventArgs e) {
+        inventoryIsInUI = false;
+    }
+
+    public void EnableInUI(object sender, EventArgs e) {
+        inventoryIsInUI = true;
     }
 }

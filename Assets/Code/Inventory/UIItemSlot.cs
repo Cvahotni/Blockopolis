@@ -7,12 +7,16 @@ using TMPro;
 public class UIItemSlot : MonoBehaviour
 {
     [SerializeField] private Image slotIcon;
+    [SerializeField] private Image highlight;
     [SerializeField] private TMP_Text slotAmount;
 
     private ItemSlot itemSlot;
 
     private Color fullColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
     private Color emptyColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+    private Color highlightColor = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+
+    private bool highlighted = false;
 
     public bool HasItem {
         get { return !itemSlot.Empty; }
@@ -25,6 +29,16 @@ public class UIItemSlot : MonoBehaviour
     public ItemSlot ItemSlot {
         get { return itemSlot; }
         set { itemSlot = value; }
+    }
+
+    public bool Highlighted {
+        get { return highlighted; }
+        set { highlighted = value; }
+    }
+
+    private void FixedUpdate() {
+        highlight.color = highlighted ? highlightColor : emptyColor;
+        highlighted = false;
     }
 
     public void Link(ItemSlot itemSlot) {

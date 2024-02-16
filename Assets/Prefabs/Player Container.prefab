@@ -638,7 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf35b5e532b5b3e47847de4aaa1ed1aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blendRate: 1
+  blendRate: 0.5
   playerBody: {fileID: 2898816550176629650}
 --- !u!1 &6388306103593455503
 GameObject:

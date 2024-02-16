@@ -95,12 +95,12 @@ public class ItemSlot
     }
 
     private void UpdateHotbarSlot(bool value) {
-        if(hotbarSlot == null) return;
+        if(!IsHotbarSlot) return;
         hotbarSlot.UpdateSlot(value);
     }
 
     private void LinkHotbarSlot() {
-        if(hotbarSlot == null) return;
+        if(!IsHotbarSlot) return;
         hotbarSlot.Link(this);
     }
 
@@ -111,5 +111,13 @@ public class ItemSlot
 
     public bool HasItem {
         get { return !empty; }
+    }
+
+    public bool IsHotbarSlot {
+        get { return hotbarSlot != null; }
+    }
+
+    public bool Equals(ItemSlot other) {
+        return other.Stack.Equals(stack);
     }
 }

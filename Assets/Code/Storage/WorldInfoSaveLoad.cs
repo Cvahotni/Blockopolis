@@ -17,7 +17,6 @@ public class WorldInfoSaveLoad
     }
 
     public static World LoadWorldInfo(string path) {
-        UnityEngine.Debug.Log(path);
         WorldSaveLoad.CheckWorldLoadFile(path, WorldStorageProperties.worldInfoFileName);
 
         string loadPath = WorldSaveLoad.GetWorldFilePath(path, WorldStorageProperties.worldInfoFileName);
