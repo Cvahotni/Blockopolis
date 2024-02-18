@@ -66,6 +66,5 @@ public class WorldLoadingScreen : MonoBehaviour
     private void ToggleActivity() {
         playerObject.SetActive(!screenEnabled);
         backupCamera.gameObject.SetActive(screenEnabled);
-        playerObject.SetActive(!screenEnabled);
     }
 }

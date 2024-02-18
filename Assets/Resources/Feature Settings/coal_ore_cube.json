@@ -8,7 +8,7 @@
     "featuresPerChunk": 3,
     "placeType": 2,
     "minY": 25,
-    "maxY": 95,
+    "maxY": 125,
     "spawnChance": 90,
     "overrideBlock": {
         "id": 3,

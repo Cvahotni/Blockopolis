@@ -33,7 +33,7 @@ public struct ChunkDecorationBuilderJob : IJob
                 float worldZ = GetWorldZ(z);
 
                 float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + yOffset;
-                float randomNoiseLevel = Noise.Get2DNoiseAt(noiseOffset[0], noiseOffset[1], worldX, worldZ, 1.175f, 16.0f);
+                float randomNoiseLevel = Noise.Get2DNoiseAt(0, 0, worldX, worldZ, 1.175f, 16.0f);
 
                 int yLevel = (int) (noiseLevel);
 

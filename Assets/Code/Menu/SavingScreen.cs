@@ -53,6 +53,8 @@ public class SavingScreen : MonoBehaviour
                 if(quit) {
                     Debug.Log("Returning to main menu.");
                     SceneManager.LoadScene(sceneName: MenuProperties.menuSceneName);
+
+                    break;
                 }
 
                 else {
@@ -61,6 +63,8 @@ public class SavingScreen : MonoBehaviour
 
                     worldEventSystem.InvokeWorldFinishedLoading();
                     playerEventSystem.InvokePlayerSpawn();
+
+                    break;
                 }
             }
         }

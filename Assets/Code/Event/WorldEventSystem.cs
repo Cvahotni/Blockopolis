@@ -120,11 +120,11 @@ public class WorldEventSystem : MonoBehaviour
     }
 
     private void AddLoadingScreenStatusListeners() {
+        loadingScreenStatusEvent += WorldHandler.SaveCurrentWorldQuickly;
         loadingScreenStatusEvent += worldAllocator.UpdateCullChunksOutOfView;
         loadingScreenStatusEvent += worldAllocator.UpdateBuildChunksQuickly;
         loadingScreenStatusEvent += worldFeaturePlacer.UpdateBuildFeaturesQuickly;
         loadingScreenStatusEvent += savingScreen.Save;
-        loadingScreenStatusEvent += WorldHandler.SaveCurrentWorldQuickly;
     }
 
     private void AddChunksGeneratedChangeListeners() {
