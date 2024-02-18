@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tall Grass
   m_EditorClassIdentifier: 
   id: 24
+  replaceable: 1
   isLiquid: 0
   material: 3
   hardness: 0

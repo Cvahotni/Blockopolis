@@ -76,8 +76,12 @@ public class WorldAccess
     }
 
     public static BlockID GetBlockAt(int worldX, int worldY, int worldZ) {
+        return new BlockID(GetPackedBlockAt(worldX, worldY, worldZ));
+    }
+
+    public static ushort GetPackedBlockAt(int worldX, int worldY, int worldZ) {
         long chunkPos = WorldPositionHelper.BlockPositionToChunkPos(worldX, worldZ);
-        BlockID air = new BlockID(0);
+        ushort air = new BlockID(0).Pack();
 
         if(WorldAllocator.IsChunkOutsideOfWorld(chunkPos)) return air;
         if(!WorldStorage.DoesChunkExist(chunkPos)) return air;
@@ -97,6 +101,6 @@ public class WorldAccess
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, worldY, relativeZ);
         if(worldY < 0 || worldY >= VoxelProperties.chunkHeight) return air;
 
-        return new BlockID(voxelMap[voxelMapIndex]);
+        return voxelMap[voxelMapIndex];
     }
 }

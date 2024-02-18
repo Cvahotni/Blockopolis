@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Red Mushroom
   m_EditorClassIdentifier: 
   id: 29
+  replaceable: 1
   isLiquid: 0
   material: 3
   hardness: 0

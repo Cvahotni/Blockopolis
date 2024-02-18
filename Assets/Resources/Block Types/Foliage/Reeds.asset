@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Reeds
   m_EditorClassIdentifier: 
   id: 27
+  replaceable: 1
   isLiquid: 0
   material: 3
   hardness: 0

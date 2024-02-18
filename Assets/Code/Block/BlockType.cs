@@ -7,6 +7,7 @@ public class BlockType : ScriptableObject
 {
     [Header("Basic Information")]
     public byte id;
+    public bool replaceable;
     public bool isLiquid;
 
     [Header("Material Information")]

@@ -604,7 +604,8 @@ MonoBehaviour:
   minCheckIncrement: 0.000001
   checkIncrementDivisionAmount: 4
   breakDelay: 0.2
-  progressDelay: 0.25
+  placeDelay: 0.195
+  progressDelay: 0
   blockOutline: {fileID: 0}
   blockCrackOutline: {fileID: 0}
   chunkMask:
