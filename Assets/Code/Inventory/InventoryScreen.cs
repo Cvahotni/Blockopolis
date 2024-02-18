@@ -8,7 +8,7 @@ public class InventoryScreen : MonoBehaviour
     public static InventoryScreen Instance { get; private set; }
 
     private InventoryEventSystem inventoryEventSystem;
-    private bool inventoryEnabled = true;
+    private bool inventoryEnabled = false;
 
     [SerializeField] private GameObject inventoryScreen;
 

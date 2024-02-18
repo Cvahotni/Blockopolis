@@ -28,7 +28,10 @@ public struct WorldRegion
             int x = ChunkPositionHelper.GetChunkPosX(coord);
             int z = ChunkPositionHelper.GetChunkPosZ(coord);
 
-            Debug.Log("Added chunk to oversized region: " + x + ", " + z + ", " + voxelStorageMap.Count);
+            long regionPos = RegionPositionHelper.ChunkPosToRegionPos(coord);
+
+            int rx = RegionPositionHelper.GetRegionPosX(regionPos);
+            int rz = RegionPositionHelper.GetRegionPosZ(regionPos);
         }
     }
 

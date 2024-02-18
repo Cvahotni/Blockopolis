@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,17 +14,10 @@ public class WorldLoadingScreen : MonoBehaviour
     [SerializeField] private Slider progressBar;
 
     private WorldEventSystem worldEventSystem;
-    private PlayerEventSystem playerEventSystem;
 
     private bool screenEnabled = true;
     private int amountOfChunksInViewDistance = 65536;
     private int chunksGenerated;
-
-    private bool playerTeleportedToSpawn = false;
-
-    public bool ScreenEnabled {
-        get { return screenEnabled; }
-    }
     
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -32,27 +26,16 @@ public class WorldLoadingScreen : MonoBehaviour
 
     private void Start() {
         worldEventSystem = WorldEventSystem.Instance;
-        playerEventSystem = PlayerEventSystem.Instance;
+        ToggleActivity();
     }
 
     private void Update() {
         UpdateProgressBar();
         UpdateObjectsStatus();
-        UpdatePlayerSpawnStatus();
     }
 
     private void UpdateObjectsStatus() {
         loadingScreen.SetActive(screenEnabled);
-        backupCamera.gameObject.SetActive(screenEnabled);
-
-        playerObject.SetActive(!screenEnabled);
-    }
-
-    private void UpdatePlayerSpawnStatus() {
-        if(playerTeleportedToSpawn || screenEnabled) return;
-        
-        playerEventSystem.InvokePlayerSpawn();
-        playerTeleportedToSpawn = true;
     }
 
     private void UpdateProgressBar() {
@@ -74,5 +57,15 @@ public class WorldLoadingScreen : MonoBehaviour
 
     public void UpdateAmountOfChunksInViewDistance(object sender, int amount) {
         amountOfChunksInViewDistance = amount;
+    }
+
+    public void ToggleActivity(object sender, EventArgs e) {
+        ToggleActivity();
+    }
+
+    private void ToggleActivity() {
+        playerObject.SetActive(!screenEnabled);
+        backupCamera.gameObject.SetActive(screenEnabled);
+        playerObject.SetActive(!screenEnabled);
     }
 }

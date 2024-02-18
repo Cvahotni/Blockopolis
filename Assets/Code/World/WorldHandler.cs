@@ -36,6 +36,10 @@ public class WorldHandler
         SaveCurrentWorld(true);
     }
 
+    public static void SaveCurrentWorldQuickly(object sender, bool var) {
+        SaveCurrentWorld(true);
+    }
+
     public static void SaveCurrentWorld(bool saveQuickly) {
         Inventory inventory = Inventory.Instance;
         WorldInfoSaveLoad.SaveWorldInfo(currentWorld);

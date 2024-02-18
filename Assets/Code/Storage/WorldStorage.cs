@@ -171,10 +171,6 @@ public static class WorldStorage
         WorldRegionSaveLoad.LoadRegion(GetRegionPosName(world, regionPos), regionPos);
     }
 
-    private static bool DoesRegionsFileExist(string regionsFile) {
-        return WorldSaveLoad.DoesFileExist(regionsFile);
-    }
-
     public static bool IsRegionSaved(World world, long regionPos) {
         return WorldSaveLoad.DoesFileExist(GetRegionPosName(world, regionPos));
     }

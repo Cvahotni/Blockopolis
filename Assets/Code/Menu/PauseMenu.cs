@@ -11,7 +11,6 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private GameObject pauseMenuButtons;
 
-    [SerializeField] private int saveChecksPerSecond = 4;
     private WaitForSeconds pauseWaitForSeconds;
 
     private void Awake() {
@@ -20,7 +19,6 @@ public class PauseMenu : MonoBehaviour
     }
 
     private void Start() {
-        pauseWaitForSeconds = new WaitForSeconds(1.0f / saveChecksPerSecond);
         HidePauseMenu();
     }
 
@@ -34,21 +32,6 @@ public class PauseMenu : MonoBehaviour
 
     public void HidePauseMenu() {
         pauseMenu.SetActive(false);
-    }
-
-    public void ReturnToTitleScreen(object sender, EventArgs e) {
-        StartCoroutine(ReturnToTitleScreenCoroutine());
-    }
-
-    private IEnumerator ReturnToTitleScreenCoroutine() {
-        for(;;) {
-            yield return pauseWaitForSeconds;
-
-            if(WorldStorage.RegionsSaved >= WorldStorage.RegionMapSize()) {
-                WorldStorage.ResetRegionsSaved();
-                SceneManager.LoadScene(sceneName: MenuProperties.menuSceneName);
-            }
-        }
     }
 
     public void HidePauseButtons(object sender, EventArgs e) {

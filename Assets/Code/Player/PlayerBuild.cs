@@ -242,7 +242,6 @@ public class PlayerBuild : MonoBehaviour
                 }
 
                 else {
-                    lastPos = pos - (playerCamera.transform.forward * checkIncrement);
                     Vector3Int lastPosFloored = new Vector3Int(Mathf.FloorToInt(lastPos.x), Mathf.FloorToInt(lastPos.y), Mathf.FloorToInt(lastPos.z));
 
                     highlightPos = lastPosFloored;
@@ -253,8 +252,8 @@ public class PlayerBuild : MonoBehaviour
                 }
             }
 
+            if(stepAmount == checkIncrement) lastPos = posFlooredAsInt;
             step += stepAmount;
-            lastPos = posFlooredAsInt;
         }
 
         targetPos = playerPositionFloored;

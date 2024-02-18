@@ -12,6 +12,7 @@ public class Hotbar : MonoBehaviour
     [SerializeField] private int hotbarLength = 9;
 
     private bool hotbarEnabled = true;
+    private bool enableInput = false;
     private int slotIndex = 0;
 
     private InventoryEventSystem inventoryEventSystem;
@@ -39,8 +40,11 @@ public class Hotbar : MonoBehaviour
     private void Update() {
         if(!hotbarEnabled) return;
 
-        GetHotbarButtonInputs();
-        UpdateSlotIndex();
+        if(enableInput) {
+            GetHotbarButtonInputs();
+            UpdateSlotIndex();
+        }
+
         UpdateHighlightPosition();
         UpdatePlayerTargetBlock();
     }
@@ -145,16 +149,16 @@ public class Hotbar : MonoBehaviour
         inventoryEventSystem.InvokeTargetSlotUpdate(id);
     }
 
-    public void SetStatus(object sender, bool status) {
-        hotbarEnabled = status;
-    }
-
     public void Enable(object sender, EventArgs e) {
         hotbarEnabled = true;
     }
 
     public void Disable(object sender, EventArgs e) {
         hotbarEnabled = false;
+    }
+
+    public void EnableInput(object sender, EventArgs e) {
+        enableInput = true;
     }
 
     public void TakeFromCurrentSlot(object sender, BlockModifyData data) {

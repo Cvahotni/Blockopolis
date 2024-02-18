@@ -34,6 +34,9 @@ public class WorldEventSystem : MonoBehaviour
     private ChunkObjectPool chunkObjectPool;
     private ChunkObjectBuilder chunkObjectBuilder;
     private WorldFeaturePlacer worldFeaturePlacer;
+    private SavingScreen savingScreen;
+    private PlayerStorage playerStorage;
+    private InventoryScreen inventoryScreen;
 
     private event EventHandler<long> chunkAddEvent;
     private event EventHandler<long> chunkRemoveEvent;
@@ -48,7 +51,7 @@ public class WorldEventSystem : MonoBehaviour
     private event EventHandler<bool> loadingScreenStatusEvent;
     private event EventHandler<int> chunksGeneratedChangeEvent;
     private event EventHandler<int> amountOfChunksInViewDistanceChangeEvent;
-
+    private event EventHandler worldFinishedLoadingEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -64,6 +67,9 @@ public class WorldEventSystem : MonoBehaviour
         chunkObjectPool = ChunkObjectPool.Instance;
         chunkObjectBuilder = ChunkObjectBuilder.Instance;
         worldFeaturePlacer = WorldFeaturePlacer.Instance;
+        savingScreen = SavingScreen.Instance;
+        playerStorage = PlayerStorage.Instance;
+        inventoryScreen = InventoryScreen.Instance;
 
         AddChunkAddListeners();
         AddChunkRemoveListeners();
@@ -76,6 +82,7 @@ public class WorldEventSystem : MonoBehaviour
         AddLoadingScreenStatusListeners();
         AddChunksGeneratedChangeListeners();
         AddAmountOfChunksInViewDistanceChangeListeners();
+        AddWorldFinishedLoadingListeners();
     }
 
     private void AddChunkAddListeners() {
@@ -116,7 +123,8 @@ public class WorldEventSystem : MonoBehaviour
         loadingScreenStatusEvent += worldAllocator.UpdateCullChunksOutOfView;
         loadingScreenStatusEvent += worldAllocator.UpdateBuildChunksQuickly;
         loadingScreenStatusEvent += worldFeaturePlacer.UpdateBuildFeaturesQuickly;
-        loadingScreenStatusEvent += hotbar.SetStatus;
+        loadingScreenStatusEvent += savingScreen.Save;
+        loadingScreenStatusEvent += WorldHandler.SaveCurrentWorldQuickly;
     }
 
     private void AddChunksGeneratedChangeListeners() {
@@ -125,6 +133,12 @@ public class WorldEventSystem : MonoBehaviour
 
     private void AddAmountOfChunksInViewDistanceChangeListeners() {
         amountOfChunksInViewDistanceChangeEvent += worldLoadingScreen.UpdateAmountOfChunksInViewDistance;
+    }
+
+    private void AddWorldFinishedLoadingListeners() {
+        worldFinishedLoadingEvent += hotbar.EnableInput;
+        worldFinishedLoadingEvent += inventoryScreen.Enable;
+        worldFinishedLoadingEvent += worldLoadingScreen.ToggleActivity;
     }
 
     public void InvokeChunkAdd(long coord) {
@@ -169,5 +183,9 @@ public class WorldEventSystem : MonoBehaviour
 
     public void InvokeAmountOfChunksInViewDistanceChange(int amount) {
         amountOfChunksInViewDistanceChangeEvent.Invoke(this, amount);
+    }
+
+    public void InvokeWorldFinishedLoading() {
+        worldFinishedLoadingEvent.Invoke(this, EventArgs.Empty);
     }
 }

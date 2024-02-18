@@ -99,8 +99,8 @@ public class PauseEventSystem : MonoBehaviour
         saveAndQuitEvent += playerStorage.SavePlayer;
         saveAndQuitEvent += WorldHandler.SaveCurrentWorldQuickly;
         saveAndQuitEvent += pauseMenu.HidePauseButtons;
-        saveAndQuitEvent += pauseMenu.ReturnToTitleScreen;
         saveAndQuitEvent += savingScreen.ToggleSavingScreen;
+        saveAndQuitEvent += savingScreen.ReturnToTitleScreenAfterSaving;
     }
 
     public void InvokePause() {
