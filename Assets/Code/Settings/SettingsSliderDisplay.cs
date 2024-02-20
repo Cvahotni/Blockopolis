@@ -10,7 +10,7 @@ public class SettingsSliderDisplay : MonoBehaviour
     [SerializeField] private Slider slider;
     [SerializeField] private float multiplier;
 
-    private void Start() {
+    private void FixedUpdate() {
         UpdateDisplayText();
     }
 
