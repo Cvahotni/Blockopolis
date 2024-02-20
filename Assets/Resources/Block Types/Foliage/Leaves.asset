@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Leaves
   m_EditorClassIdentifier: 
   id: 8
-  replaceable: 1
+  replaceable: 0
   isLiquid: 0
   material: 3
   hardness: 0.25

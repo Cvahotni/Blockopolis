@@ -264,7 +264,7 @@ public class PlayerBuild : MonoBehaviour
                     BlockID block = WorldAccess.GetBlockAt(posFlooredAsInt.x, posFlooredAsInt.y, posFlooredAsInt.z);
                     BlockType type = BlockRegistry.BlockTypes[block.id];
 
-                    highlightPos = type.replaceable ? posFlooredAsInt : GetHighlightPosition(posFlooredAsInt, lastPosFloored);
+                    highlightPos = type.replaceable && targetBlockID != type.id ? posFlooredAsInt : GetHighlightPosition(posFlooredAsInt, lastPosFloored);
                     targetPos = posFlooredAsInt;
             
                     targetRaycastBlock = WorldAccess.GetBlockAt(posFlooredAsInt);

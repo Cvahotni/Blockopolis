@@ -12,6 +12,10 @@ public struct ChunkPlaceFeaturesJob : IJob
     public NativeArray<long> coord;
     public NativeArray<ushort> voxelMap;
 
+    public NativeList<float> frequencies;
+    public NativeList<float> amplitudes;
+    public NativeArray<float> noiseOffset;
+
     public NativeArray<FeaturePlacement> featurePlacements;
     public NativeParallelHashMap<FeaturePlacement, ushort> featureData;
     public NativeParallelHashMap<ushort, FeatureSettings> featureSettings;
@@ -86,6 +90,7 @@ public struct ChunkPlaceFeaturesJob : IJob
                         if(dx > currentFeatureSettings.size.x) continue;
                         if(dz > currentFeatureSettings.size.z) continue;
 
+                        int surface = currentFeatureSettings.placeType == FeaturePlaceType.SurfaceHeight ? GetYLevel(fx, fz) : fy;
                         int checkVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
 
                         BlockID checkBlockID = new BlockID(voxelMap[checkVoxelMapArrayIndex]);
@@ -96,12 +101,20 @@ public struct ChunkPlaceFeaturesJob : IJob
 
                         ushort id = featureData[newPlacement];
                         if(id == 0) continue;
-                        
-                        int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
+
+                        int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, surface, fz);
                         voxelMap[voxelMapArrayIndex] = id;
                     }
                 } 
             }
         }
+    }
+    
+    private int GetYLevel(int x, int z) {
+        float worldX = WorldPositionHelper.GetWorldX(x, coord[0]);
+        float worldZ = WorldPositionHelper.GetWorldZ(z, coord[0]);
+
+        float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + WorldUtil.YOffset;
+        return (int) (noiseLevel) + 1;
     }
 }

@@ -125,6 +125,11 @@ public class ChunkBuilder : MonoBehaviour
             voxelMap = chunkVoxelBuildData.voxelMap,
             coord = chunkVoxelBuildData.chunkPos,
 
+            frequencies = chunkVoxelBuildData.frequencies,
+            amplitudes = chunkVoxelBuildData.amplitudes,
+
+            noiseOffset = chunkVoxelBuildData.noiseOffset,
+
             featurePlacements = featurePlacements,
             featureData = featureData,
             featureSettings = featureSettings

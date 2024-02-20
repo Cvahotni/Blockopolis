@@ -75,4 +75,12 @@ public class WorldPositionHelper
 
         return Border.BorderDirection.UNDEFINED;
     }
+
+    public static float GetWorldX(int x, long coord) {
+        return (ChunkPositionHelper.GetChunkPosWX(coord) + x) + (VoxelProperties.worldSize / 2);
+    }
+
+    public static float GetWorldZ(int z, long coord) {
+        return (ChunkPositionHelper.GetChunkPosWZ(coord) + z) + (VoxelProperties.worldSize / 2);
+    }
 }
