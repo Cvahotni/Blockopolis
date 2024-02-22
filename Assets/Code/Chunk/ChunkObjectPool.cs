@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ChunkObjectPool : MonoBehaviour
@@ -8,6 +9,7 @@ public class ChunkObjectPool : MonoBehaviour
     private WorldEventSystem worldEventSystem;
 
     private Queue<GameObject> poolQueue = new Queue<GameObject>();
+    public bool IsEmpty { get { return poolQueue.Count == 0; }}
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -19,7 +21,14 @@ public class ChunkObjectPool : MonoBehaviour
         PopulatePool();
     }
 
-    private void PopulatePool() {
+    public void ClearPool() {
+        for(int i = 0; i < poolQueue.Count; i++) {
+            GameObject gameObject = poolQueue.Dequeue();
+            Destroy(gameObject);
+        }
+    }
+
+    public void PopulatePool() {
         for(int i = 0; i < GameSettings.ChunkPoolSize; i++) {
             GameObject gameObject = CreateGameObject();
             ReturnToPool(gameObject);

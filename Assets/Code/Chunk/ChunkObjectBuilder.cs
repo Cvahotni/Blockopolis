@@ -55,6 +55,7 @@ public class ChunkObjectBuilder : MonoBehaviour
 
     public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
         RemoveExistingChunkObject(builtChunkData.coord);
+        if(chunkObjectPool.IsEmpty) return;
 
         GameObject chunkGameObject = chunkObjectPool.GetFromPool();
         chunkGameObject.SetActive(true);    

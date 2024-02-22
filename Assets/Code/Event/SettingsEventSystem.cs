@@ -21,6 +21,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     private static SettingsEventSystem _instance;
 
+    private ChunkObjectPool chunkObjectPool;
+    private EndlessTerrain endlessTerrain;
+    private WorldAllocator worldAllocator;
+
     private UnityEvent<int> viewDistanceChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> chunksPerSecondChangeEvent = new UnityEvent<int>();
     private UnityEvent<int> featuresPerSecondChangeEvent = new UnityEvent<int>();
@@ -32,6 +36,7 @@ public class SettingsEventSystem : MonoBehaviour
     private UnityEvent<bool> enableVSyncChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> fullscreenChangeEvent = new UnityEvent<bool>();
     private UnityEvent<bool> enableShadersChangeEvent = new UnityEvent<bool>();
+    private UnityEvent applyGameChangesEvent = new UnityEvent();
     private UnityEvent applyChangesEvent = new UnityEvent();
 
     private void Awake() {
@@ -40,8 +45,13 @@ public class SettingsEventSystem : MonoBehaviour
     }
 
     private void Start() {
+        chunkObjectPool = ChunkObjectPool.Instance;
+        endlessTerrain = EndlessTerrain.Instance;
+        worldAllocator = WorldAllocator.Instance;
+
         AddSettingsListeners();
         AddApplyChangesListeners();
+        AddApplyGameChangesListeners();
     }
 
     private void AddSettingsListeners() {
@@ -61,6 +71,12 @@ public class SettingsEventSystem : MonoBehaviour
     private void AddApplyChangesListeners() {
         applyChangesEvent.AddListener(GameSettings.ApplyChangesToUnity);
         applyChangesEvent.AddListener(GameSettingsStorage.Save);
+    }
+
+    private void AddApplyGameChangesListeners() {
+        applyGameChangesEvent.AddListener(chunkObjectPool.ClearPool);
+        applyGameChangesEvent.AddListener(chunkObjectPool.PopulatePool);
+        applyGameChangesEvent.AddListener(endlessTerrain.RemoveOutOfRangeChunks);
     }
 
     public void InvokeViewDistanceChange(float amount) {
@@ -109,5 +125,9 @@ public class SettingsEventSystem : MonoBehaviour
 
     public void InvokeApplyChanges() {
         applyChangesEvent.Invoke();
+    }
+
+    public void InvokeApplyGameChanges() {
+        applyGameChangesEvent.Invoke();
     }
 }

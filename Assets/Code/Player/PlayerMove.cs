@@ -36,6 +36,10 @@ public class PlayerMove : MonoBehaviour
         get { return isWalking; }
     }
 
+    public bool IsEnabled {
+        set { isEnabled = value; }
+    }
+
     private float x;
     private float z;
 
@@ -111,6 +115,8 @@ public class PlayerMove : MonoBehaviour
 
     private void HandleMoveVelocity() {
         Vector3 move = transform.right * x + transform.forward * z;
+
+        if(playerRigidBody.isKinematic) return;
         playerRigidBody.velocity = new Vector3(move.x, playerRigidBody.velocity.y, move.z);
     }
 

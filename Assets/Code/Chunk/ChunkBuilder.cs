@@ -138,6 +138,7 @@ public class ChunkBuilder : MonoBehaviour
         JobHandle placeFeaturesJobHandle = chunkPlaceFeaturesJob.Schedule();
         placeFeaturesJobHandle.Complete();
 
+        placeChunkFeaturesMarker.End();
         placeChunkDecorationsMarker.Begin();
 
         var chunkPlaceDecorationsJob = new ChunkDecorationBuilderJob() {
@@ -151,9 +152,9 @@ public class ChunkBuilder : MonoBehaviour
         };
 
         JobHandle chunkPlaceDecorationsJobHandle = chunkPlaceDecorationsJob.Schedule();
+        
         chunkPlaceDecorationsJobHandle.Complete();
-
-        placeChunkFeaturesMarker.End();
+        placeChunkDecorationsMarker.End();
     }
 
     private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {

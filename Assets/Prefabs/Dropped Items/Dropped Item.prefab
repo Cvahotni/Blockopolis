@@ -272,7 +272,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemTransform: {fileID: 1090323509224716811}
-  itemForm: 1
 --- !u!114 &7495013036504120734
 MonoBehaviour:
   m_ObjectHideFlags: 0

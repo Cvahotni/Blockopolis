@@ -61,11 +61,14 @@ public class WorldAllocator : MonoBehaviour
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
         bool shouldBuildNextChunk = shouldBuildChunks || immediate;
-        if(queue.Count == 0 || !shouldBuildNextChunk) return;
+
+        if(queue.Count == 0) return;
+        if(!shouldBuildNextChunk) return;
 
         long chunkPos = queue.Dequeue();
-        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
-        
+        bool outOfRange = endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
+        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !outOfRange;
+
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
 
         int chunkX = ChunkPositionHelper.GetChunkPosX(chunkPos);
@@ -112,6 +115,18 @@ public class WorldAllocator : MonoBehaviour
 
     public static bool IsChunkOutsideOfWorld(long coord) {
         return coord == int.MaxValue;
+    }
+
+    public void Clear() {
+        chunkQueue.Clear();
+    }
+
+    public void EnableCullChunksOutOfView() {
+        cullChunksOutOfView = true;
+    }
+
+    public void DisableCullChunksOutOfView() {
+        cullChunksOutOfView = false;
     }
 
     public void UpdateCullChunksOutOfView(object sender, bool value) {

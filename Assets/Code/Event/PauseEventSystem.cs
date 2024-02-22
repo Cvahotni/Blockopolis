@@ -33,11 +33,14 @@ public class PauseEventSystem : MonoBehaviour
     private Inventory inventory;
     private InventoryScreen inventoryScreen;
     private PlayerStorage playerStorage;
+    private SettingsScreen settingsScreen;
 
     private event EventHandler pauseEvent;
     private event EventHandler unpauseEvent;
     private event EventHandler pauseToggleEvent;
     private event EventHandler saveAndQuitEvent;
+    private event EventHandler pauseSettingsEnableEvent;
+    private event EventHandler pauseSettingsDisableEvent;
 
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
@@ -57,11 +60,14 @@ public class PauseEventSystem : MonoBehaviour
         inventory = Inventory.Instance;
         inventoryScreen = InventoryScreen.Instance;
         playerStorage = PlayerStorage.Instance;
+        settingsScreen = SettingsScreen.Instance;
 
         AddPauseListeners();
         AddUnpauseListeners();
         AddPauseToggleListeners();
         AddSaveAndQuitListeners();
+        AddPauseSettingsEnableListeners();
+        AddPauseSettingsDisableListeners();
     }
 
     private void AddPauseListeners() {
@@ -75,6 +81,7 @@ public class PauseEventSystem : MonoBehaviour
         pauseEvent += hotbar.Disable;
         pauseEvent += inventory.DeactivateInUI;
         pauseEvent += inventoryScreen.Disable;
+        pauseEvent += settingsScreen.DisableScreen;
     }
 
     private void AddUnpauseListeners() {
@@ -88,6 +95,7 @@ public class PauseEventSystem : MonoBehaviour
         unpauseEvent += hotbar.Enable;
         unpauseEvent += inventory.DeactivateInUI;
         unpauseEvent += inventoryScreen.Enable;
+        unpauseEvent += settingsScreen.DisableScreen;
     }
 
     private void AddPauseToggleListeners() {
@@ -99,8 +107,19 @@ public class PauseEventSystem : MonoBehaviour
         saveAndQuitEvent += playerStorage.SavePlayer;
         saveAndQuitEvent += WorldHandler.SaveCurrentWorldQuickly;
         saveAndQuitEvent += pauseMenu.HidePauseButtons;
+        saveAndQuitEvent += settingsScreen.DisableScreen;
         saveAndQuitEvent += savingScreen.ToggleSavingScreen;
         saveAndQuitEvent += savingScreen.ReturnToTitleScreenAfterSaving;
+    }
+
+    private void AddPauseSettingsEnableListeners() {
+        pauseSettingsEnableEvent += pauseMenu.HidePauseMenu;
+        pauseSettingsEnableEvent += settingsScreen.EnableScreen;
+    }
+
+    private void AddPauseSettingsDisableListeners() {
+        pauseSettingsDisableEvent += pauseMenu.DisplayPauseMenu;
+        pauseSettingsDisableEvent += settingsScreen.DisableScreen;
     }
 
     public void InvokePause() {
@@ -117,5 +136,13 @@ public class PauseEventSystem : MonoBehaviour
 
     public void InvokeSaveAndQuit() {
         saveAndQuitEvent.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokePauseSettingsEnable() {
+        pauseSettingsEnableEvent.Invoke(this, EventArgs.Empty);
+    }
+
+     public void InvokePauseSettingsDisable() {
+        pauseSettingsDisableEvent.Invoke(this, EventArgs.Empty);
     }
 }

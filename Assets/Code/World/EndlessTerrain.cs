@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Scripting;
 using Unity.Collections;
 using Unity.Mathematics;
+using System;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -73,7 +74,7 @@ public class EndlessTerrain : MonoBehaviour
         playerTransform.position = WorldSpawner.GetPlayerSpawnLocation();
     }
 
-    private void BuildInitialChunks() {
+    public void BuildInitialChunks() {
         lastPlayerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
         StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ(), false));
     }
@@ -87,19 +88,19 @@ public class EndlessTerrain : MonoBehaviour
                 GameSettings.ViewDistance + VoxelProperties.featureChunkBuffer)
             );
 
-            RemoveOutOfRangeChunks();
             CheckViewDistance();
         }
     }
 
-    private void CheckViewDistance() {
+    public void CheckViewDistance() {
         long coord = GetChunkCoordFromVector3(playerTransform.position);
         lastPlayerChunkCoord = coord;
 
+        RemoveOutOfRangeChunks();
         StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ(), true));
     }
 
-    private void RemoveOutOfRangeChunks() {
+    public void RemoveOutOfRangeChunks() {
         for(int i = addedChunks.Count - 1; i >= 0; i--) {
             long chunk = addedChunks[i];
             if(IsChunkOutOfRange(chunk, 0)) worldEventSystem.InvokeChunkRemove(chunk);

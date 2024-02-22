@@ -7,6 +7,7 @@ using System;
 public class SavingScreen : MonoBehaviour
 {
     public static SavingScreen Instance { get; private set; }
+    
     [SerializeField] private GameObject savingScreen;
     [SerializeField] private int saveChecksPerSecond = 4;
 
