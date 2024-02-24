@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[DefaultExecutionOrder(-250)]
 public class PauseEventSystem : MonoBehaviour
 {
     public static PauseEventSystem Instance {

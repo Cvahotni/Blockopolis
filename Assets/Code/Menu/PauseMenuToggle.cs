@@ -6,10 +6,13 @@ using System;
 public class PauseMenuToggle : MonoBehaviour
 {
     public static PauseMenuToggle Instance { get; private set; }
+
     private PauseEventSystem pauseEventSystem;
+    private InventoryEventSystem inventoryEventSystem;
 
     [SerializeField] private GameObject pauseScreen;
-    private bool inventoryIsInUI = false;
+    [SerializeField] private GameObject settingsScreen;
+    [SerializeField] private GameObject inventoryScreen;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -18,20 +21,20 @@ public class PauseMenuToggle : MonoBehaviour
 
     private void Start() {
         pauseEventSystem = PauseEventSystem.Instance;
+        inventoryEventSystem = InventoryEventSystem.Instance;
     }
 
     public void TogglePause(object sender, EventArgs e) {
-        if(inventoryIsInUI) return;
+        if(inventoryScreen.activeSelf) {
+            inventoryEventSystem.InvokeInventoryScreenClose();
+        }
 
-        if(pauseScreen.activeSelf) pauseEventSystem.InvokeUnpause();
-        else pauseEventSystem.InvokePause(); 
-    }
+        else {
+            if(pauseScreen.activeSelf || settingsScreen.activeSelf) {
+                pauseEventSystem.InvokeUnpause();
+            }
 
-    public void DisableInUI(object sender, EventArgs e) {
-        inventoryIsInUI = false;
-    }
-
-    public void EnableInUI(object sender, EventArgs e) {
-        inventoryIsInUI = true;
+            else pauseEventSystem.InvokePause(); 
+        }
     }
 }

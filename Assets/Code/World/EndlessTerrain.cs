@@ -50,16 +50,18 @@ public class EndlessTerrain : MonoBehaviour
             return;
         }
 
-        BuildNativeArrays();
-
         noiseOffset = GetTerrainNoiseOffset();
-        MovePlayerToSpawn();
 
+        BuildNativeArrays();
+        MovePlayerToSpawn();
+        ViewDistanceChange();
+        BuildInitialChunks();
+    }
+
+    public void ViewDistanceChange() {
         worldEventSystem.InvokeAmountOfChunksInViewDistanceChange(
             GetAmountOfChunksInViewDistance()
         );
-
-        BuildInitialChunks();
     }
 
     private void BuildNativeArrays() {
@@ -110,16 +112,44 @@ public class EndlessTerrain : MonoBehaviour
     private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ, bool async) {
         worldEventSystem.InvokePlaceFeatures(new int3(originX, originZ, GameSettings.ViewDistance + VoxelProperties.featureChunkBuffer));
 
-        for(int x = -GameSettings.ViewDistance + originX; x < GameSettings.ViewDistance + originX; x++) {
-            for(int z = -GameSettings.ViewDistance + originZ; z < GameSettings.ViewDistance + originZ; z++) {
-                long coord = ChunkPositionHelper.GetChunkPos(x, z);
+        int di = 1;
+        int dj = 0;
+
+        int segmentLength = 1;
+        int segmentPassed = 0;
+
+        int i = 0;
+        int j = 0;
+
+        for(int k = 0; k < GameSettings.ViewDistance * (GameSettings.ViewDistance * 4) + (GameSettings.ViewDistance * 4); ++k) {
+            long coord = ChunkPositionHelper.GetChunkPos(originX + i, originZ + j);
+
+            bool shouldAddChunk = (
+                !WorldAllocator.IsChunkOutsideOfWorld(coord) &&
+                !IsChunkInWorld(coord) &&
+                !IsChunkOutOfRange(coord, 0)
+            );
+
+            if(shouldAddChunk) {
                 if(async) yield return shortWait;
-
-                if(WorldAllocator.IsChunkOutsideOfWorld(coord)) continue;
-                if(IsChunkInWorld(coord)) continue;
-                if(IsChunkOutOfRange(coord, 0)) continue;
-
                 worldEventSystem.InvokeChunkAdd(coord);
+            }
+
+            i += di;
+            j += dj;
+
+            ++segmentPassed;
+
+            if(segmentPassed == segmentLength) {
+                segmentPassed = 0;
+
+                int buffer = di;
+                di = -dj;
+                dj = buffer;
+            
+                if(dj == 0) {
+                    ++segmentLength;
+                }
             }
         }
     }

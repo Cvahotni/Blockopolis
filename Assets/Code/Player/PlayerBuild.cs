@@ -110,7 +110,7 @@ public class PlayerBuild : MonoBehaviour
     private void MineCurrentBlock() {
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
-        if(!CanModifyAt(offsetTargetPos, true) || previousTargetPos != targetPos) {
+        if(!CanModifyAt(offsetTargetPos, false) || previousTargetPos != targetPos) {
             ResetMiningProgress(true);
             return;
         }
@@ -185,7 +185,7 @@ public class PlayerBuild : MonoBehaviour
     private void DestroyTargetBlock() {
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
-        if(!CanModifyAt(offsetTargetPos, true)) return;
+        if(!CanModifyAt(offsetTargetPos, false)) return;
         BlockID block = WorldAccess.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
         WorldAccess.ModifyBlocks(new List<VoxelModification>() {

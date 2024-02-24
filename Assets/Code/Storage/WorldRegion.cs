@@ -22,17 +22,9 @@ public struct WorldRegion
 
     public void AddChunk(long coord, ref NativeArray<ushort> voxelMap) {
         if(voxelStorageMap.ContainsKey(coord)) return;
+        if(voxelStorageMap.Count > chunksInRegionAmount) return;
+
         voxelStorageMap.Add(coord, voxelMap);
-
-        if(voxelStorageMap.Count > chunksInRegionAmount) {
-            int x = ChunkPositionHelper.GetChunkPosX(coord);
-            int z = ChunkPositionHelper.GetChunkPosZ(coord);
-
-            long regionPos = RegionPositionHelper.ChunkPosToRegionPos(coord);
-
-            int rx = RegionPositionHelper.GetRegionPosX(regionPos);
-            int rz = RegionPositionHelper.GetRegionPosZ(regionPos);
-        }
     }
 
     public void SetChunk(long coord, ref NativeArray<ushort> voxelMap) {

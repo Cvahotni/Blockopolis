@@ -29,7 +29,6 @@ public class InventoryEventSystem : MonoBehaviour
     private WorldAudioPlayer worldAudioPlayer;
     private MouseLook mouseLook;
     private PlayerMove playerMove;
-    private PauseMenuToggle pauseMenuToggle;
 
     private event EventHandler<ushort> targetSlotUpdateEvent;
     private event EventHandler<SwitchedItemStack> modifyHeldSlotEvent;
@@ -51,7 +50,6 @@ public class InventoryEventSystem : MonoBehaviour
         worldAudioPlayer = WorldAudioPlayer.Instance;
         mouseLook = MouseLook.Instance;
         playerMove = PlayerMove.Instance;
-        pauseMenuToggle = PauseMenuToggle.Instance;
 
         AddTargetSlotUpdateListeners();
         AddModifyHeldSlotListeners();
@@ -85,7 +83,6 @@ public class InventoryEventSystem : MonoBehaviour
         inventoryScreenOpenEvent += mouseLook.Disable;
         inventoryScreenOpenEvent += playerMove.DenyInput;
         inventoryScreenOpenEvent += playerBuild.Disable;
-        inventoryScreenOpenEvent += pauseMenuToggle.EnableInUI;
     }
 
     private void AddInventoryScreenCloseListeners() {
@@ -94,7 +91,6 @@ public class InventoryEventSystem : MonoBehaviour
         inventoryScreenCloseEvent += mouseLook.Enable;
         inventoryScreenCloseEvent += playerMove.AllowInput;
         inventoryScreenCloseEvent += playerBuild.Enable;
-        inventoryScreenCloseEvent += pauseMenuToggle.DisableInUI;
     }
 
     public void InvokeTargetSlotUpdate(ushort id) {

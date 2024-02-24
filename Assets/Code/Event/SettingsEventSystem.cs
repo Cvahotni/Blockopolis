@@ -39,19 +39,27 @@ public class SettingsEventSystem : MonoBehaviour
     private UnityEvent applyGameChangesEvent = new UnityEvent();
     private UnityEvent applyChangesEvent = new UnityEvent();
 
+    private bool registeredInGame = false;
+
     private void Awake() {
         if(_instance != null && _instance != this) Destroy(this);
         else Instance = this;
     }
 
     private void Start() {
+        AddSettingsListeners();
+        AddApplyChangesListeners();
+    }
+
+    public void RegisterInGame() {
+        if(registeredInGame) return;
+
         chunkObjectPool = ChunkObjectPool.Instance;
         endlessTerrain = EndlessTerrain.Instance;
         worldAllocator = WorldAllocator.Instance;
 
-        AddSettingsListeners();
-        AddApplyChangesListeners();
         AddApplyGameChangesListeners();
+        registeredInGame = true;
     }
 
     private void AddSettingsListeners() {
@@ -77,6 +85,8 @@ public class SettingsEventSystem : MonoBehaviour
         applyGameChangesEvent.AddListener(chunkObjectPool.ClearPool);
         applyGameChangesEvent.AddListener(chunkObjectPool.PopulatePool);
         applyGameChangesEvent.AddListener(endlessTerrain.RemoveOutOfRangeChunks);
+        applyGameChangesEvent.AddListener(endlessTerrain.BuildInitialChunks);
+        applyGameChangesEvent.AddListener(endlessTerrain.ViewDistanceChange);
     }
 
     public void InvokeViewDistanceChange(float amount) {

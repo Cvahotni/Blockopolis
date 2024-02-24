@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657832, g: 0.49641222, b: 0.57481664, a: 1}
+  m_IndirectSpecularColor: {r: 0.4465878, g: 0.4964224, b: 0.57482475, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1040,6 +1040,7 @@ GameObject:
   - component: {fileID: 160162608}
   - component: {fileID: 160162607}
   - component: {fileID: 160162609}
+  - component: {fileID: 160162610}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1088,6 +1089,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: e3ee23aa9da619d218e5ea09a3ca00cc, type: 2}
   masterVolumeName: Master
+--- !u!114 &160162610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 160162606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b6382077b7c4d279d10c97e37cfc96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &176542772
 GameObject:
   m_ObjectHideFlags: 0
@@ -10384,13 +10397,33 @@ PrefabInstance:
       value: Settings Menu
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
       objectReference: {fileID: 726532332}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
-      value: 
-      objectReference: {fileID: 1627225273}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
+      value: ToggleToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
+      value: MenuController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

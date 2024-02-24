@@ -3364,7 +3364,7 @@ PrefabInstance:
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
-      objectReference: {fileID: 2005276643}
+      objectReference: {fileID: 447810587}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_Target
       value: 
@@ -3375,11 +3375,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: InvokeApplyGameChanges
+      value: InvokeApplyChanges
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_MethodName
-      value: PlayButtonClick
+      value: InvokeApplyGameChanges
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_MethodName
@@ -3387,11 +3387,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: SettingsEventSystem, Assembly-CSharp
+      value: SettingsEventSystemAccess, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
-      value: MenuAudioPlayerAccess, Assembly-CSharp
+      value: SettingsEventSystemAccess, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3911510858087140379, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[3].m_TargetAssemblyTypeName
@@ -3649,13 +3649,13 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &447810587 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7298260048149979096, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
+  m_CorrespondingSourceObject: {fileID: 9181153386422311688, guid: a4cc4c8c1e4587051a7789877ea097e6, type: 3}
   m_PrefabInstance: {fileID: 447810585}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b6382077b7c4d279d10c97e37cfc96, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d8938614ef5f99d3825914fb78f879d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &457489182
@@ -12778,6 +12778,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseScreen: {fileID: 752620921}
+  settingsScreen: {fileID: 1923291507}
+  inventoryScreen: {fileID: 658562993}
 --- !u!114 &1857861254
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13692,6 +13694,7 @@ GameObject:
   - component: {fileID: 1950036061}
   - component: {fileID: 1950036060}
   - component: {fileID: 1950036064}
+  - component: {fileID: 1950036065}
   m_Layer: 0
   m_Name: Event System Manager
   m_TagString: Untagged
@@ -13760,6 +13763,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69036811fa064380f916d7c8b6212bf9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1950036065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950036059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62b6382077b7c4d279d10c97e37cfc96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1957514997

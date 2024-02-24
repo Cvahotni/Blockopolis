@@ -14,6 +14,8 @@ public class WorldAllocator : MonoBehaviour
     private Queue<long> immidiateChunkQueue = new Queue<long>();
 
     private WorldEventSystem worldEventSystem;
+    private SettingsEventSystem settingsEventSystem;
+
     private EndlessTerrain endlessTerrain;
 
     private int chunksGenerated;
@@ -36,9 +38,12 @@ public class WorldAllocator : MonoBehaviour
 
     private void Start() {
         worldEventSystem = WorldEventSystem.Instance;
-        endlessTerrain = EndlessTerrain.Instance;
+        settingsEventSystem = SettingsEventSystem.Instance;
 
+        endlessTerrain = EndlessTerrain.Instance;
         currentWorld = WorldHandler.CurrentWorld;
+
+        settingsEventSystem.RegisterInGame();
     }
 
     private void Update() {
@@ -67,7 +72,6 @@ public class WorldAllocator : MonoBehaviour
 
         long chunkPos = queue.Dequeue();
         bool outOfRange = endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
-        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView && !outOfRange;
 
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
 
@@ -87,7 +91,7 @@ public class WorldAllocator : MonoBehaviour
         bool skipChunkZ = HandleRegionAllocation(RegionPositionHelper.ModifyRegionPos(regionPos, x, z));
         bool skipCurrentChunk = HandleRegionAllocation(regionPos);
         
-        if(shouldCullChunk || skipChunkX || skipChunkZ || skipCurrentChunk && !immediate) {
+        if(skipChunkX || skipChunkZ || skipCurrentChunk && !immediate) {
             queue.Enqueue(chunkPos);
             return;
         }
@@ -123,6 +127,10 @@ public class WorldAllocator : MonoBehaviour
 
     public void EnableCullChunksOutOfView() {
         cullChunksOutOfView = true;
+    }
+
+    public void EnableBuildChunksQuickly() {
+        buildChunksQuickly = true;
     }
 
     public void DisableCullChunksOutOfView() {
