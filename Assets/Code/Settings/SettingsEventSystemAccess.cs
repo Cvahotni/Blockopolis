@@ -9,11 +9,11 @@ public class SettingsEventSystemAccess : MonoBehaviour
     }
 
     public void InvokeChunksPerSecondChange(float amount) {
-        SettingsEventSystem.Instance.InvokeChunksPerSecondChange((int) amount * 50);
+        SettingsEventSystem.Instance.InvokeChunksPerSecondChange((int) amount);
     }
 
     public void InvokeFeaturesPerSecondChange(float amount) {
-        SettingsEventSystem.Instance.InvokeFeaturesPerSecondChange((int) amount * 50);
+        SettingsEventSystem.Instance.InvokeFeaturesPerSecondChange((int) amount);
     }
 
     public void InvokeChunkBuildsPerFrameChange(float amount) {
@@ -21,11 +21,11 @@ public class SettingsEventSystemAccess : MonoBehaviour
     }
 
     public void InvokeMaxFramerateChange(float amount) {
-        SettingsEventSystem.Instance.InvokeMaxFramerateChange((int) amount * 10);
+        SettingsEventSystem.Instance.InvokeMaxFramerateChange((int) amount);
     }
 
     public void InvokeFOVChange(float amount) {
-        SettingsEventSystem.Instance.InvokeFOVChange((int) amount * 5);
+        SettingsEventSystem.Instance.InvokeFOVChange((int) amount);
     }
 
     public void InvokeSensitivityChange(float amount) {

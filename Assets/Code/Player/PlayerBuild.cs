@@ -127,7 +127,6 @@ public class PlayerBuild : MonoBehaviour
         block, 1);
 
         if(currentBlockBreakProgress == 0.0f) {
-            Debug.Log("Playing breaking sound");
             blockCrackAnimator.enabled = true;
 
             blockCrackAnimator.Rebind();

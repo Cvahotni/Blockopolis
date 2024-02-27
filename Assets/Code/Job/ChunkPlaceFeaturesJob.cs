@@ -28,84 +28,88 @@ public struct ChunkPlaceFeaturesJob : IJob
         int chunkWX = ChunkPositionHelper.GetChunkPosWX(coord[0]);
         int chunkWZ = ChunkPositionHelper.GetChunkPosWZ(coord[0]);
 
-        foreach(FeaturePlacement placement in featurePlacements) {
-            FeatureSettings currentFeatureSettings = featureSettings[placement.id];
+        for(int p = 0; p < 2; p++) {
+            foreach(FeaturePlacement placement in featurePlacements) {
+                FeatureSettings currentFeatureSettings = featureSettings[placement.id];
+                if((int) currentFeatureSettings.priority != p) continue;
 
-            int minX = -(currentFeatureSettings.size.x / 2);
-            int maxX = (currentFeatureSettings.size.x / 2);
+                int minX = -(currentFeatureSettings.size.x / 2);
+                int maxX = (currentFeatureSettings.size.x / 2);
 
-            int minY = 0;
-            int maxY = currentFeatureSettings.size.y - 1;
+                int minY = 0;
+                int maxY = currentFeatureSettings.size.y - 1;
 
-            int minZ = -(currentFeatureSettings.size.z / 2);
-            int maxZ = (currentFeatureSettings.size.z / 2);
+                int minZ = -(currentFeatureSettings.size.z / 2);
+                int maxZ = (currentFeatureSettings.size.z / 2);
 
-            minX += placement.x;
-            maxX += placement.x;
+                minX += placement.x;
+                maxX += placement.x;
 
-            minY += placement.y;
-            maxY += placement.y;
+                minY += placement.y;
+                maxY += placement.y;
 
-            minZ += placement.z;
-            maxZ += placement.z;
+                minZ += placement.z;
+                maxZ += placement.z;
             
-            if(!AABB.IsOverlapping(
-                minX, minY, minZ,
-                maxX, maxY, maxZ,
+                if(!AABB.IsOverlapping(
+                    minX, minY, minZ,
+                    maxX, maxY, maxZ,
 
-                chunkWX - 1, 0, chunkWZ - 1,
+                    chunkWX - 1, 0, chunkWZ - 1,
 
-                chunkWX + VoxelProperties.chunkWidth + 1, 
-                VoxelProperties.chunkHeight, 
-                chunkWZ + VoxelProperties.chunkWidth + 1)) {
+                    chunkWX + VoxelProperties.chunkWidth + 1, 
+                    VoxelProperties.chunkHeight, 
+                    chunkWZ + VoxelProperties.chunkWidth + 1)) {
                     
-                continue;
-            }
+                    continue;
+                }
 
-            for(int x = minX; x <= maxX; x++) {
-                for(int y = minY; y <= maxY; y++) {
-                    for(int z = minZ; z <= maxZ; z++) {
-                        int nx = x - chunkWX;
-                        int nz = z - chunkWZ;
+                for(int x = minX; x <= maxX; x++) {
+                    for(int y = minY; y <= maxY; y++) {
+                        for(int z = minZ; z <= maxZ; z++) {
+                            int nx = x - chunkWX;
+                            int nz = z - chunkWZ;
 
-                        int npx = x - placement.x;
-                        int npz = z - placement.z;
+                            int npx = x - placement.x;
+                            int npz = z - placement.z;
 
-                        int fx = nx;
-                        int fy = y;
-                        int fz = nz;
+                            int fx = nx;
+                            int fy = y;
+                            int fz = nz;
 
-                        if(fx < 0) fx = VoxelProperties.chunkWidth + x;
-                        if(fz < 0) fz = VoxelProperties.chunkWidth + z;
+                            if(fx < 0) fx = VoxelProperties.chunkWidth + x;
+                            if(fz < 0) fz = VoxelProperties.chunkWidth + z;
 
-                        if(fx < 0 || fx >= VoxelProperties.chunkWidth ||
-                            fy < 0 || fy >= VoxelProperties.chunkHeight ||
-                            fz < 0 || fz >= VoxelProperties.chunkWidth) {
-                                continue;
+                            if(fx < 0 || fx >= VoxelProperties.chunkWidth ||
+                                fy < 0 || fy >= VoxelProperties.chunkHeight ||
+                                fz < 0 || fz >= VoxelProperties.chunkWidth) {
+                                    continue;
                             }
 
-                        int dx = Mathf.Abs(placement.x - (chunkWX + fx));
-                        int dz = Mathf.Abs(placement.z - (chunkWZ + fz));
+                            int dx = Mathf.Abs(placement.x - (chunkWX + fx));
+                            int dz = Mathf.Abs(placement.z - (chunkWZ + fz));
 
-                        if(dx > currentFeatureSettings.size.x) continue;
-                        if(dz > currentFeatureSettings.size.z) continue;
+                            if(dx > currentFeatureSettings.size.x) continue;
+                            if(dz > currentFeatureSettings.size.z) continue;
 
-                        int surface = currentFeatureSettings.placeType == FeaturePlaceType.SurfaceHeight ? GetYLevel(fx, fz) : fy;
-                        int checkVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
+                            int surface = currentFeatureSettings.placeType == FeaturePlaceType.SurfaceHeight ? GetYLevel(fx, fz) : fy;
 
-                        BlockID checkBlockID = new BlockID(voxelMap[checkVoxelMapArrayIndex]);
-                        if(!checkBlockID.Equals(currentFeatureSettings.overrideBlock)) continue;
+                            int checkVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
+                            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, surface, fz);
 
-                        FeaturePlacement newPlacement = new FeaturePlacement(npx, y - placement.y, npz, placement.id);
-                        if(!featureData.ContainsKey(newPlacement)) continue;
+                            FeaturePlacement newPlacement = new FeaturePlacement(npx, y - placement.y, npz, placement.id);
+                            if(!featureData.ContainsKey(newPlacement)) continue;
 
-                        ushort id = featureData[newPlacement];
-                        if(id == 0) continue;
+                            BlockID worldCheckBlockID = new BlockID(voxelMap[checkVoxelMapArrayIndex]);
+                            if(!worldCheckBlockID.Equals(currentFeatureSettings.overrideBlock)) continue;
 
-                        int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, surface, fz);
-                        voxelMap[voxelMapArrayIndex] = id;
-                    }
-                } 
+                            ushort id = featureData[newPlacement];
+
+                            if(id == 0) continue;
+                            voxelMap[voxelMapArrayIndex] = id;
+                        }
+                    } 
+                }
             }
         }
     }

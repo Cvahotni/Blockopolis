@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Air
   m_EditorClassIdentifier: 
   id: 0
+  replaceable: 0
   isLiquid: 0
   material: 5
   hardness: 65536
+  tags: 00000000

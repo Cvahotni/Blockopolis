@@ -5,11 +5,12 @@
         "y": 1,
         "z": 7
     },
-    "featuresPerChunk": 1,
+    "featuresPerChunk": 32,
     "placeType": 1,
     "minY": 66,
     "maxY": 255,
-    "spawnChance": 10,
+    "priority": 1,
+    "spawnChance": 100,
     "overrideBlock": {
         "id": 0,
         "variant": 0,

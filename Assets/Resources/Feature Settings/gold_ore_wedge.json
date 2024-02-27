@@ -9,6 +9,7 @@
     "placeType": 2,
     "minY": 8,
     "maxY": 32,
+    "priority": 0,
     "spawnChance": 30,
     "overrideBlock": {
         "id": 3,

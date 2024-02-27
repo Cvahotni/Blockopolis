@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Wood
   m_EditorClassIdentifier: 
   id: 7
+  replaceable: 0
   isLiquid: 0
   material: 2
   hardness: 2
+  tags: 01000000

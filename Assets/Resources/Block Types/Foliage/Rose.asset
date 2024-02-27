@@ -17,3 +17,4 @@ MonoBehaviour:
   isLiquid: 0
   material: 3
   hardness: 0
+  tags: 02000000
