@@ -58,7 +58,9 @@ public class ChunkObjectBuilder : MonoBehaviour
         if(chunkObjectPool.IsEmpty) return;
 
         GameObject chunkGameObject = chunkObjectPool.GetFromPool();
-        chunkGameObject.SetActive(true);    
+        
+        chunkGameObject.SetActive(true);
+        chunkGameObject.isStatic = true;
 
         int chunkPositionX = ChunkPositionHelper.GetChunkPosWX(builtChunkData.coord);
         int chunkPositionZ = ChunkPositionHelper.GetChunkPosWZ(builtChunkData.coord);

@@ -110,13 +110,15 @@ public class PlayerBuild : MonoBehaviour
     private void MineCurrentBlock() {
         Vector3 offsetTargetPos = GetOffsetTargetPos();
 
-        if(!CanModifyAt(offsetTargetPos, false) || previousTargetPos != targetPos) {
+        bool exit = (
+            !CanModifyAt(offsetTargetPos, false) || previousTargetPos != targetPos ||
+            !blockCrackOutline.activeSelf || !canMine
+        );
+
+        if(exit) {
             ResetMiningProgress(true);
             return;
         }
-
-        if(!blockCrackOutline.activeSelf) return;
-        if(!canMine) return;
 
         BlockID block = WorldAccess.GetBlockAt(targetPos.x, targetPos.y, targetPos.z);
 
@@ -125,6 +127,7 @@ public class PlayerBuild : MonoBehaviour
         block, 1);
 
         if(currentBlockBreakProgress == 0.0f) {
+            Debug.Log("Playing breaking sound");
             blockCrackAnimator.enabled = true;
 
             blockCrackAnimator.Rebind();
@@ -349,7 +352,7 @@ public class PlayerBuild : MonoBehaviour
 
     private void UpdateBlockCrackOutline() {
         Vector3 blockOutlinePosition = GetOffsetTargetPos();
-        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition, false) && isMining && IsInteractable(blockOutlinePosition);
+        bool shouldCrackOutlineBeActive = CanModifyAt(blockOutlinePosition, false) && isMining && canMine && IsInteractable(blockOutlinePosition);
 
         blockCrackOutline.SetActive(shouldCrackOutlineBeActive);
         blockCrackOutline.transform.position = blockOutlinePosition;

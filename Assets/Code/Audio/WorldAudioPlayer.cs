@@ -97,6 +97,7 @@ public class WorldAudioPlayer : MonoBehaviour
     public void RemoveInterruptableAudioSources(object sender, EventArgs e) {
         for(int i = audioSourceMap.Count - 1; i >= 0; i--) {
             AudioSource source = audioSourceMap.Keys.ElementAt(i);
+            
             if(source == null) continue;
             if(source.volume == 0.0f) continue;
 

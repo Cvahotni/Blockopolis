@@ -127,8 +127,12 @@ public static class WorldStorage
 
     private static IEnumerator SaveRegionsCoroutine(World world, bool saveQuickly) {
         int i = regionMap.Count - 1;
+        int j = 0;
 
         while(i >= 0) {
+            i = regionMap.Count - 1 - j;
+            if(i >= regionMap.Count || i < 0) break;
+
             var item = regionMap.ElementAt(i);
 
             long regionPos = item.Key;
@@ -140,7 +144,7 @@ public static class WorldStorage
             string regionName = GetRegionPosName(world, regionPos);
             WorldRegionSaveLoad.SaveRegion(world, regionName, regionData, regionPos);
 
-            i--;
+            j++;
         }
     }
 

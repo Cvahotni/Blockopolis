@@ -66,9 +66,7 @@ public class WorldAllocator : MonoBehaviour
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
         bool shouldBuildNextChunk = shouldBuildChunks || immediate;
-
-        if(queue.Count == 0) return;
-        if(!shouldBuildNextChunk) return;
+        if(queue.Count == 0 || !shouldBuildNextChunk) return;
 
         long chunkPos = queue.Dequeue();
         bool outOfRange = endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
@@ -159,21 +157,6 @@ public class WorldAllocator : MonoBehaviour
 
     private void EnableChunkBuilding() {
         shouldBuildChunks = true;
-    }
-
-    private bool IsChunkInFrustum(long coord) {
-        int worldX = ChunkPositionHelper.GetChunkPosWX(coord);
-        int worldZ = ChunkPositionHelper.GetChunkPosWZ(coord);
-
-        float boundsCenterX = worldX + (VoxelProperties.chunkWidth / 2);
-        float boundsCenterY = VoxelProperties.chunkHeight / 2;
-        float boundsCenterZ = worldZ + (VoxelProperties.chunkWidth / 2);
-        
-        Vector3 boundsCenter = new Vector3(boundsCenterX, boundsCenterY, boundsCenterZ);
-        Vector3 boundSize = new Vector3(VoxelProperties.chunkWidth, VoxelProperties.chunkHeight, VoxelProperties.chunkWidth);
-    
-        Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
-        return GeometryUtility.TestPlanesAABB(frustumPlanes, new Bounds(boundsCenter, boundSize));
     }
 
     private void OnDestroy() {

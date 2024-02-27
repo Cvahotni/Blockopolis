@@ -36,6 +36,10 @@ public class PlayerMove : MonoBehaviour
         get { return isWalking; }
     }
 
+    public bool IsUnderWater {
+        get { return isUnderWater; }
+    }
+
     public bool IsEnabled {
         set { isEnabled = value; }
     }

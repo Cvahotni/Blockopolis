@@ -44,7 +44,7 @@ public class PlayerHand : MonoBehaviour
         if(playerMove == null) return;
         if(handObjectAnimator == null) return;
 
-        handObjectAnimator.SetBool("isWalking", playerMove.IsWalking);
+        handObjectAnimator.SetBool("isWalking", playerMove.IsWalking && !playerMove.IsUnderWater);
     }
 
     public void SwitchHeldItem(object sender, SwitchedItemStack stack) {

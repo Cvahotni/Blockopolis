@@ -69,5 +69,7 @@ public class SavingScreen : MonoBehaviour
                 }
             }
         }
+
+        yield return null;
     }
 }
