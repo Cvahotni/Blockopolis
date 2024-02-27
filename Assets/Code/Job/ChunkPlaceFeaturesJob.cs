@@ -104,8 +104,9 @@ public struct ChunkPlaceFeaturesJob : IJob
                             if(!worldCheckBlockID.Equals(currentFeatureSettings.overrideBlock)) continue;
 
                             ushort id = featureData[newPlacement];
+                            BlockID featureBlock = new BlockID(id);
 
-                            if(id == 0) continue;
+                            if(featureBlock.IsAir()) continue;
                             voxelMap[voxelMapArrayIndex] = id;
                         }
                     } 
