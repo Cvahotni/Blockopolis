@@ -12,11 +12,9 @@ public class PlayerWaterEffect : MonoBehaviour
     [SerializeField] private VolumeProfile normalProfile;
     [SerializeField] private VolumeProfile underwaterProfile;
 
-    [SerializeField] private float underwaterOffset = 0.88f;
     [SerializeField] private byte waterID;
-
+    
     private PlayerEventSystem playerEventSystem;
-    private bool underwater = false;
 
     private void Start() {
         playerEventSystem = PlayerEventSystem.Instance;

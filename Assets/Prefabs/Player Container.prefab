@@ -93,6 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ced774157b98f7a5fa2325815630a242, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCamera: {fileID: 5085421253055869276}
 --- !u!114 &25051183953089205
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc28c7c9aefa96c14a6a18340a6690d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidbody: {fileID: 3321812370123416527}
+  playerRigidbody: {fileID: 3321812370123416527}
 --- !u!65 &1988829788404630368
 BoxCollider:
   m_ObjectHideFlags: 0

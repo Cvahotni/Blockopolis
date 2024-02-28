@@ -37,6 +37,7 @@ public class WorldEventSystem : MonoBehaviour
     private SavingScreen savingScreen;
     private PlayerStorage playerStorage;
     private InventoryScreen inventoryScreen;
+    private MouseLook mouseLook;
 
     private event EventHandler<long> chunkAddEvent;
     private event EventHandler<long> chunkRemoveEvent;
@@ -70,6 +71,7 @@ public class WorldEventSystem : MonoBehaviour
         savingScreen = SavingScreen.Instance;
         playerStorage = PlayerStorage.Instance;
         inventoryScreen = InventoryScreen.Instance;
+        mouseLook = MouseLook.Instance;
 
         AddChunkAddListeners();
         AddChunkRemoveListeners();
@@ -139,6 +141,8 @@ public class WorldEventSystem : MonoBehaviour
         worldFinishedLoadingEvent += hotbar.EnableInput;
         worldFinishedLoadingEvent += inventoryScreen.Enable;
         worldFinishedLoadingEvent += worldLoadingScreen.ToggleActivity;
+        worldFinishedLoadingEvent += playerStorage.LoadPlayer;
+        worldFinishedLoadingEvent += mouseLook.SetupRotation;
     }
 
     public void InvokeChunkAdd(long coord) {

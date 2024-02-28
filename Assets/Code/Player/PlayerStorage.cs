@@ -6,15 +6,27 @@ using System;
 public class PlayerStorage : MonoBehaviour
 {
     public static PlayerStorage Instance { get; private set; }
+    [SerializeField] public GameObject playerCamera;
+
+    private static float xRotation = 0.0f;
+    private static float yRotation = 0.0f;
+
+    public static float XRotation { 
+        get { return xRotation; }
+        set { xRotation = value; }
+    }
+
+    public static float YRotation { 
+        get { return yRotation; }
+        set { yRotation = value; }
+    }
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
-
-        LoadPlayer();
     }
 
-    private void LoadPlayer() {
+    public void LoadPlayer(object sender, EventArgs e) {
         World world = WorldHandler.CurrentWorld;
         string path = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
 

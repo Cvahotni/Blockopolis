@@ -25,6 +25,9 @@ public class WorldPlayerSaveLoad
         PlayerData playerData = JsonUtility.FromJson<PlayerData>(json);
         WorldSpawner.CachedSpawnPos = new Vector3(playerData.Position.x, playerData.Position.y, playerData.Position.z);
 
+        PlayerStorage.XRotation = playerData.XRotation;
+        PlayerStorage.YRotation = playerData.YRotation;
+
         Hotbar hotbar = Hotbar.Instance;
         if(hotbar != null) hotbar.SlotIndex = playerData.HeldSlotIndex;
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerChunkCheck : MonoBehaviour
 {
-    [SerializeField] private Rigidbody rigidbody;
+    [SerializeField] private Rigidbody playerRigidbody;
 
     private void Start() {
         InvokeRepeating("Check", 0.05f, 0.1f);
@@ -16,7 +16,7 @@ public class PlayerChunkCheck : MonoBehaviour
         int playerZ = Mathf.FloorToInt(transform.position.z) >> VoxelProperties.chunkBitShift;
 
         long chunkPos = ChunkPositionHelper.GetChunkPos(playerX, playerZ);
-        rigidbody.isKinematic = !(WorldStorage.DoesChunkExist(chunkPos) && ChunkObjectExists(chunkPos));
+        playerRigidbody.isKinematic = !(WorldStorage.DoesChunkExist(chunkPos) && ChunkObjectExists(chunkPos));
     }
     
     private bool ChunkObjectExists(long coord) {

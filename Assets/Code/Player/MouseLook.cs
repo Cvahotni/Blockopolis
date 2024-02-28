@@ -22,6 +22,14 @@ public class MouseLook : MonoBehaviour
     private float mouseLerpX = 0.0f;
     private float mouseLerpY = 0.0f;
 
+    public float XRotation { 
+        get { return xRotation; }
+    }
+
+    public float YRotation { 
+        get { return yRotation; }
+    }
+
     private bool isEnabled = true;
 
     private void Awake() {
@@ -47,6 +55,14 @@ public class MouseLook : MonoBehaviour
 
         GetMouseInput();
         RotatePlayer();
+    }
+
+    public void SetupRotation(object sender, EventArgs e) {
+        xRotation = PlayerStorage.XRotation;
+        yRotation = PlayerStorage.YRotation;
+
+        transform.localRotation = Quaternion.Euler(xRotation, 0.0f, 0.0f);
+        playerBody.Rotate(Vector3.up * yRotation);
     }
 
     private void UpdateCameraFOV() {

@@ -43,7 +43,6 @@ public class PlayerBuild : MonoBehaviour
     private bool isEnabled = true;
     private bool canMine = true;
     private bool canPlace = true;
-    private bool placing = false;
 
     private Vector3 previousTargetPos;
     private BlockModifyData blockBreakStartData;
