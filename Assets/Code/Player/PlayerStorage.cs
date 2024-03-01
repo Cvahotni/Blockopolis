@@ -11,6 +11,9 @@ public class PlayerStorage : MonoBehaviour
     private static float xRotation = 0.0f;
     private static float yRotation = 0.0f;
 
+    private World world;
+    private string path;
+
     public static float XRotation { 
         get { return xRotation; }
         set { xRotation = value; }
@@ -26,16 +29,29 @@ public class PlayerStorage : MonoBehaviour
         else Instance = this;
     }
 
-    public void LoadPlayer(object sender, EventArgs e) {
-        World world = WorldHandler.CurrentWorld;
-        string path = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
+    private void Start() {
+        world = WorldHandler.CurrentWorld;
+        path = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
 
+        LoadPlayerData();
+    }
+
+    public void LoadPlayerData() {
         if(!WorldSaveLoad.DoesFileExist(path)) {
             Debug.Log("Failed to load player data: File doesn't exist.");
             return;
         }
 
         WorldPlayerSaveLoad.LoadWorldPlayer(world, gameObject);
+    }
+
+    public void LoadPlayerRotation(object sender, EventArgs e) {
+        if(!WorldSaveLoad.DoesFileExist(path)) {
+            Debug.Log("Failed to load player rotation: File doesn't exist.");
+            return;
+        }
+
+        WorldPlayerSaveLoad.LoadWorldPlayerRotation(world);
     }
 
     public void SavePlayer(object sender, EventArgs e) {

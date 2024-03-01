@@ -139,7 +139,6 @@ public class GameSettings
     }
 
     public static void SetFOV(int newFov) {
-        Debug.Log("FOV: " + newFov);
         fov = Mathf.Clamp(newFov, minFOV, maxFOV);
     }
 

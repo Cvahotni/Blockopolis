@@ -141,7 +141,7 @@ public class WorldEventSystem : MonoBehaviour
         worldFinishedLoadingEvent += hotbar.EnableInput;
         worldFinishedLoadingEvent += inventoryScreen.Enable;
         worldFinishedLoadingEvent += worldLoadingScreen.ToggleActivity;
-        worldFinishedLoadingEvent += playerStorage.LoadPlayer;
+        worldFinishedLoadingEvent += playerStorage.LoadPlayerRotation;
         worldFinishedLoadingEvent += mouseLook.SetupRotation;
     }
 

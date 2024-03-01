@@ -295,7 +295,10 @@ public class PlayerBuild : MonoBehaviour
                 Mathf.FloorToInt(position.z)
             );
 
-            if(currentDistance <= distance && block.IsAir()) {
+            if(!BlockRegistry.BlockTypes.ContainsKey(block.id)) return origin;
+            BlockType type = BlockRegistry.BlockTypes[block.id];
+
+            if(currentDistance <= distance && (block.IsAir() || type.isLiquid)) {
                 newHightlightPosition = position;
                 distance = currentDistance;
             }
@@ -336,7 +339,7 @@ public class PlayerBuild : MonoBehaviour
         BlockState state = BlockRegistry.BlockStateDictionary[packedBlock];
 
         bool blockCheck = !state.solid;
-        bool mainChecks =  skyCheck && voidCheck;
+        bool mainChecks = skyCheck && voidCheck;
 
         return checkPlayer ? mainChecks && boxCheck : mainChecks && boxCheck || blockCheck;
     }

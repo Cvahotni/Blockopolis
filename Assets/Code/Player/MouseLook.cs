@@ -43,11 +43,8 @@ public class MouseLook : MonoBehaviour
     }
 
     private void Update() {
-        HandleLockInputs();
-    }
-
-    private void FixedUpdate() {
         UpdateCameraFOV();
+        HandleLockInputs();
     }
 
     private void LateUpdate() {
