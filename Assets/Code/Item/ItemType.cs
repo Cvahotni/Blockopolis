@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 [CreateAssetMenu(fileName = "New Item Type", menuName = "Voxel Engine/Item Type")]
 public class ItemType : ScriptableObject

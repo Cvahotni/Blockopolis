@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public class GameSettings
 {
@@ -101,7 +98,7 @@ public class GameSettings
         get { return chunksPerSecondMultiplier; }
     }
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void Start() {
         var watch = new System.Diagnostics.Stopwatch();
         watch.Start();

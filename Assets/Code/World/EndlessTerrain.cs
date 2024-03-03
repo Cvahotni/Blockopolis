@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Scripting;
 using Unity.Collections;
 using Unity.Mathematics;
-using System;
 
 public class EndlessTerrain : MonoBehaviour
 {
@@ -45,7 +43,7 @@ public class EndlessTerrain : MonoBehaviour
 
         if(!WorldHandler.IsCurrentWorldInfoValid()) {
             Debug.LogError("Invalid world detected! " + WorldHandler.CurrentWorld.Name);
-            this.enabled = false;
+            enabled = false;
 
             return;
         }
@@ -121,7 +119,7 @@ public class EndlessTerrain : MonoBehaviour
         int i = 0;
         int j = 0;
 
-        for(int k = 0; k < GameSettings.ViewDistance * (GameSettings.ViewDistance * 4) + (GameSettings.ViewDistance * 4); ++k) {
+        for(int k = 0; k < GameSettings.ViewDistance * GameSettings.ViewDistance * 4 + (GameSettings.ViewDistance * 4); ++k) {
             long coord = ChunkPositionHelper.GetChunkPos(originX + i, originZ + j);
 
             bool shouldAddChunk = (

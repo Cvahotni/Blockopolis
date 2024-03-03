@@ -70,7 +70,7 @@ public class WorldFeaturePlacer : MonoBehaviour
 
     private void PlaceFeaturesOfType(int x, int z, ushort type) {
         FeatureSettings settings = FeatureRegistry.FeatureSettings[type];
-        UnityEngine.Random.seed = WorldHandler.CurrentWorld.Seed + ((x + 800) * z) + (type * 404);
+        UnityEngine.Random.InitState(WorldHandler.CurrentWorld.Seed + ((x + 800) * z) + (type * 404));
 
         for(int i = 0; i < settings.featuresPerChunk; i++) {
             int wx = x * VoxelProperties.chunkWidth;
@@ -107,10 +107,10 @@ public class WorldFeaturePlacer : MonoBehaviour
     }
 
     private int GetSurfaceFeatureY(int randomX, int randomZ) {
-        return (int) (Noise.Get2DNoise(
+        return (int) Noise.Get2DNoise(
                 WorldUtil.GetRealWorldX(randomX), WorldUtil.GetRealWorldZ(randomZ), 
                 endlessTerrain.NoiseOffset.x, endlessTerrain.NoiseOffset.y, 
-                endlessTerrain.NativeFrequencies, endlessTerrain.NativeAmplitudes)) - 15;
+                endlessTerrain.NativeFrequencies, endlessTerrain.NativeAmplitudes) - 15;
     }
 
     public void UpdateBuildFeaturesQuickly(object sender, bool value) {

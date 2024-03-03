@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
 using Unity.Burst;
-using Unity.Mathematics;
 
 [BurstCompile]
 public struct ChunkVoxelBuilderJob : IJob

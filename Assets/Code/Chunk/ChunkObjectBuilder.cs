@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using Unity.Collections;
 
 [RequireComponent(typeof(ChunkObjectPool))]
 public class ChunkObjectBuilder : MonoBehaviour
@@ -53,6 +50,7 @@ public class ChunkObjectBuilder : MonoBehaviour
         materials[2] = terrainMaterial;
     }
 
+    [System.Obsolete]
     public void BuildChunkObject(object sender, BuiltChunkData builtChunkData) {
         RemoveExistingChunkObject(builtChunkData.coord);
         if(chunkObjectPool.IsEmpty) return;

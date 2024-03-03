@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Jobs;
 using Unity.Collections;
 using Unity.Burst;
-using Unity.Mathematics;
 
 [BurstCompile]
 public struct ChunkPlaceFeaturesJob : IJob
@@ -34,13 +31,13 @@ public struct ChunkPlaceFeaturesJob : IJob
                 if((int) currentFeatureSettings.priority != p) continue;
 
                 int minX = -(currentFeatureSettings.size.x / 2);
-                int maxX = (currentFeatureSettings.size.x / 2);
+                int maxX = currentFeatureSettings.size.x / 2;
 
                 int minY = 0;
                 int maxY = currentFeatureSettings.size.y - 1;
 
                 int minZ = -(currentFeatureSettings.size.z / 2);
-                int maxZ = (currentFeatureSettings.size.z / 2);
+                int maxZ = currentFeatureSettings.size.z / 2;
 
                 minX += placement.x;
                 maxX += placement.x;
@@ -120,6 +117,6 @@ public struct ChunkPlaceFeaturesJob : IJob
         float worldZ = WorldPositionHelper.GetWorldZ(z, coord[0]);
 
         float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + WorldUtil.YOffset;
-        return (int) (noiseLevel) + 1;
+        return (int) noiseLevel + 1;
     }
 }

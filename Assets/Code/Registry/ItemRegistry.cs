@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -22,8 +21,8 @@ public class ItemRegistry : MonoBehaviour
     }
 
     private void LoadItemTypesFromFolder() {
-        System.Object[] objects = Resources.LoadAll("Item Types");
-        foreach(System.Object currentObject in objects) itemTypes.Add((ItemType) currentObject);
+        object[] objects = Resources.LoadAll("Item Types");
+        foreach(object currentObject in objects) itemTypes.Add((ItemType) currentObject);
     }
 
     public Material GetMaterialForID(ushort id) {
@@ -75,14 +74,13 @@ public class ItemRegistry : MonoBehaviour
 
     public float GetItemMineMultiplier(ushort currentID, BlockID blockId) {
         BlockMaterial blockMaterial = BlockRegistry.GetMaterialForBlock(blockId.id);
-        float mineSpeed = 1.0f;
         
-        foreach(ItemType itemType in itemTypes) {
+        foreach (ItemType itemType in itemTypes) {
             if(itemType.ID == currentID && itemType is ToolItemType) {
                 ToolItemType toolItemType = itemType as ToolItemType;
 
                 if(toolItemType.MineableMaterials.Contains(blockMaterial)) {
-                    mineSpeed = toolItemType.SpeedMultiplier;
+                    float mineSpeed = toolItemType.SpeedMultiplier;
                     return mineSpeed;
                 }
             }

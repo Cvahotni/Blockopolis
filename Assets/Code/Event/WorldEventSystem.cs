@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using Unity.Mathematics;
 using System;
 
@@ -123,7 +120,6 @@ public class WorldEventSystem : MonoBehaviour
 
     private void AddLoadingScreenStatusListeners() {
         loadingScreenStatusEvent += WorldHandler.SaveCurrentWorldQuickly;
-        loadingScreenStatusEvent += worldAllocator.UpdateCullChunksOutOfView;
         loadingScreenStatusEvent += worldAllocator.UpdateBuildChunksQuickly;
         loadingScreenStatusEvent += worldFeaturePlacer.UpdateBuildFeaturesQuickly;
         loadingScreenStatusEvent += savingScreen.Save;

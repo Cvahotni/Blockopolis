@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MenuProperties
 {
     public static readonly string menuSceneName = "Main Menu";

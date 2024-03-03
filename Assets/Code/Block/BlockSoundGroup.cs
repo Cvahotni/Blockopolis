@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Block Sound Group", menuName = "Voxel Engine/Block Sound Group")]

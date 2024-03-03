@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
@@ -45,10 +44,11 @@ public class BlockModelRegistry
     private static void CreateNativeCollections() {
         blockModelDictionary = new NativeParallelHashMap<byte, BlockStateModel>(1, Allocator.Persistent);
 
-        blockModelData = new BlockModelData();
-        blockModelData.voxelVerts = new NativeList<float3>(Allocator.Persistent);
-        blockModelData.voxelTris = new NativeList<uint>(Allocator.Persistent);
-        blockModelData.voxelUVs = new NativeList<float2>(Allocator.Persistent);
+        blockModelData = new BlockModelData {
+            voxelVerts = new NativeList<float3>(Allocator.Persistent),
+            voxelTris = new NativeList<uint>(Allocator.Persistent),
+            voxelUVs = new NativeList<float2>(Allocator.Persistent)
+        };
     }
 
     private static void RegisterBlockStateModels() {

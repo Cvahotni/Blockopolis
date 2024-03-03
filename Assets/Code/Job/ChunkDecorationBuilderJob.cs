@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Jobs;
 using Unity.Burst;
-using Unity.Mathematics;
 using Unity.Collections;
 
 [BurstCompile]
@@ -22,9 +18,7 @@ public struct ChunkDecorationBuilderJob : IJob
     }
 
     private void AddDecorations() {
-        int soilLevel = 6;
         int seaLevel = 64;
-
         float yOffset = -16.0f;
 
         for(int x = 0; x < VoxelProperties.chunkWidth; x++) {

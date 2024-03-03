@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BlockIDHelper
 {
     public static byte ID(ushort input) {

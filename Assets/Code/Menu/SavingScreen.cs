@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
@@ -52,14 +51,11 @@ public class SavingScreen : MonoBehaviour
                 WorldStorage.ResetRegionsSaved();
 
                 if(quit) {
-                    Debug.Log("Returning to main menu.");
                     SceneManager.LoadScene(sceneName: MenuProperties.menuSceneName);
-
                     break;
                 }
 
                 else {
-                    Debug.Log("Save finished.");
                     ToggleSavingScreen();
 
                     worldEventSystem.InvokeWorldFinishedLoading();

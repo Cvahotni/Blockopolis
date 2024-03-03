@@ -1,13 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Profiling;
 using System;
-using System.Diagnostics;
 
 [RequireComponent(typeof(EndlessTerrain))]
 [RequireComponent(typeof(WorldFeatures))]
@@ -36,8 +33,8 @@ public class ChunkBuilder : MonoBehaviour
 
     private void Start() {
         if(!WorldHandler.IsCurrentWorldInfoValid()) {
-            UnityEngine.Debug.LogError("ChunkBuilder can't find a valid world to use.");
-            this.enabled = false;
+            Debug.LogError("ChunkBuilder can't find a valid world to use.");
+            enabled = false;
 
             return;
         }
@@ -49,10 +46,12 @@ public class ChunkBuilder : MonoBehaviour
         featurePlacements = worldFeatures.GetPlacements();
     }
 
+    [Obsolete]
     public void BuildChunk(object sender, long chunkCoord) {
         BuildChunk(chunkCoord);
     }
 
+    [Obsolete]
     private void BuildChunk(long chunkCoord) {
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 
@@ -102,6 +101,7 @@ public class ChunkBuilder : MonoBehaviour
         access.StartCoroutine(BuildChunkMesh(chunkCoord, chunkBuildData, chunkVoxelBuildData, builtChunkData));
     }
 
+    [Obsolete]
     private void BuildChunkVoxelData(ChunkVoxelBuildData chunkVoxelBuildData) {
         buildChunkVoxelMapMarker.Begin();
 
@@ -157,6 +157,7 @@ public class ChunkBuilder : MonoBehaviour
         placeChunkDecorationsMarker.End();
     }
 
+    [Obsolete]
     private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {
         NativeArray<ushort> voxelMap = new NativeArray<ushort>(chunkVoxelBuildData.voxelMap, Allocator.Persistent);
         NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkBuildData.forwardVoxelMap, Allocator.Persistent);
@@ -223,14 +224,16 @@ public class ChunkBuilder : MonoBehaviour
         blockModelDictionary.Dispose();
     }
 
+    [Obsolete]
     public NativeArray<ushort> GetVoxelMap(long chunkCoord) {
-        if(!this.enabled) {
+        if(!enabled) {
             throw new InvalidOperationException("ChunkBuilder is disabled! Cannot continue.");
         }
 
         return GetVoxelMapWithOffset(chunkCoord, 0, 0);
     }
 
+    [Obsolete]
     public NativeArray<ushort> GetVoxelMapWithOffset(long chunkCoord, int offsetX, int offsetZ) {
         long chunkPos = ChunkPositionHelper.ModifyChunkPos(chunkCoord, offsetX, offsetZ);
 
@@ -243,6 +246,7 @@ public class ChunkBuilder : MonoBehaviour
         else WorldStorage.AddChunk(chunkCoord, ref voxelMap);
     }
 
+    [Obsolete]
     public NativeArray<ushort> CreateNewVoxelMap(long chunkCoord) {
         Vector2 terrainNoiseOffset = endlessTerrain.NoiseOffset;
 
@@ -271,6 +275,6 @@ public class ChunkBuilder : MonoBehaviour
     }
 
     public NativeArray<ushort> CreateEmptyVoxelMap() {
-        return new NativeArray<ushort>((VoxelProperties.chunkWidth) * VoxelProperties.chunkHeight * (VoxelProperties.chunkWidth), Allocator.Persistent);
+        return new NativeArray<ushort>(VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth, Allocator.Persistent);
     }
 }

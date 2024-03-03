@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
 
 public class WorldsButtonList : MonoBehaviour
 {
@@ -37,7 +34,7 @@ public class WorldsButtonList : MonoBehaviour
         GameObject[] listingObjects = GameObject.FindGameObjectsWithTag(MenuProperties.worldListingTag);
 
         foreach(GameObject listingObject in listingObjects) {
-            GameObject.Destroy(listingObject);
+            Destroy(listingObject);
         }
     }
 }

@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class RegionPositionHelper
 {
     public static long GetRegionPos(int x, int z) {

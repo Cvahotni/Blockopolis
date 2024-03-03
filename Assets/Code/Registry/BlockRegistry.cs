@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
@@ -63,23 +62,23 @@ public class BlockRegistry
 
     private static void PopulateBlockStates() {
         foreach(BlockStateObject blockStateObject in blockStateObjects) {
-            BlockState blockState = new BlockState();
+            BlockState blockState = new BlockState {
+                id = blockStateObject.id,
+                variant = blockStateObject.variant,
 
-            blockState.id = blockStateObject.id;
-            blockState.variant = blockStateObject.variant;
+                solid = blockStateObject.solid,
+                transparent = blockStateObject.transparent,
+                cutout = blockStateObject.cutout,
 
-            blockState.solid = blockStateObject.solid;
-            blockState.transparent = blockStateObject.transparent;
-            blockState.cutout = blockStateObject.cutout;
+                model = blockStateObject.model.id,
 
-            blockState.model = blockStateObject.model.id;
-
-            blockState.frontTexture = new float2(blockStateObject.frontTexture.x, blockStateObject.frontTexture.y);
-            blockState.backTexture = new float2(blockStateObject.backTexture.x, blockStateObject.backTexture.y);
-            blockState.upTexture = new float2(blockStateObject.upTexture.x, blockStateObject.upTexture.y);
-            blockState.downTexture = new float2(blockStateObject.downTexture.x, blockStateObject.downTexture.y);
-            blockState.leftTexture = new float2(blockStateObject.leftTexture.x, blockStateObject.leftTexture.y);
-            blockState.rightTexture = new float2(blockStateObject.rightTexture.x, blockStateObject.rightTexture.y);
+                frontTexture = new float2(blockStateObject.frontTexture.x, blockStateObject.frontTexture.y),
+                backTexture = new float2(blockStateObject.backTexture.x, blockStateObject.backTexture.y),
+                upTexture = new float2(blockStateObject.upTexture.x, blockStateObject.upTexture.y),
+                downTexture = new float2(blockStateObject.downTexture.x, blockStateObject.downTexture.y),
+                leftTexture = new float2(blockStateObject.leftTexture.x, blockStateObject.leftTexture.y),
+                rightTexture = new float2(blockStateObject.rightTexture.x, blockStateObject.rightTexture.y)
+            };
 
             blockStates.Add(blockState);
         }

@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using Unity.Collections;
 
 public class WorldRegionSaveLoad
@@ -11,9 +9,9 @@ public class WorldRegionSaveLoad
     private static int chunkElementsSize = VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth;
     private static int chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
 
-    private static byte[] chunkSaveBytes = new byte[(sizeof(ushort) * chunkElementsSize)];
-    private static byte[] chunkLoadBytes = new byte[(sizeof(ushort) * chunkElementsSize) + sizeof(long)];
-    private static byte[] chunkBuffer = new byte[sizeof(ushort) * chunkElementsSize];
+    private static byte[] chunkVoxelSaveBytes = new byte[(sizeof(ushort) * chunkElementsSize)];
+    private static byte[] chunkVoxelLoadBytes = new byte[(sizeof(ushort) * chunkElementsSize) + sizeof(long)];
+    private static byte[] chunkVoxelBuffer = new byte[sizeof(ushort) * chunkElementsSize];
     private static byte[] metaSaveDataBytes = new byte[sizeof(long)];
     private static byte[] metaLoadDataBytes = new byte[sizeof(long)];
 
@@ -62,11 +60,11 @@ public class WorldRegionSaveLoad
             long chunkCoord = keys[i];
             NativeArray<ushort> voxelArray = values[i];
 
-            NativeArrayExtension.ToRawBytes(voxelArray, chunkSaveBytes);
+            NativeArrayExtension.ToRawBytes(voxelArray, chunkVoxelSaveBytes);
 
             using (var stream = new FileStream(path, FileMode.Append)) {
                 using(var binaryWriter = new BinaryWriter(stream)) {
-                    SetMetaDataBytes((long) chunkCoord);
+                    SetMetaDataBytes(chunkCoord);
                     long newRegionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkCoord);
 
                     binaryWriter.Write(metaSaveDataBytes, 0, metaSaveDataBytes.Length);
@@ -75,7 +73,7 @@ public class WorldRegionSaveLoad
 
             using(var stream = new FileStream(path, FileMode.Append)) {
                 using(var binaryWriter = new BinaryWriter(stream)) {
-                    binaryWriter.Write(chunkSaveBytes, 0, chunkSaveBytes.Length);
+                    binaryWriter.Write(chunkVoxelSaveBytes, 0, chunkVoxelSaveBytes.Length);
                 }
             }
         }
@@ -108,7 +106,7 @@ public class WorldRegionSaveLoad
         WorldRegion region = new WorldRegion(false);
 
         for(int i = 0; i < chunksInRegionAmount; i++) {
-            int metaStartBytes = (i * ((sizeof(ushort) * chunkElementsSize) + 8));
+            int metaStartBytes = i * ((sizeof(ushort) * chunkElementsSize) + 8);
             int metaEndBytes = metaStartBytes + 8;
 
             int chunkBytesStart = metaEndBytes;
@@ -118,16 +116,16 @@ public class WorldRegionSaveLoad
             long chunkBytesSize = chunkBytesEnd - chunkBytesStart;
 
             binaryReader.Read(metaLoadDataBytes, 0, (int) metaBytesSize);
-            binaryReader.Read(chunkLoadBytes, 0, (int) chunkBytesSize);
+            binaryReader.Read(chunkVoxelLoadBytes, 0, (int) chunkBytesSize);
 
             binaryReader.BaseStream.Position = chunkBytesEnd;
             long chunkCoord = ReadMetaDataBytes();
             
-            Array.Copy(chunkLoadBytes, 0, chunkBuffer, 0, chunkBytesSize);
+            Array.Copy(chunkVoxelLoadBytes, 0, chunkVoxelBuffer, 0, chunkBytesSize);
             NativeArray<ushort> chunkArray = new NativeArray<ushort>(chunkElementsSize, Allocator.Persistent);
 
             long newRegionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkCoord);
-            NativeArrayExtension.FromRawBytes(chunkBuffer, chunkBuffer.Length, chunkArray);
+            NativeArrayExtension.FromRawBytes(chunkVoxelBuffer, chunkVoxelBuffer.Length, chunkArray);
 
             region.AddChunk(chunkCoord, ref chunkArray);
         }
@@ -153,9 +151,9 @@ public class WorldRegionSaveLoad
     }
 
     private static long ReadMetaDataBytes() {
-        return (((long) metaLoadDataBytes[0] & 0xFF) | (((long) metaLoadDataBytes[1] & 0xFF) << 8)
+        return ((long) metaLoadDataBytes[0] & 0xFF) | (((long) metaLoadDataBytes[1] & 0xFF) << 8)
         | (((long) metaLoadDataBytes[2] & 0xFF) << 16) | (((long) metaLoadDataBytes[3] & 0xFF) << 24)
         | (((long) metaLoadDataBytes[4] & 0xFF) << 32) | (((long) metaLoadDataBytes[5] & 0xFF) << 40)
-        | (((long) metaLoadDataBytes[6] & 0xFF) << 48) | (((long) metaLoadDataBytes[7] & 0xFF) << 56));
+        | (((long) metaLoadDataBytes[6] & 0xFF) << 48) | (((long) metaLoadDataBytes[7] & 0xFF) << 56);
     }
 }

@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 
 [CreateAssetMenu(fileName = "New Tool Item Type", menuName = "Voxel Engine/Tool Item Type")]
 public class ToolItemType : ItemType

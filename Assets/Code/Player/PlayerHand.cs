@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -14,8 +13,6 @@ public class PlayerHand : MonoBehaviour
     private PlayerMove playerMove;
     private ItemRegistry itemRegistry;
 
-    private int currentHotbarSlot;
-
     private float currentWalkAnimatorTime;
     private float currentSwingAnimatorTime;
 
@@ -23,8 +20,6 @@ public class PlayerHand : MonoBehaviour
 
     private WaitForSeconds shortTime = new WaitForSeconds(0.128f);
     private WaitForSeconds swingTime = new WaitForSeconds(0.161f);
-    
-    public int CurrentHotbatSlot { set { currentHotbarSlot = value; }}
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -171,8 +166,6 @@ public class PlayerHand : MonoBehaviour
 
     private void UpdateAnimatorTime(int layer, float time) {
         AnimatorStateInfo stateInfo = handObjectAnimator.GetCurrentAnimatorStateInfo(layer);
-        float normalizedTime = time / stateInfo.length;
-
         handObjectAnimator.PlayInFixedTime(stateInfo.fullPathHash, layer, time);
     }
 

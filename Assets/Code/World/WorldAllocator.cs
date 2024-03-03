@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Collections;
 using Unity.Mathematics;
 using System;
 
@@ -19,7 +17,6 @@ public class WorldAllocator : MonoBehaviour
     private EndlessTerrain endlessTerrain;
 
     private int chunksGenerated;
-    private bool cullChunksOutOfView = false;
     private bool shouldBuildChunks = true;
 
     private World currentWorld;
@@ -123,20 +120,8 @@ public class WorldAllocator : MonoBehaviour
         chunkQueue.Clear();
     }
 
-    public void EnableCullChunksOutOfView() {
-        cullChunksOutOfView = true;
-    }
-
     public void EnableBuildChunksQuickly() {
         buildChunksQuickly = true;
-    }
-
-    public void DisableCullChunksOutOfView() {
-        cullChunksOutOfView = false;
-    }
-
-    public void UpdateCullChunksOutOfView(object sender, bool value) {
-        cullChunksOutOfView = value;
     }
 
     public void UpdateBuildChunksQuickly(object sender, bool value) {

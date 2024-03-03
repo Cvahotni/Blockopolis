@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 
@@ -16,7 +14,7 @@ public class Noise
             float currentFrequency = frequencies[i];
             float currentAmplitude = amplitudes[i];
         
-            totalNoiseValue += Noise.Get2DNoiseAt(terrainNoiseOffsetX, terrainNoiseOffsetZ, worldX, worldZ, currentAmplitude, currentFrequency);
+            totalNoiseValue += Get2DNoiseAt(terrainNoiseOffsetX, terrainNoiseOffsetZ, worldX, worldZ, currentAmplitude, currentFrequency);
         }
 
         return totalNoiseValue;
@@ -30,7 +28,7 @@ public class Noise
         float inputX = (x + xOffset) * frequency;
         float inputZ = (z + zOffset) * frequency;
 
-        return (Mathf.PerlinNoise(inputX + offsetX, inputZ + offsetZ)) * amplitude;
+        return Mathf.PerlinNoise(inputX + offsetX, inputZ + offsetZ) * amplitude;
     }
 
     public static float Get3DNoiseAt(float offsetX, float offsetY, float offsetZ, float x, float y, float z, float amplitude, float frequency) {
@@ -42,7 +40,7 @@ public class Noise
         float inputY = (y + yOffset) * frequency;
         float inputZ = (z + zOffset) * frequency;
 
-        return (Get3DPerlin(inputX + offsetX, inputY + offsetY, inputZ + offsetZ)) * amplitude;
+        return Get3DPerlin(inputX + offsetX, inputY + offsetY, inputZ + offsetZ) * amplitude;
     }
 
     private static float Get3DPerlin(float x, float y, float z) {

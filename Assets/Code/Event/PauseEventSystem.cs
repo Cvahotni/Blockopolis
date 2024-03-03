@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 
@@ -28,8 +26,6 @@ public class PauseEventSystem : MonoBehaviour
     private Hotbar hotbar;
     private PauseMenu pauseMenu;
     private PauseMenuToggle pauseMenuToggle;
-    private PlayerHand playerHand;
-    private EndlessTerrain endlessTerrain;
     private SavingScreen savingScreen;
     private Inventory inventory;
     private InventoryScreen inventoryScreen;
@@ -55,8 +51,6 @@ public class PauseEventSystem : MonoBehaviour
         hotbar = Hotbar.Instance;
         pauseMenu = PauseMenu.Instance;
         pauseMenuToggle = PauseMenuToggle.Instance;
-        playerHand = PlayerHand.Instance;
-        endlessTerrain = EndlessTerrain.Instance;
         savingScreen = SavingScreen.Instance;
         inventory = Inventory.Instance;
         inventoryScreen = InventoryScreen.Instance;

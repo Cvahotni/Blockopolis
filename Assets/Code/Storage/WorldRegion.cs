@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 
@@ -9,6 +7,9 @@ public struct WorldRegion
     private NativeHashMap<long, NativeArray<ushort>> voxelStorageMap;
     public NativeHashMap<long, NativeArray<ushort>> VoxelStorageMap { get { return voxelStorageMap; } }
 
+    private NativeHashMap<long, NativeArray<byte>> lightStorageMap;
+    public NativeHashMap<long, NativeArray<byte>> LightStorageMap { get { return lightStorageMap; } }
+
     private int chunksInRegionAmount;
     private bool disposed;
 
@@ -16,7 +17,10 @@ public struct WorldRegion
         if(debug) Debug.Log("Created WorldRegion");
 
         chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
+
         voxelStorageMap = new NativeHashMap<long, NativeArray<ushort>>(chunksInRegionAmount, Allocator.Persistent);
+        lightStorageMap = new NativeHashMap<long, NativeArray<byte>>(chunksInRegionAmount, Allocator.Persistent);
+
         disposed = false;
     }
 
@@ -65,7 +69,12 @@ public struct WorldRegion
             destroyedCount++;
         }
 
+        foreach(var nativeArrayPair in lightStorageMap) {
+            nativeArrayPair.Value.Dispose();
+        }
+
         voxelStorageMap.Dispose();
+        lightStorageMap.Dispose();
 
         disposed = true;
         return destroyedCount;

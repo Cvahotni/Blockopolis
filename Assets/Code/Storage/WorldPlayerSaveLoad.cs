@@ -1,13 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.IO;
 
 public class WorldPlayerSaveLoad
 {
-    private static string playerDataJsonBuffer = "";
-
     public static void SaveWorldPlayer(World world, GameObject player) {
         WorldSaveLoad.CheckWorldSaveFile(world, WorldStorageProperties.playerFileName);
         string path = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
@@ -16,21 +11,15 @@ public class WorldPlayerSaveLoad
         string json = JsonUtility.ToJson(playerData);
 
         File.WriteAllText(path, json);
-        playerDataJsonBuffer = "";
     }
 
     private static PlayerData LoadPlayerData(World world) {
-        if(playerDataJsonBuffer == "") {
-            WorldSaveLoad.CheckWorldLoadFile(world.Name, WorldStorageProperties.playerFileName);
+        WorldSaveLoad.CheckWorldLoadFile(world.Name, WorldStorageProperties.playerFileName);
 
-            string loadPath = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
-            string json = File.ReadAllText(loadPath);
+        string loadPath = WorldSaveLoad.GetWorldFilePath(world, WorldStorageProperties.playerFileName);
+        string json = File.ReadAllText(loadPath);
     
-            playerDataJsonBuffer = json;
-            return JsonUtility.FromJson<PlayerData>(json);
-        }
-
-        else return JsonUtility.FromJson<PlayerData>(playerDataJsonBuffer);
+        return JsonUtility.FromJson<PlayerData>(json);
     }
 
     public static void LoadWorldPlayer(World world, GameObject player) {

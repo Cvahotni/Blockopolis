@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -26,8 +24,6 @@ public class RenameWorldMenuController : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        //A lot of garbage generated here!
-
         bool isValid = WorldNameChecker.IsNameValid(nameField.text) && editWorldMenuController.CurrentWorldName != nameField.text;
         renameButton.interactable = isValid;
     }

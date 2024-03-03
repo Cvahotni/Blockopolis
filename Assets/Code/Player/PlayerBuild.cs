@@ -311,19 +311,6 @@ public class PlayerBuild : MonoBehaviour
         );
     }
 
-    private void ResetRaycastPositions() {
-        Vector3 playerPosition = playerCamera.transform.position;
-
-        int positionX = Mathf.FloorToInt(playerPosition.x);
-        int positionY = Mathf.FloorToInt(playerPosition.y);
-        int positionZ = Mathf.FloorToInt(playerPosition.z);
-
-        Vector3Int playerPositionFloored = new Vector3Int(positionX, positionY, positionZ);
-
-        targetPos = playerPositionFloored;
-        highlightPos = playerPositionFloored;
-    }
-
     private bool CanModifyAt(Vector3 position, bool checkPlayer) {
         bool boxCheck = !Physics.CheckBox(position, Vector3.one * 0.5f, Quaternion.identity, playerMask, QueryTriggerInteraction.Ignore);
         bool skyCheck = position.y < VoxelProperties.chunkHeight;
