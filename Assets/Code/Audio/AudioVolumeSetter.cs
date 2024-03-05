@@ -10,7 +10,7 @@ public class AudioVolumeSetter : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    private void FixedUpdate() {   
+    private void Update() {   
         audioMixer.SetFloat(masterVolumeName, Mathf.Log10(GameSettings.Volume / 100.0f) * 30.0f);
     }
 }

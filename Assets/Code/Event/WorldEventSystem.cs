@@ -112,6 +112,7 @@ public class WorldEventSystem : MonoBehaviour
 
     private void AddFeaturePlacingFinishedListeners() {
         featurePlacingFinishedEvent += worldAllocator.EnableChunkBuilding;
+        featurePlacingFinishedEvent += worldFeaturePlacer.DisableBuildFeaturesQuickly;
     }
 
     private void AddChunkObjectBuildListeners() {

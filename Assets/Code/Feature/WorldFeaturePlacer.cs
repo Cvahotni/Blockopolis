@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Mathematics;
+using System;
 
 [DefaultExecutionOrder(-800)]
 [RequireComponent(typeof(WorldFeatures))]
@@ -55,6 +56,7 @@ public class WorldFeaturePlacer : MonoBehaviour
 
                 if(!buildFeaturesQuickly) yield return shortWait;
                 if(endlessTerrain.IsFeatureChunkOutOfRange(coord)) continue;
+                if(WorldStorage.DoesChunkExist(coord)) continue;
 
                 foreach(var pair in FeatureRegistry.FeatureSettings) {
                     ushort id = pair.Key;
@@ -111,6 +113,14 @@ public class WorldFeaturePlacer : MonoBehaviour
                 WorldUtil.GetRealWorldX(randomX), WorldUtil.GetRealWorldZ(randomZ), 
                 endlessTerrain.NoiseOffset.x, endlessTerrain.NoiseOffset.y, 
                 endlessTerrain.NativeFrequencies, endlessTerrain.NativeAmplitudes) - 15;
+    }
+
+    public void EnableBuildFeaturesQuickly() {
+        buildFeaturesQuickly = true;
+    }
+
+    public void DisableBuildFeaturesQuickly(object sender, EventArgs e) {
+        buildFeaturesQuickly = false;
     }
 
     public void UpdateBuildFeaturesQuickly(object sender, bool value) {

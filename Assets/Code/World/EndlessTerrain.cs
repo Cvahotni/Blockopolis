@@ -106,6 +106,7 @@ public class EndlessTerrain : MonoBehaviour
 
     public void RemoveOutOfRangeChunks(bool finalize) {
         for(int i = addedChunks.Count - 1; i >= 0; i--) {
+            if(i >= addedChunks.Count) continue;
             long chunk = addedChunks[i];
             
             if(IsChunkOutOfRange(chunk, 0)) {

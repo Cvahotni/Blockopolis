@@ -19,7 +19,7 @@ public class SettingsEventSystem : MonoBehaviour
 
     private static SettingsEventSystem _instance;
 
-    private ChunkObjectPool chunkObjectPool;
+    private WorldFeaturePlacer worldFeaturePlacer;
     private EndlessTerrain endlessTerrain;
     private WorldAllocator worldAllocator;
 
@@ -52,9 +52,9 @@ public class SettingsEventSystem : MonoBehaviour
     public void RegisterInGame() {
         if(registeredInGame) return;
 
-        chunkObjectPool = ChunkObjectPool.Instance;
         endlessTerrain = EndlessTerrain.Instance;
         worldAllocator = WorldAllocator.Instance;
+        worldFeaturePlacer = WorldFeaturePlacer.Instance;
 
         AddApplyGameChangesListeners();
         registeredInGame = true;
@@ -81,9 +81,10 @@ public class SettingsEventSystem : MonoBehaviour
 
     private void AddApplyGameChangesListeners() {
         applyGameChangesEvent.AddListener(endlessTerrain.ForceRemoveOutOfRangeChunks);
-        applyGameChangesEvent.AddListener(endlessTerrain.BuildInitialChunks);
         applyGameChangesEvent.AddListener(endlessTerrain.ViewDistanceChange);
+        applyGameChangesEvent.AddListener(endlessTerrain.BuildInitialChunks);
         applyGameChangesEvent.AddListener(worldAllocator.RemoveOutOfRangeChunks);
+        applyGameChangesEvent.AddListener(worldFeaturePlacer.EnableBuildFeaturesQuickly);
     }
 
     public void InvokeViewDistanceChange(float amount) {
