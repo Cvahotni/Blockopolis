@@ -80,11 +80,10 @@ public class SettingsEventSystem : MonoBehaviour
     }
 
     private void AddApplyGameChangesListeners() {
-        applyGameChangesEvent.AddListener(chunkObjectPool.ClearPool);
-        applyGameChangesEvent.AddListener(chunkObjectPool.PopulatePool);
-        applyGameChangesEvent.AddListener(endlessTerrain.RemoveOutOfRangeChunks);
+        applyGameChangesEvent.AddListener(endlessTerrain.ForceRemoveOutOfRangeChunks);
         applyGameChangesEvent.AddListener(endlessTerrain.BuildInitialChunks);
         applyGameChangesEvent.AddListener(endlessTerrain.ViewDistanceChange);
+        applyGameChangesEvent.AddListener(worldAllocator.RemoveOutOfRangeChunks);
     }
 
     public void InvokeViewDistanceChange(float amount) {

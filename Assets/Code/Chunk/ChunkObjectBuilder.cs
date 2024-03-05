@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
+[RequireComponent(typeof(EndlessTerrain))]
 [RequireComponent(typeof(ChunkObjectPool))]
 public class ChunkObjectBuilder : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class ChunkObjectBuilder : MonoBehaviour
     public static ChunkObjectBuilder Instance { get; private set; }
 
     private ChunkObjectPool chunkObjectPool;
+
     private Material[] materials;
 
     [SerializeField]

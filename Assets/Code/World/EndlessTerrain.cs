@@ -96,14 +96,22 @@ public class EndlessTerrain : MonoBehaviour
         long coord = GetChunkCoordFromVector3(playerTransform.position);
         lastPlayerChunkCoord = coord;
 
-        RemoveOutOfRangeChunks();
+        RemoveOutOfRangeChunks(false);
         StartCoroutine(GenerateChunksAroundPlayer(GetPlayerChunkX(), GetPlayerChunkZ(), true));
     }
 
-    public void RemoveOutOfRangeChunks() {
+    public void ForceRemoveOutOfRangeChunks() {
+        RemoveOutOfRangeChunks(true);
+    }
+
+    public void RemoveOutOfRangeChunks(bool finalize) {
         for(int i = addedChunks.Count - 1; i >= 0; i--) {
             long chunk = addedChunks[i];
-            if(IsChunkOutOfRange(chunk, 0)) worldEventSystem.InvokeChunkRemove(chunk);
+            
+            if(IsChunkOutOfRange(chunk, 0)) {
+                worldEventSystem.InvokeChunkRemove(chunk);
+                if(finalize) worldEventSystem.InvokeChunkRemoveFinal(chunk);
+            }
         }
     }
 

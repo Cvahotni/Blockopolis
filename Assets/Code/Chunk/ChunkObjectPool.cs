@@ -19,17 +19,10 @@ public class ChunkObjectPool : MonoBehaviour
         PopulatePool();
     }
 
-    public void ClearPool() {
-        for(int i = 0; i < poolQueue.Count; i++) {
-            GameObject gameObject = poolQueue.Dequeue();
-            Destroy(gameObject);
-        }
-    }
-
     public void PopulatePool() {
         for(int i = 0; i < GameSettings.ChunkPoolSize; i++) {
-            GameObject gameObject = CreateGameObject();
-            ReturnToPool(gameObject);
+            GameObject queueGameObject = CreateGameObject();
+            ReturnToPool(queueGameObject);
         }
     }
 

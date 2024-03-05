@@ -69,6 +69,7 @@ public class WorldAllocator : MonoBehaviour
         bool outOfRange = endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
 
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
+        if(endlessTerrain.IsChunkOutOfRange(chunkPos, 2)) return;
 
         int chunkX = ChunkPositionHelper.GetChunkPosX(chunkPos);
         int chunkZ = ChunkPositionHelper.GetChunkPosZ(chunkPos);
@@ -116,8 +117,14 @@ public class WorldAllocator : MonoBehaviour
         return coord == int.MaxValue;
     }
 
-    public void Clear() {
-        chunkQueue.Clear();
+    public void RemoveOutOfRangeChunks() {
+        for(int i = 0; i < chunkQueue.Count; i++) {
+            long coord = chunkQueue.Dequeue();
+            
+            if(!endlessTerrain.IsChunkOutOfRange(coord, 2)) {
+                chunkQueue.Enqueue(coord);
+            }
+        }
     }
 
     public void EnableBuildChunksQuickly() {

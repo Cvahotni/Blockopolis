@@ -127,6 +127,8 @@ public class PlayerMove : MonoBehaviour
             float currentJumpHeight = isUnderWater ? underWaterJumpHeight : jumpHeight;
 
             Vector3 originalVelocity = playerRigidBody.velocity;
+            if(playerRigidBody.isKinematic) return;
+
             playerRigidBody.velocity = new Vector3(originalVelocity.x, Mathf.Sqrt(currentJumpHeight * -2.0f * gravity), originalVelocity.z);
         }
     }

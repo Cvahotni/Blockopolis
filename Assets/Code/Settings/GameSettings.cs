@@ -5,7 +5,7 @@ public class GameSettings
     private static int viewDistance = 16;
     private static int chunksPerSecond = 500;
     private static int featuresPerSecond = 500;
-    private static int chunkPoolSize = 0;
+    private static int chunkPoolSize = 4096;
     private static int maxFramerate = 250;
     private static int chunkBuildsPerFrame = 1;
     private static int fov = 90;
@@ -56,7 +56,6 @@ public class GameSettings
 
     public static int ChunkPoolSize {
         get { return chunkPoolSize; }
-        set { chunkPoolSize = value; }
     }
 
     public static int MaxFramerate {
@@ -104,9 +103,7 @@ public class GameSettings
         watch.Start();
 
         GameSettingsStorage.Load();
-        
         ApplyChangesToUnity();
-        UpdateChunkPoolSize();
 
         watch.Stop();
         float timeTaken = watch.ElapsedTicks * 1000 / System.Diagnostics.Stopwatch.Frequency;
@@ -116,7 +113,6 @@ public class GameSettings
 
     public static void SetViewDistance(int newViewDistance) {
         viewDistance = Mathf.Clamp(newViewDistance, minViewDistance, maxViewDistance);
-        UpdateChunkPoolSize();
     }
 
     public static void SetChunksPerSecond(int newChunksPerSecond) {
@@ -160,10 +156,6 @@ public class GameSettings
     public static void SetEnableShaders(bool newEnableShaders) {
         enableShaders = newEnableShaders;
         ApplyChangesToUnity();
-    }
-
-    private static void UpdateChunkPoolSize() {
-        chunkPoolSize = 64 * (viewDistance * 2);
     }
 
     public static void ApplyChangesToUnity() {
