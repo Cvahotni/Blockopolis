@@ -22,12 +22,6 @@ public class WorldAllocator : MonoBehaviour
     private World currentWorld;
     private bool buildChunksQuickly = true;
 
-    [SerializeField] private Camera playerCamera;
-
-    public int ChunksGenerated {
-        get { return chunksGenerated; }
-    }
-
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
         else Instance = this;
@@ -62,11 +56,8 @@ public class WorldAllocator : MonoBehaviour
     }
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
-        bool shouldBuildNextChunk = shouldBuildChunks || immediate;
-        if(queue.Count == 0 || !shouldBuildNextChunk) return;
-
+        if(queue.Count == 0) return;
         long chunkPos = queue.Dequeue();
-        bool outOfRange = endlessTerrain.IsChunkOutOfRange(chunkPos, 0);
 
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
         if(endlessTerrain.IsChunkOutOfRange(chunkPos, 2)) return;
@@ -127,28 +118,8 @@ public class WorldAllocator : MonoBehaviour
         }
     }
 
-    public void EnableBuildChunksQuickly() {
-        buildChunksQuickly = true;
-    }
-
     public void UpdateBuildChunksQuickly(object sender, bool value) {
         buildChunksQuickly = !value;
-    }
-
-    public void DisableChunkBuilding(object sender, int3 data) {
-        DisableChunkBuilding();
-    }
-
-    public void EnableChunkBuilding(object sender, EventArgs e) {
-        EnableChunkBuilding();
-    }
-
-    private void DisableChunkBuilding() {
-        shouldBuildChunks = false;
-    }
-
-    private void EnableChunkBuilding() {
-        shouldBuildChunks = true;
     }
 
     private void OnDestroy() {

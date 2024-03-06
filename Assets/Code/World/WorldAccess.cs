@@ -25,7 +25,6 @@ public class WorldAccess
             ModifyChunkVoxelMap(chunkPos, relativeX, position.y, relativeZ, id);
 
             if(WorldPositionHelper.IsBlockOnChunkEdge(relativeX, relativeZ)) {
-                Border.BorderDirection borderDirection = WorldPositionHelper.GetBorderDirection(relativeX, relativeZ, VoxelProperties.chunkWidth);
                 AddNeighborChunks(chunkPos, chunksToAddToQueue);
             }
             
@@ -50,6 +49,8 @@ public class WorldAccess
 
         int voxelMapIndex = ArrayIndexHelper.GetVoxelArrayIndex(relativeX, relativeY, relativeZ);
         voxelMap[voxelMapIndex] = currentBlock.Pack();
+
+        WorldStorage.SetChunk(chunk, ref voxelMap);
     }
 
     private static void AddNeighborChunks(long currentChunk, List<long> chunksToAddToQueue) {

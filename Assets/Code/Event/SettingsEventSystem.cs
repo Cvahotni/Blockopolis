@@ -84,7 +84,6 @@ public class SettingsEventSystem : MonoBehaviour
         applyGameChangesEvent.AddListener(endlessTerrain.ViewDistanceChange);
         applyGameChangesEvent.AddListener(endlessTerrain.BuildInitialChunks);
         applyGameChangesEvent.AddListener(worldAllocator.RemoveOutOfRangeChunks);
-        applyGameChangesEvent.AddListener(worldFeaturePlacer.EnableBuildFeaturesQuickly);
     }
 
     public void InvokeViewDistanceChange(float amount) {

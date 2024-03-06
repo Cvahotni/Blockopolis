@@ -14,11 +14,12 @@ public struct FeatureSettings
     public int maxY;
 
     public FeaturePriority priority;
-
     public float spawnChance;
-    public BlockID overrideBlock;
 
-    public FeatureSettings(ushort id, int3 size, int featuresPerChunk, FeaturePlaceType placeType, int minY, int maxY, float spawnChance, BlockID overrideBlock, FeaturePriority priority) {
+    public BlockID overrideBlock;
+    public BlockID groundBlock;
+
+    public FeatureSettings(ushort id, int3 size, int featuresPerChunk, FeaturePlaceType placeType, int minY, int maxY, float spawnChance, BlockID overrideBlock, FeaturePriority priority, BlockID groundBlock) {
         this.id = id;
         this.size = size;
 
@@ -32,5 +33,6 @@ public struct FeatureSettings
         this.overrideBlock = overrideBlock;
 
         this.priority = priority;
+        this.groundBlock = groundBlock;
     }
 }

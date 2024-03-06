@@ -27,6 +27,7 @@ public class VoxelProperties {
 	public static readonly int worldSizeInRegionsHalved = worldSizeInRegions / 2;
 
 	public static readonly int regionBitShift = 8;
+	public static readonly int featurePlacementBuffer = 3;
 
 	public static readonly Vector3[] faceChecks = new Vector3[6] {
 		new Vector3(0.0f, 0.0f, -1.0f),

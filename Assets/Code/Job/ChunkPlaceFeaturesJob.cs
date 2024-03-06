@@ -86,6 +86,9 @@ public struct ChunkPlaceFeaturesJob : IJob
                             int dx = Mathf.Abs(placement.x - (chunkWX + fx));
                             int dz = Mathf.Abs(placement.z - (chunkWZ + fz));
 
+                            int ox = Mathf.Abs(placement.x - chunkWX);
+                            int oz = Mathf.Abs(placement.z - chunkWZ);
+
                             if(dx > currentFeatureSettings.size.x) continue;
                             if(dz > currentFeatureSettings.size.z) continue;
 
@@ -93,12 +96,19 @@ public struct ChunkPlaceFeaturesJob : IJob
 
                             int checkVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, fy, fz);
                             int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, surface, fz);
+                            int groundVoxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(fx, surface - 1, fz);
 
                             FeaturePlacement newPlacement = new FeaturePlacement(npx, y - placement.y, npz, placement.id);
                             if(!featureData.ContainsKey(newPlacement)) continue;
 
                             BlockID worldCheckBlockID = new BlockID(voxelMap[checkVoxelMapArrayIndex]);
                             if(!worldCheckBlockID.Equals(currentFeatureSettings.overrideBlock)) continue;
+
+                            BlockID groundCheckBlockID = new BlockID(voxelMap[groundVoxelMapArrayIndex]);
+                            
+                            if(!groundCheckBlockID.Equals(currentFeatureSettings.groundBlock) && currentFeatureSettings.placeType == FeaturePlaceType.SurfaceHeight) {
+                                continue;
+                            }
 
                             ushort id = featureData[newPlacement];
                             BlockID featureBlock = new BlockID(id);

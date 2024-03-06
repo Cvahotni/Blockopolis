@@ -1,5 +1,4 @@
 using UnityEngine;
-using Unity.Mathematics;
 using System;
 
 [DefaultExecutionOrder(-500)]
@@ -41,10 +40,6 @@ public class WorldEventSystem : MonoBehaviour
     private event EventHandler<long> chunkRemoveFinalEvent;
     private event EventHandler<long> chunkBuildEvent;
 
-    private event EventHandler<int3> placeFeaturesEvent;
-    private event EventHandler<int3> removeFeaturesEvent;
-    private event EventHandler featurePlacingFinishedEvent;
-
     private event EventHandler<BuiltChunkData> chunkObjectBuildEvent;
     private event EventHandler<bool> loadingScreenStatusEvent;
     private event EventHandler<int> chunksGeneratedChangeEvent;
@@ -73,10 +68,7 @@ public class WorldEventSystem : MonoBehaviour
         AddChunkAddListeners();
         AddChunkRemoveListeners();
         AddChunkRemoveFinalListeners();
-        AddFeaturePlacingFinishedListeners();
         AddChunkBuildListeners();
-        AddPlaceFeaturesListeners();
-        AddRemoveFeaturesListeners();
         AddChunkObjectBuildListeners();
         AddLoadingScreenStatusListeners();
         AddChunksGeneratedChangeListeners();
@@ -98,21 +90,8 @@ public class WorldEventSystem : MonoBehaviour
     }
 
     private void AddChunkBuildListeners() {
+        chunkBuildEvent += worldFeaturePlacer.PlaceFeatures;
         chunkBuildEvent += chunkBuilder.BuildChunk;
-    }
-
-    private void AddPlaceFeaturesListeners() {
-        placeFeaturesEvent += worldAllocator.DisableChunkBuilding;
-        placeFeaturesEvent += worldFeaturePlacer.PlaceFeatures;
-    }
-
-    private void AddRemoveFeaturesListeners() {
-        removeFeaturesEvent += worldFeaturePlacer.RemoveFeatures;
-    }
-
-    private void AddFeaturePlacingFinishedListeners() {
-        featurePlacingFinishedEvent += worldAllocator.EnableChunkBuilding;
-        featurePlacingFinishedEvent += worldFeaturePlacer.DisableBuildFeaturesQuickly;
     }
 
     private void AddChunkObjectBuildListeners() {
@@ -122,7 +101,6 @@ public class WorldEventSystem : MonoBehaviour
     private void AddLoadingScreenStatusListeners() {
         loadingScreenStatusEvent += WorldHandler.SaveCurrentWorldQuickly;
         loadingScreenStatusEvent += worldAllocator.UpdateBuildChunksQuickly;
-        loadingScreenStatusEvent += worldFeaturePlacer.UpdateBuildFeaturesQuickly;
         loadingScreenStatusEvent += savingScreen.Save;
     }
 
@@ -156,18 +134,6 @@ public class WorldEventSystem : MonoBehaviour
 
     public void InvokeChunkBuild(long coord) {
         chunkBuildEvent.Invoke(this, coord);
-    }
-
-    public void InvokePlaceFeatures(int3 data) {
-        placeFeaturesEvent.Invoke(this, data);
-    }
-
-    public void InvokeRemoveFeatures(int3 data) {
-        removeFeaturesEvent.Invoke(this, data);
-    }
-
-    public void InvokeFinishedBuildingFeatures() {
-        featurePlacingFinishedEvent.Invoke(this, EventArgs.Empty);
     }
 
     public void InvokeChunkObjectBuild(BuiltChunkData data) {

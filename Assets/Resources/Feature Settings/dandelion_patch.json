@@ -15,5 +15,10 @@
         "id": 0,
         "variant": 0,
         "rotation": 0
+    },
+    "groundBlock": {
+        "id": 1,
+        "variant": 0,
+        "rotation": 0
     }
 }

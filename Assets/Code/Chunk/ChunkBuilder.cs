@@ -21,8 +21,6 @@ public class ChunkBuilder : MonoBehaviour
     private WorldEventSystem worldEventSystem;
     private EndlessTerrain endlessTerrain;
     private WorldFeatures worldFeatures;
-
-    private NativeList<FeaturePlacement> featurePlacements;
     private NativeParallelHashMap<FeaturePlacement, ushort> featureData = FeatureRegistry.FeatureData;
     private NativeParallelHashMap<ushort, FeatureSettings> featureSettings = FeatureRegistry.FeatureSettings;
 
@@ -42,8 +40,6 @@ public class ChunkBuilder : MonoBehaviour
         worldEventSystem = WorldEventSystem.Instance;
         endlessTerrain = EndlessTerrain.Instance;
         worldFeatures = WorldFeatures.Instance;
-
-        featurePlacements = worldFeatures.GetPlacements();
     }
 
     [Obsolete]
@@ -130,7 +126,7 @@ public class ChunkBuilder : MonoBehaviour
 
             noiseOffset = chunkVoxelBuildData.noiseOffset,
 
-            featurePlacements = featurePlacements,
+            featurePlacements = worldFeatures.GetPlacements(),
             featureData = featureData,
             featureSettings = featureSettings
         };
@@ -203,9 +199,7 @@ public class ChunkBuilder : MonoBehaviour
         });
 
         chunkMeshJobHandle.Complete();
-
         worldEventSystem.InvokeChunkObjectBuild(builtChunkData);
-        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
 
         chunkBuildData.Dispose();
         chunkVoxelBuildData.Dispose();
@@ -269,6 +263,7 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
         BuildChunkVoxelData(chunkVoxelBuildData);
+        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
 
         chunkVoxelBuildData.Dispose();
         return voxelMap;

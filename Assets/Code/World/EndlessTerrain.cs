@@ -83,11 +83,6 @@ public class EndlessTerrain : MonoBehaviour
         playerChunkCoord = GetChunkCoordFromVector3(playerTransform.position);
 
         if(playerChunkCoord != lastPlayerChunkCoord) {
-            worldEventSystem.InvokeRemoveFeatures(
-                new int3(GetPlayerChunkX(), GetPlayerChunkZ(), 
-                GameSettings.ViewDistance + VoxelProperties.featureChunkBuffer)
-            );
-
             CheckViewDistance();
         }
     }
@@ -117,8 +112,6 @@ public class EndlessTerrain : MonoBehaviour
     }
 
     private IEnumerator GenerateChunksAroundPlayer(int originX, int originZ, bool async) {
-        worldEventSystem.InvokePlaceFeatures(new int3(originX, originZ, GameSettings.ViewDistance + VoxelProperties.featureChunkBuffer));
-
         int di = 1;
         int dj = 0;
 
