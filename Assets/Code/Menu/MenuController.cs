@@ -4,14 +4,14 @@ public class MenuController : MonoBehaviour
 {
     public static MenuController Instance { get; private set; }
 
-    [SerializeField] private GameObject mainMenuObject;
-    [SerializeField] private GameObject worldSelectionObject;
-    [SerializeField] private GameObject createWorldMenuObject;
-    [SerializeField] private GameObject editWorldMenuObject;
-    [SerializeField] private GameObject deleteWorldMenuObject;
-    [SerializeField] private GameObject renameWorldMenuObject;
-    [SerializeField] private GameObject settingsMenuObject;
-    [SerializeField] private GameObject creditsMenuObject;
+    [SerializeField] private GameObject[] mainMenuObjects;
+    [SerializeField] private GameObject[] worldSelectionObjects;
+    [SerializeField] private GameObject[] createWorldMenuObjects;
+    [SerializeField] private GameObject[] editWorldMenuObjects;
+    [SerializeField] private GameObject[] deleteWorldMenuObjects;
+    [SerializeField] private GameObject[] renameWorldMenuObjects;
+    [SerializeField] private GameObject[] settingsMenuObjects;
+    [SerializeField] private GameObject[] creditsMenuObjects;
     [SerializeField] private GameObject overlayObject;
 
     private void Awake() {
@@ -28,98 +28,100 @@ public class MenuController : MonoBehaviour
     }
 
     public void ToggleOverlay() {
-        ToggleMenuObject(overlayObject, !overlayObject.activeSelf);
+        ToggleMenuObjects(new GameObject[] { overlayObject }, !overlayObject.activeSelf);
     }
 
     public void ToggleToMainMenu() {
-        ToggleMenuObject(mainMenuObject, true);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, true);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToWorldSelection() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, true);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, true);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToCreateWorld() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, true);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, true);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToEditWorld(string name) {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, true);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, true);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToDeleteWorld() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, true);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, true);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToRenameWorld() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, true);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, true);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToSettings() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, true);
-        ToggleMenuObject(creditsMenuObject, false);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, true);
+        ToggleMenuObjects(creditsMenuObjects, false);
     }
 
     public void ToggleToCredits() {
-        ToggleMenuObject(mainMenuObject, false);
-        ToggleMenuObject(worldSelectionObject, false);
-        ToggleMenuObject(createWorldMenuObject, false);
-        ToggleMenuObject(editWorldMenuObject, false);
-        ToggleMenuObject(deleteWorldMenuObject, false);
-        ToggleMenuObject(renameWorldMenuObject, false);
-        ToggleMenuObject(settingsMenuObject, false);
-        ToggleMenuObject(creditsMenuObject, true);
+        ToggleMenuObjects(mainMenuObjects, false);
+        ToggleMenuObjects(worldSelectionObjects, false);
+        ToggleMenuObjects(createWorldMenuObjects, false);
+        ToggleMenuObjects(editWorldMenuObjects, false);
+        ToggleMenuObjects(deleteWorldMenuObjects, false);
+        ToggleMenuObjects(renameWorldMenuObjects, false);
+        ToggleMenuObjects(settingsMenuObjects, false);
+        ToggleMenuObjects(creditsMenuObjects, true);
     }
 
-    private void ToggleMenuObject(GameObject menuObject, bool value) {
-        menuObject.SetActive(value);
+    private void ToggleMenuObjects(GameObject[] menuObjects, bool value) {
+        foreach(GameObject menuObject in menuObjects) {
+            menuObject.SetActive(value);
+        }
     }
 }
