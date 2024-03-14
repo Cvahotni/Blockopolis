@@ -183,6 +183,10 @@ public class EndlessTerrain : MonoBehaviour
     }
 
     public void RemoveChunk(object sender, long coord) {
+        RemoveChunk(coord);
+    }
+
+    public void RemoveChunk(long coord) {
         addedChunks.Remove(coord);
     }
 

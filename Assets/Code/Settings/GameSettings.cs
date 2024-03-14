@@ -3,8 +3,8 @@ using UnityEngine;
 public class GameSettings
 {
     private static int viewDistance = 16;
-    private static int chunksPerSecond = 500;
-    private static int featuresPerSecond = 500;
+    private static int chunksPerSecond = 150;
+    private static int featuresPerSecond = 150;
     private static int chunkPoolSize = 4096;
     private static int maxFramerate = 250;
     private static int chunkBuildsPerFrame = 1;

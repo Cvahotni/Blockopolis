@@ -189,7 +189,7 @@ public class ChunkBuilder : MonoBehaviour
 
             voxelVerts = voxelVerts,
             voxelTris = voxelTris,
-            voxelUVs = voxelUVs
+            voxelUVs = voxelUVs,
         };
 
         JobHandle chunkMeshJobHandle = chunkMeshJob.Schedule();

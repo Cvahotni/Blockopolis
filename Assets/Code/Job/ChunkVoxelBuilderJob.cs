@@ -27,7 +27,7 @@ public struct ChunkVoxelBuilderJob : IJob
                 float worldZ = WorldPositionHelper.GetWorldZ(z, coord[0]);
 
                 float noiseLevel = Noise.Get2DNoise(worldX, worldZ, noiseOffset[0], noiseOffset[1], frequencies, amplitudes) + WorldUtil.YOffset;
-                int yLevel = (int) (noiseLevel);
+                int yLevel = (int) noiseLevel;
 
                 for(int y = 0; y < VoxelProperties.chunkHeight; y++) {
                     PutVoxel(x, y, z, 0, 0);

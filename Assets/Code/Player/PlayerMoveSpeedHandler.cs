@@ -1,17 +1,12 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerWaterEffect : MonoBehaviour
+public class PlayerMoveSpeedHandler : MonoBehaviour
 {
     [SerializeField] private Transform playerBody;
     [SerializeField] private Transform playerCamera;
-    [SerializeField] private Volume volume;
-
-    [SerializeField] private VolumeProfile normalProfile;
-    [SerializeField] private VolumeProfile underwaterProfile;
 
     [SerializeField] private byte waterID;
-    
     private PlayerEventSystem playerEventSystem;
 
     private void Start() {
@@ -26,10 +21,7 @@ public class PlayerWaterEffect : MonoBehaviour
         bool bodyUnderWater = WorldAccess.GetBlockAt(playerBody.position).id == waterID;
         bool cameraUnderWater = WorldAccess.GetBlockAt(playerCamera.position).id == waterID;
 
-        if(cameraUnderWater) volume.sharedProfile = underwaterProfile;
         if(bodyUnderWater) playerEventSystem.InvokePlayerEnterWater();
-
-        if(!cameraUnderWater) volume.sharedProfile = normalProfile;
         if(!bodyUnderWater) playerEventSystem.InvokePlayerExitWater();
     }
 }

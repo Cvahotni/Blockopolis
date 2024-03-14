@@ -5,7 +5,7 @@ public class ArrayIndexHelper
     }
 
     public static int GetVoxelArrayIndexWithResolution(int x, int y, int z, int r) {
-        return ((z + 1) * ((VoxelProperties.chunkWidth / r) + 2) * (VoxelProperties.chunkHeight / r)) + (y * ((VoxelProperties.chunkWidth / r) + 2)) + x + 1;
+        return (z * (VoxelProperties.chunkWidth / r) * (VoxelProperties.chunkHeight / r)) + (y * (VoxelProperties.chunkWidth / r)) + x;
     }
 
     public static int GetTriangleIndex(int x, int z) {

@@ -4,6 +4,9 @@ public class VoxelProperties {
     public static readonly int chunkWidth = 16;
     public static readonly int chunkHeight = 256;
 
+	public static readonly int noiseMapWidth = 16;
+    public static readonly int noiseMapHeight = 256;
+
 	public static readonly int worldMaxY = 1024;
 	public static readonly int worldMinY = -128;
 

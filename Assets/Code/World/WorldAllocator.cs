@@ -57,10 +57,14 @@ public class WorldAllocator : MonoBehaviour
 
     private void BuildNextChunk(ref Queue<long> queue, bool immediate) {
         if(queue.Count == 0) return;
+        
         long chunkPos = queue.Dequeue();
-
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkPos);
-        if(endlessTerrain.IsChunkOutOfRange(chunkPos, 2)) return;
+
+        if(endlessTerrain.IsChunkOutOfRange(chunkPos, 1)) {
+            endlessTerrain.RemoveChunk(chunkPos);
+            return;
+        }
 
         int chunkX = ChunkPositionHelper.GetChunkPosX(chunkPos);
         int chunkZ = ChunkPositionHelper.GetChunkPosZ(chunkPos);
