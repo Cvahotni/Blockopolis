@@ -118,6 +118,7 @@ public class WorldEventSystem : MonoBehaviour
         worldFinishedLoadingEvent += worldLoadingScreen.ToggleActivity;
         worldFinishedLoadingEvent += playerStorage.LoadPlayerRotation;
         worldFinishedLoadingEvent += mouseLook.SetupRotation;
+        worldFinishedLoadingEvent += worldAllocator.EnableCullChunksOutOfView;
     }
 
     public void InvokeChunkAdd(long coord) {

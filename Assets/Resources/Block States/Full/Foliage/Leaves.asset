@@ -19,6 +19,7 @@ MonoBehaviour:
   cutout: 0
   material: 3
   hardness: 0.25
+  transparency: 11
   model: {fileID: 11400000, guid: b050645591976412ea27348ab266e8da, type: 2}
   backTexture: {x: 9, y: 0}
   frontTexture: {x: 9, y: 0}

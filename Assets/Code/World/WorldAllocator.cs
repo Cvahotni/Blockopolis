@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
-using System;
 
 [RequireComponent(typeof(EndlessTerrain))]
 public class WorldAllocator : MonoBehaviour
@@ -17,10 +16,13 @@ public class WorldAllocator : MonoBehaviour
     private EndlessTerrain endlessTerrain;
 
     private int chunksGenerated;
-    private bool shouldBuildChunks = true;
 
     private World currentWorld;
     private bool buildChunksQuickly = true;
+    private bool cullChunksOutOfView = false;
+
+    [SerializeField]
+    private Camera playerCamera;
 
     private void Awake() {
         if(Instance != null && Instance != this) Destroy(this);
@@ -66,6 +68,8 @@ public class WorldAllocator : MonoBehaviour
             return;
         }
 
+        bool shouldCullChunk = !IsChunkInFrustum(chunkPos) && cullChunksOutOfView;
+
         int chunkX = ChunkPositionHelper.GetChunkPosX(chunkPos);
         int chunkZ = ChunkPositionHelper.GetChunkPosZ(chunkPos);
 
@@ -82,7 +86,7 @@ public class WorldAllocator : MonoBehaviour
         bool skipChunkZ = HandleRegionAllocation(RegionPositionHelper.ModifyRegionPos(regionPos, x, z));
         bool skipCurrentChunk = HandleRegionAllocation(regionPos);
         
-        if(skipChunkX || skipChunkZ || skipCurrentChunk && !immediate) {
+        if(shouldCullChunk || skipChunkX || skipChunkZ || skipCurrentChunk && !immediate) {
             queue.Enqueue(chunkPos);
             return;
         }
@@ -108,6 +112,21 @@ public class WorldAllocator : MonoBehaviour
         return regionIsInvalid || isWaitingForRegion;
     }
 
+    private bool IsChunkInFrustum(long coord) {
+        int worldX = ChunkPositionHelper.GetChunkPosWX(coord);
+        int worldZ = ChunkPositionHelper.GetChunkPosWZ(coord);
+
+        float boundsCenterX = worldX + (VoxelProperties.chunkWidth / 2);
+        float boundsCenterY = VoxelProperties.chunkHeight / 2;
+        float boundsCenterZ = worldZ + (VoxelProperties.chunkWidth / 2);
+        
+        Vector3 boundsCenter = new Vector3(boundsCenterX, boundsCenterY, boundsCenterZ);
+        Vector3 boundSize = new Vector3(VoxelProperties.chunkWidth, VoxelProperties.chunkHeight, VoxelProperties.chunkWidth);
+    
+        Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
+        return GeometryUtility.TestPlanesAABB(frustumPlanes, new Bounds(boundsCenter, boundSize));
+    }
+
     public static bool IsChunkOutsideOfWorld(long coord) {
         return coord == int.MaxValue;
     }
@@ -120,6 +139,10 @@ public class WorldAllocator : MonoBehaviour
                 chunkQueue.Enqueue(coord);
             }
         }
+    }
+
+    public void EnableCullChunksOutOfView(object sender, EventArgs e) {
+        cullChunksOutOfView = true;
     }
 
     public void UpdateBuildChunksQuickly(object sender, bool value) {

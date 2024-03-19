@@ -15,6 +15,9 @@ public class BlockStateObject : ScriptableObject
     public BlockMaterial material;
     public float hardness;
 
+    [Header("Lighting Information")]
+    public byte transparency;
+
     [Header("Model Information")]
     public BlockStateModelObject model;
 

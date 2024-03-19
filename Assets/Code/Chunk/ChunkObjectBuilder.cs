@@ -8,6 +8,7 @@ public class ChunkObjectBuilder : MonoBehaviour
     private VertexAttributeDescriptor positionDescriptor = new VertexAttributeDescriptor(VertexAttribute.Position);
 	private VertexAttributeDescriptor texCoordDescriptor = new VertexAttributeDescriptor(VertexAttribute.TexCoord0);
 	private VertexAttributeDescriptor normalDescriptor = new VertexAttributeDescriptor(VertexAttribute.Normal);
+    private VertexAttributeDescriptor colorDescriptor = new VertexAttributeDescriptor(VertexAttribute.Color);
 
     private readonly int subMeshCount = 3;
     private readonly string chunkTagName = "Ground";
@@ -74,6 +75,7 @@ public class ChunkObjectBuilder : MonoBehaviour
         meshFilter.mesh.SetVertexBufferParams(builtChunkData.vertices.Length,
             positionDescriptor,
             normalDescriptor,
+            colorDescriptor,
             texCoordDescriptor
         );
 

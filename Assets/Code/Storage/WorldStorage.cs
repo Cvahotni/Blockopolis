@@ -27,7 +27,7 @@ public static class WorldStorage
         saveRegionsQuicklyWaitForSeconds = new WaitForSeconds(1.0f / (regionSavesPerSecond * regionSavesPerSecondMultiplier));
     }
 
-    public static void AddChunk(long coord, ref NativeArray<ushort> voxelMap) {
+    public static void AddChunk(long coord, ref NativeArray<ushort> voxelMap, ref NativeArray<byte> lightMap) {
         long regionPos = RegionPositionHelper.ChunkPosToRegionPos(coord);
 
         if(!DoesRegionExist(regionPos)) {
@@ -35,7 +35,7 @@ public static class WorldStorage
         }
 
         WorldRegion region = GetRegionAtChunkCoord(coord);
-        region.AddChunk(coord, ref voxelMap);
+        region.AddChunk(coord, ref voxelMap, ref lightMap);
     }
 
     public static void SetChunk(long coord, ref NativeArray<ushort> voxelMap) {
@@ -43,9 +43,14 @@ public static class WorldStorage
         region.SetChunk(coord, ref voxelMap);
     }
 
-    public static NativeArray<ushort> GetChunk(long coord) {
+    public static NativeArray<ushort> GetChunkVoxelMap(long coord) {
         WorldRegion region = GetRegionAtChunkCoord(coord);
-        return region.GetChunk(coord);
+        return region.GetChunkVoxelMap(coord);
+    }
+
+    public static NativeArray<byte> GetChunkLightMap(long coord) {
+        WorldRegion region = GetRegionAtChunkCoord(coord);
+        return region.GetChunkLightMap(coord);
     }
 
     public static void RemoveChunk(object sender, long coord) {

@@ -24,7 +24,7 @@ public struct WorldRegion
         disposed = false;
     }
 
-    public void AddChunk(long coord, ref NativeArray<ushort> voxelMap) {
+    public void AddChunk(long coord, ref NativeArray<ushort> voxelMap, ref NativeArray<byte> lightMap) {
         if(voxelStorageMap.ContainsKey(coord)) return;
 
         if(voxelStorageMap.Count >= chunksInRegionAmount) {
@@ -37,6 +37,7 @@ public struct WorldRegion
         }
 
         voxelStorageMap.Add(coord, voxelMap);
+        lightStorageMap.Add(coord, lightMap);
     }
 
     public void SetChunk(long coord, ref NativeArray<ushort> voxelMap) {
@@ -48,8 +49,12 @@ public struct WorldRegion
         voxelStorageMap[coord] = voxelMap;
     }
 
-    public NativeArray<ushort> GetChunk(long coord) {
+    public NativeArray<ushort> GetChunkVoxelMap(long coord) {
         return voxelStorageMap[coord];
+    }
+
+    public NativeArray<byte> GetChunkLightMap(long coord) {
+        return lightStorageMap[coord];
     }
 
     public void RemoveChunk(long coord) {

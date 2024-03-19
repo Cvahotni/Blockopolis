@@ -11,6 +11,7 @@ public struct BlockState
     public bool cutout;
 
     public byte model;
+    public byte transparency;
 
     public float2 backTexture;
     public float2 frontTexture;

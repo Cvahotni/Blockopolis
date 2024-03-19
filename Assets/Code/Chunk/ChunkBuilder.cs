@@ -12,9 +12,8 @@ public class ChunkBuilder : MonoBehaviour
 {
     public static ChunkBuilder Instance { get; private set; }
 
-    private readonly ProfilerMarker buildChunkNoiseMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkNoiseMap3D");
     private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
-    private readonly ProfilerMarker buildChunkMeshMarker = new ProfilerMarker("ChunkBuilder.BuildChunkMesh");
+    private readonly ProfilerMarker buildChunkLightMapMarker = new ProfilerMarker("ChunkBuilder.BuildLightMap");
     private readonly ProfilerMarker placeChunkFeaturesMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkFeatures");
     private readonly ProfilerMarker placeChunkDecorationsMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkDecorations");
 
@@ -52,15 +51,16 @@ public class ChunkBuilder : MonoBehaviour
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
 
         NativeList<ChunkVertex> vertices = new NativeList<ChunkVertex>(Allocator.Persistent);
+
         NativeList<uint> indices = new NativeList<uint>(Allocator.Persistent);
         NativeList<uint> transparentIndices = new NativeList<uint>(Allocator.Persistent);
         NativeList<uint> cutoutIndices = new NativeList<uint>(Allocator.Persistent);
 
-        NativeArray<ushort> voxelMap = GetVoxelMap(chunkCoord);
-        NativeArray<ushort> forwardVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, 1);
-        NativeArray<ushort> backVoxelMap = GetVoxelMapWithOffset(chunkCoord, 0, -1);
-        NativeArray<ushort> rightVoxelMap = GetVoxelMapWithOffset(chunkCoord, 1, 0);
-        NativeArray<ushort> leftVoxelMap = GetVoxelMapWithOffset(chunkCoord, -1, 0);
+        ChunkData currentChunkData = GetChunkDataWithOffset(chunkCoord, 0, 0);
+        ChunkData forwardVoxelMap = GetChunkDataWithOffset(chunkCoord, 0, 1);
+        ChunkData backVoxelMap = GetChunkDataWithOffset(chunkCoord, 0, -1);
+        ChunkData rightVoxelMap = GetChunkDataWithOffset(chunkCoord, 1, 0);
+        ChunkData leftVoxelMap = GetChunkDataWithOffset(chunkCoord, -1, 0);
 
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
 
@@ -72,14 +72,14 @@ public class ChunkBuilder : MonoBehaviour
         ChunkBuildData chunkBuildData = new ChunkBuildData(
             ref chunkPos, ref vertices,
             ref indices,
-            ref leftVoxelMap, ref rightVoxelMap,
-            ref backVoxelMap, ref forwardVoxelMap,
+            ref leftVoxelMap.voxelMap, ref rightVoxelMap.voxelMap,
+            ref backVoxelMap.voxelMap, ref forwardVoxelMap.voxelMap,
             ref modelData, ref transparentIndices,
             ref cutoutIndices
         );
 
         ChunkVoxelBuildData chunkVoxelBuildData = new ChunkVoxelBuildData(
-            ref chunkPos, ref voxelMap,
+            ref chunkPos, ref currentChunkData.voxelMap, ref currentChunkData.lightMap,
             ref nativeFrequencies, ref nativeAmplitudes,
             ref noiseOffset
         );
@@ -148,14 +148,32 @@ public class ChunkBuilder : MonoBehaviour
         };
 
         JobHandle chunkPlaceDecorationsJobHandle = chunkPlaceDecorationsJob.Schedule();
-        
         chunkPlaceDecorationsJobHandle.Complete();
+
         placeChunkDecorationsMarker.End();
+        buildChunkLightMapMarker.Begin();
+
+        NativeParallelHashMap<ushort, BlockState> blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(1, Allocator.Persistent);
+        foreach(var pair in BlockRegistry.BlockStateDictionary) blockStateDictionary.Add(pair.Key, pair.Value);
+
+        var chunkBuildLightMapJob = new ChunkLightMapBuilderJob() {
+            lightMap = chunkVoxelBuildData.lightMap,
+            voxelMap = chunkVoxelBuildData.voxelMap,
+
+            blockStates = blockStateDictionary
+        };
+
+        JobHandle chunkBuildLightMapJobHandle = chunkBuildLightMapJob.Schedule();
+        chunkBuildLightMapJobHandle.Complete();
+
+        blockStateDictionary.Dispose();
+        buildChunkLightMapMarker.End();
     }
 
     [Obsolete]
     private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {
         NativeArray<ushort> voxelMap = new NativeArray<ushort>(chunkVoxelBuildData.voxelMap, Allocator.Persistent);
+        NativeArray<byte> lightMap = new NativeArray<byte>(chunkVoxelBuildData.lightMap, Allocator.Persistent);
         NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkBuildData.forwardVoxelMap, Allocator.Persistent);
         NativeArray<ushort> backVoxelMap = new NativeArray<ushort>(chunkBuildData.backVoxelMap, Allocator.Persistent);
         NativeArray<ushort> rightVoxelMap = new NativeArray<ushort>(chunkBuildData.rightVoxelMap, Allocator.Persistent);
@@ -173,6 +191,7 @@ public class ChunkBuilder : MonoBehaviour
 
         var chunkMeshJob = new ChunkMeshBuilderJob() {
             voxelMap = voxelMap,
+            lightMap = lightMap,
 
             leftVoxelMap = leftVoxelMap,
             rightVoxelMap = rightVoxelMap,
@@ -205,6 +224,7 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.Dispose();
 
         voxelMap.Dispose();
+        lightMap.Dispose();
         forwardVoxelMap.Dispose();
         backVoxelMap.Dispose();
         rightVoxelMap.Dispose();
@@ -224,35 +244,47 @@ public class ChunkBuilder : MonoBehaviour
             throw new InvalidOperationException("ChunkBuilder is disabled! Cannot continue.");
         }
 
-        return GetVoxelMapWithOffset(chunkCoord, 0, 0);
+        return GetChunkDataWithOffset(chunkCoord, 0, 0).voxelMap;
     }
-
+    
     [Obsolete]
-    public NativeArray<ushort> GetVoxelMapWithOffset(long chunkCoord, int offsetX, int offsetZ) {
+    public ChunkData GetChunkDataWithOffset(long chunkCoord, int offsetX, int offsetZ) {
         long chunkPos = ChunkPositionHelper.ModifyChunkPos(chunkCoord, offsetX, offsetZ);
 
-        if(WorldStorage.DoesChunkExist(chunkPos)) return WorldStorage.GetChunk(chunkPos);
-        else return CreateNewVoxelMap(chunkPos);
+        if(WorldStorage.DoesChunkExist(chunkPos)) {
+            NativeArray<ushort> voxelMap = WorldStorage.GetChunkVoxelMap(chunkPos);
+            NativeArray<byte> lightMap = WorldStorage.GetChunkLightMap(chunkPos);
+
+            ChunkData chunkData = new ChunkData(
+                ref voxelMap, ref lightMap
+            );
+
+            return chunkData;
+        }
+
+        else return CreateNewChunkData(chunkPos);
     }
 
-    public void SaveChunkVoxelMap(long chunkCoord, NativeArray<ushort> voxelMap) {
+    public void SaveChunkVoxelMap(long chunkCoord, NativeArray<ushort> voxelMap, NativeArray<byte> lightMap) {
         if(WorldStorage.DoesChunkExist(chunkCoord)) WorldStorage.SetChunk(chunkCoord, ref voxelMap);
-        else WorldStorage.AddChunk(chunkCoord, ref voxelMap);
+        else WorldStorage.AddChunk(chunkCoord, ref voxelMap, ref lightMap);
     }
 
     [Obsolete]
-    public NativeArray<ushort> CreateNewVoxelMap(long chunkCoord) {
+    public ChunkData CreateNewChunkData(long chunkCoord) {
         Vector2 terrainNoiseOffset = endlessTerrain.NoiseOffset;
 
         NativeArray<long> chunkPos = new NativeArray<long>(1, Allocator.Persistent);
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
+
         NativeArray<ushort> voxelMap = CreateEmptyVoxelMap();
+        NativeArray<byte> lightMap = CreateEmptyLightMap();
 
         NativeList<float> nativeFrequencies = endlessTerrain.NativeFrequencies;
         NativeList<float> nativeAmplitudes = endlessTerrain.NativeAmplitudes;
 
         ChunkVoxelBuildData chunkVoxelBuildData = new ChunkVoxelBuildData(
-            ref chunkPos, ref voxelMap,
+            ref chunkPos, ref voxelMap, ref lightMap,
             ref nativeFrequencies, ref nativeAmplitudes,
             ref noiseOffset
         );
@@ -263,13 +295,17 @@ public class ChunkBuilder : MonoBehaviour
         chunkVoxelBuildData.noiseOffset[1] = terrainNoiseOffset.y;
 
         BuildChunkVoxelData(chunkVoxelBuildData);
-        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap);
+        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap, chunkVoxelBuildData.lightMap);
 
         chunkVoxelBuildData.Dispose();
-        return voxelMap;
+        return new ChunkData(ref voxelMap, ref lightMap);
     }
 
     public NativeArray<ushort> CreateEmptyVoxelMap() {
         return new NativeArray<ushort>(VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth, Allocator.Persistent);
+    }
+
+    public NativeArray<byte> CreateEmptyLightMap() {
+        return new NativeArray<byte>(VoxelProperties.chunkWidth * VoxelProperties.chunkHeight * VoxelProperties.chunkWidth, Allocator.Persistent);
     }
 }

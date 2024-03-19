@@ -8,6 +8,7 @@ using Unity.Mathematics;
 public struct ChunkMeshBuilderJob : IJob
 {
     public NativeArray<ushort> voxelMap;
+    public NativeArray<byte> lightMap;
 
     public NativeArray<ushort> leftVoxelMap;
     public NativeArray<ushort> rightVoxelMap;
@@ -71,8 +72,8 @@ public struct ChunkMeshBuilderJob : IJob
             BlockState neighborBlockState = blockStates[neighborVoxel];
 
             bool shouldCullFace = ShouldCullFace(currentModel, f);
-            bool neighborCheck1 = (blockState.transparent && neighborBlockState.solid && shouldCullFace);
-            bool neighborCheck2 = (blockState.transparent && neighborBlockState.transparent && !shouldCullFace);
+            bool neighborCheck1 = blockState.transparent && neighborBlockState.solid && shouldCullFace;
+            bool neighborCheck2 = blockState.transparent && neighborBlockState.transparent && !shouldCullFace;
 
             if(neighborCheck1 || neighborCheck2) continue;
             if(neighborBlockState.solid && !neighborBlockState.transparent && blockState.solid && shouldCullFace) continue;
@@ -175,11 +176,20 @@ public struct ChunkMeshBuilderJob : IJob
         uint newVertexIndex = 0;
         float textureSize = 1.0f / VoxelProperties.textureAtlasSizeInBlocks;
 
+        int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(
+            (int) pos.x,
+            (int) pos.y,
+            (int) pos.z
+        );
+
+        byte lightLevel = LightIDHelper.Level(lightMap[lightMapArrayIndex]);
+        float3 light = (float) (lightLevel / 15.0f);
+
         for(uint v = startVertexIndex; v < endVertexIndex; v++) {
             float3 vertex = pos + voxelVerts[(int) v];
             float3 uv = new float3((uvOffset.x + voxelUVs[(int) v].x) * textureSize, (uvOffset.y + voxelUVs[(int) v].y) * textureSize, 0);
 
-            vertices.Add(new ChunkVertex(vertex, faceCheck, uv));
+            vertices.Add(new ChunkVertex(vertex, faceCheck, uv, 1.0f - light));
             newVertexIndex++;
         }
 

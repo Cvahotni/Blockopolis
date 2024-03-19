@@ -43,7 +43,7 @@ public class BlockRegistry
     }
 
     private static void CreateNativeCollections() {
-        blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(1, Allocator.Persistent);
+        blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(256, Allocator.Persistent);
     }
 
     private static void LoadBlockStatesFromFolder() {
@@ -71,6 +71,7 @@ public class BlockRegistry
                 cutout = blockStateObject.cutout,
 
                 model = blockStateObject.model.id,
+                transparency = blockStateObject.transparency,
 
                 frontTexture = new float2(blockStateObject.frontTexture.x, blockStateObject.frontTexture.y),
                 backTexture = new float2(blockStateObject.backTexture.x, blockStateObject.backTexture.y),

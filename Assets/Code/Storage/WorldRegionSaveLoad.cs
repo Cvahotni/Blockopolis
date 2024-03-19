@@ -10,8 +10,14 @@ public class WorldRegionSaveLoad
     private static int chunksInRegionAmount = (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift) * (VoxelProperties.regionWidth >> VoxelProperties.chunkBitShift);
 
     private static byte[] chunkVoxelSaveBytes = new byte[(sizeof(ushort) * chunkElementsSize)];
-    private static byte[] chunkVoxelLoadBytes = new byte[(sizeof(ushort) * chunkElementsSize) + sizeof(long)];
+    private static byte[] chunkVoxelLoadBytes = new byte[(sizeof(ushort) * chunkElementsSize)];
+
+    private static byte[] chunkLightSaveBytes = new byte[(sizeof(byte) * chunkElementsSize)];
+    private static byte[] chunkLightLoadBytes = new byte[(sizeof(byte) * chunkElementsSize)];
+
     private static byte[] chunkVoxelBuffer = new byte[sizeof(ushort) * chunkElementsSize];
+    private static byte[] chunkLightBuffer = new byte[sizeof(byte) * chunkElementsSize];
+
     private static byte[] metaSaveDataBytes = new byte[sizeof(long)];
     private static byte[] metaLoadDataBytes = new byte[sizeof(long)];
 
@@ -50,7 +56,9 @@ public class WorldRegionSaveLoad
 
     private static IEnumerator SaveRegionCoroutine(string path, WorldRegion region, long regionPos) {
         NativeArray<long> keys = region.VoxelStorageMap.GetKeyArray(Allocator.Persistent);
-        NativeArray<NativeArray<ushort>> values = region.VoxelStorageMap.GetValueArray(Allocator.Persistent);
+
+        NativeArray<NativeArray<ushort>> voxelValues = region.VoxelStorageMap.GetValueArray(Allocator.Persistent);
+        NativeArray<NativeArray<byte>> lightValues = region.LightStorageMap.GetValueArray(Allocator.Persistent);
 
         if(keys.Length > chunksInRegionAmount) {
             Debug.LogError("Region is too large: " + keys.Length);
@@ -58,9 +66,12 @@ public class WorldRegionSaveLoad
 
         for(int i = 0; i < region.VoxelStorageMap.Count; i++) {
             long chunkCoord = keys[i];
-            NativeArray<ushort> voxelArray = values[i];
+
+            NativeArray<ushort> voxelArray = voxelValues[i];
+            NativeArray<byte> lightArray = lightValues[i];
 
             NativeArrayExtension.ToRawBytes(voxelArray, chunkVoxelSaveBytes);
+            NativeArrayExtension.ToRawBytes(lightArray, chunkLightSaveBytes);
 
             using (var stream = new FileStream(path, FileMode.Append)) {
                 using(var binaryWriter = new BinaryWriter(stream)) {
@@ -76,12 +87,20 @@ public class WorldRegionSaveLoad
                     binaryWriter.Write(chunkVoxelSaveBytes, 0, chunkVoxelSaveBytes.Length);
                 }
             }
+
+            using(var stream = new FileStream(path, FileMode.Append)) {
+                using(var binaryWriter = new BinaryWriter(stream)) {
+                    binaryWriter.Write(chunkLightSaveBytes, 0, chunkLightSaveBytes.Length);
+                }
+            }
         }
 
         yield return regionSaveWaitForSeconds;
 
         keys.Dispose();
-        values.Dispose();
+
+        voxelValues.Dispose();
+        lightValues.Dispose();
 
         WorldStorage.IncrementRegionsSaved();
         WorldStorage.RemoveWaitingSaveRegion(regionPos);
@@ -106,28 +125,35 @@ public class WorldRegionSaveLoad
         WorldRegion region = new WorldRegion(false);
 
         for(int i = 0; i < chunksInRegionAmount; i++) {
-            int metaStartBytes = i * ((sizeof(ushort) * chunkElementsSize) + 8);
+            int metaStartBytes = i * ((sizeof(ushort) * chunkElementsSize) + sizeof(byte) + chunkElementsSize + 8);
             int metaEndBytes = metaStartBytes + 8;
 
             int chunkBytesStart = metaEndBytes;
             int chunkBytesEnd = chunkBytesStart + (sizeof(ushort) * chunkElementsSize);
 
+            int lightBytesStart = chunkBytesEnd;
+            int lightBytesEnd = lightBytesStart + (sizeof(byte) * chunkElementsSize);
+
             long metaBytesSize = metaEndBytes - metaStartBytes;
             long chunkBytesSize = chunkBytesEnd - chunkBytesStart;
+            long lightBytesSize = lightBytesEnd - lightBytesStart;
 
             binaryReader.Read(metaLoadDataBytes, 0, (int) metaBytesSize);
             binaryReader.Read(chunkVoxelLoadBytes, 0, (int) chunkBytesSize);
+            binaryReader.Read(chunkLightLoadBytes, 0, (int) lightBytesSize);
 
-            binaryReader.BaseStream.Position = chunkBytesEnd;
             long chunkCoord = ReadMetaDataBytes();
             
             Array.Copy(chunkVoxelLoadBytes, 0, chunkVoxelBuffer, 0, chunkBytesSize);
-            NativeArray<ushort> chunkArray = new NativeArray<ushort>(chunkElementsSize, Allocator.Persistent);
+            Array.Copy(chunkLightLoadBytes, 0, chunkLightBuffer, 0, lightBytesSize);
+            
+            NativeArray<ushort> chunkDataArray = new NativeArray<ushort>(chunkElementsSize, Allocator.Persistent);
+            NativeArray<byte> lightDataArray = new NativeArray<byte>(chunkElementsSize, Allocator.Persistent);
 
-            long newRegionPos = RegionPositionHelper.ChunkPosToRegionPos(chunkCoord);
-            NativeArrayExtension.FromRawBytes(chunkVoxelBuffer, chunkVoxelBuffer.Length, chunkArray);
+            NativeArrayExtension.FromRawBytes(chunkVoxelBuffer, chunkVoxelBuffer.Length, chunkDataArray);
+            NativeArrayExtension.FromRawBytes(chunkLightBuffer, chunkLightBuffer.Length, lightDataArray);
 
-            region.AddChunk(chunkCoord, ref chunkArray);
+            region.AddChunk(chunkCoord, ref chunkDataArray, ref lightDataArray);
         }
 
         yield return regionLoadWaitForSeconds;
