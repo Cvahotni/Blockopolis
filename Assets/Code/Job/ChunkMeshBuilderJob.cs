@@ -3,6 +3,7 @@ using Unity.Jobs;
 using Unity.Collections;
 using Unity.Burst;
 using Unity.Mathematics;
+using System;
 
 [BurstCompile]
 public struct ChunkMeshBuilderJob : IJob
@@ -213,5 +214,10 @@ public struct ChunkMeshBuilderJob : IJob
         }
 
         return new float2(0.0f);
+    }
+
+    internal JobHandle Schedule(JobHandle dependency)
+    {
+        throw new NotImplementedException();
     }
 }

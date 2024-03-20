@@ -13,7 +13,6 @@ public class ChunkBuilder : MonoBehaviour
     public static ChunkBuilder Instance { get; private set; }
 
     private readonly ProfilerMarker buildChunkVoxelMapMarker = new ProfilerMarker("ChunkBuilder.BuildChunkVoxelMap");
-    private readonly ProfilerMarker buildChunkLightMapMarker = new ProfilerMarker("ChunkBuilder.BuildLightMap");
     private readonly ProfilerMarker placeChunkFeaturesMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkFeatures");
     private readonly ProfilerMarker placeChunkDecorationsMarker = new ProfilerMarker("ChunkBuilder.PlaceChunkDecorations");
 
@@ -61,6 +60,10 @@ public class ChunkBuilder : MonoBehaviour
         ChunkData backVoxelMap = GetChunkDataWithOffset(chunkCoord, 0, -1);
         ChunkData rightVoxelMap = GetChunkDataWithOffset(chunkCoord, 1, 0);
         ChunkData leftVoxelMap = GetChunkDataWithOffset(chunkCoord, -1, 0);
+        ChunkData backLeftVoxelMap = GetChunkDataWithOffset(chunkCoord, -1, -1);
+        ChunkData backRightVoxelMap = GetChunkDataWithOffset(chunkCoord, 1, -1);
+        ChunkData frontLeftVoxelMap = GetChunkDataWithOffset(chunkCoord, -1, 1);
+        ChunkData frontRightVoxelMap = GetChunkDataWithOffset(chunkCoord, 1, 1);
 
         NativeArray<float> noiseOffset = new NativeArray<float>(2, Allocator.Persistent);
 
@@ -72,8 +75,6 @@ public class ChunkBuilder : MonoBehaviour
         ChunkBuildData chunkBuildData = new ChunkBuildData(
             ref chunkPos, ref vertices,
             ref indices,
-            ref leftVoxelMap.voxelMap, ref rightVoxelMap.voxelMap,
-            ref backVoxelMap.voxelMap, ref forwardVoxelMap.voxelMap,
             ref modelData, ref transparentIndices,
             ref cutoutIndices
         );
@@ -84,7 +85,16 @@ public class ChunkBuilder : MonoBehaviour
             ref noiseOffset
         );
 
+        ChunkNeighborData chunkNeighborData = new ChunkNeighborData(
+            ref leftVoxelMap.voxelMap, ref rightVoxelMap.voxelMap,
+            ref backVoxelMap.voxelMap, ref forwardVoxelMap.voxelMap,
+
+            ref backLeftVoxelMap.voxelMap, ref backRightVoxelMap.voxelMap,
+            ref frontLeftVoxelMap.voxelMap, ref frontRightVoxelMap.voxelMap
+        );
+
         Vector2 terrainNoiseOffset = endlessTerrain.NoiseOffset;
+
         chunkBuildData.chunkPos[0] = chunkCoord;
         chunkVoxelBuildData.chunkPos[0] = chunkCoord;
 
@@ -94,7 +104,7 @@ public class ChunkBuilder : MonoBehaviour
         BuiltChunkData builtChunkData = new BuiltChunkData(ref vertices, ref indices, ref transparentIndices, ref cutoutIndices, chunkPos[0]);
 
         StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
-        access.StartCoroutine(BuildChunkMesh(chunkCoord, chunkBuildData, chunkVoxelBuildData, builtChunkData));
+        access.StartCoroutine(BuildChunkLightData(chunkCoord, chunkVoxelBuildData, chunkNeighborData, chunkBuildData, builtChunkData));
     }
 
     [Obsolete]
@@ -151,33 +161,101 @@ public class ChunkBuilder : MonoBehaviour
         chunkPlaceDecorationsJobHandle.Complete();
 
         placeChunkDecorationsMarker.End();
-        buildChunkLightMapMarker.Begin();
+    }
 
+    [Obsolete]
+    private IEnumerator BuildChunkLightData(long chunkCoord, ChunkVoxelBuildData chunkVoxelBuildData, ChunkNeighborData chunkNeighborData, ChunkBuildData chunkBuildData, BuiltChunkData builtChunkData) {
         NativeParallelHashMap<ushort, BlockState> blockStateDictionary = new NativeParallelHashMap<ushort, BlockState>(1, Allocator.Persistent);
         foreach(var pair in BlockRegistry.BlockStateDictionary) blockStateDictionary.Add(pair.Key, pair.Value);
 
-        var chunkBuildLightMapJob = new ChunkLightMapBuilderJob() {
-            lightMap = chunkVoxelBuildData.lightMap,
-            voxelMap = chunkVoxelBuildData.voxelMap,
+        NativeArray<ushort> voxelMap = new NativeArray<ushort>(chunkVoxelBuildData.voxelMap, Allocator.Persistent);
+        NativeArray<byte> lightMap = new NativeArray<byte>(chunkVoxelBuildData.lightMap, Allocator.Persistent);
 
+        NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkNeighborData.forwardVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> backVoxelMap = new NativeArray<ushort>(chunkNeighborData.backVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> rightVoxelMap = new NativeArray<ushort>(chunkNeighborData.rightVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> leftVoxelMap = new NativeArray<ushort>(chunkNeighborData.leftVoxelMap, Allocator.Persistent);
+
+        NativeArray<ushort> backLeftVoxelMap = new NativeArray<ushort>(chunkNeighborData.backLeftVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> backRightVoxelMap = new NativeArray<ushort>(chunkNeighborData.backRightVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> frontLeftVoxelMap = new NativeArray<ushort>(chunkNeighborData.frontLeftVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> frontRightVoxelMap = new NativeArray<ushort>(chunkNeighborData.frontRightVoxelMap, Allocator.Persistent);
+
+        NativeArray<byte> forwardLightMap = CreateEmptyLightMap();
+        NativeArray<byte> backLightMap = CreateEmptyLightMap();
+        NativeArray<byte> leftLightMap = CreateEmptyLightMap();
+        NativeArray<byte> rightLightMap = CreateEmptyLightMap();
+
+        NativeArray<byte> backLeftLightMap = CreateEmptyLightMap();
+        NativeArray<byte> backRightLightMap = CreateEmptyLightMap();
+        NativeArray<byte> forwardLeftLightMap = CreateEmptyLightMap();
+        NativeArray<byte> forwardRightLightMap = CreateEmptyLightMap();
+
+        var chunkBuildLightMapJob = new ChunkLightMapBuilderJob() {
+            voxelMap = voxelMap,
+
+            voxelMapForward = forwardVoxelMap,
+            voxelMapBack = backVoxelMap,
+            voxelMapLeft = leftVoxelMap,
+            voxelMapRight = rightVoxelMap,
+
+            voxelMapBackLeft = backLeftVoxelMap,
+            voxelMapBackRight = backRightVoxelMap,
+            voxelMapForwardLeft = frontLeftVoxelMap,
+            voxelMapForwardRight = frontRightVoxelMap,
+
+            lightMapForward = forwardLightMap,
+            lightMapBack = backLightMap,
+            lightMapLeft = leftLightMap,
+            lightMapRight = rightLightMap,
+
+            lightMapBackLeft = backLeftLightMap,
+            lightMapBackRight = backRightLightMap,
+            lightMapForwardLeft = forwardLeftLightMap,
+            lightMapForwardRight = forwardRightLightMap,
+
+            lightMap = lightMap,
             blockStates = blockStateDictionary
         };
 
         JobHandle chunkBuildLightMapJobHandle = chunkBuildLightMapJob.Schedule();
-        chunkBuildLightMapJobHandle.Complete();
 
-        blockStateDictionary.Dispose();
-        buildChunkLightMapMarker.End();
+        yield return new WaitUntil(() => {
+            return chunkBuildLightMapJobHandle.IsCompleted;
+        });
+
+        chunkBuildLightMapJobHandle.Complete();
+        SaveChunkVoxelMap(chunkCoord, chunkVoxelBuildData.voxelMap, chunkVoxelBuildData.lightMap);
+
+        ChunkNeighborData newChunkNeighborData = new ChunkNeighborData(
+            ref leftVoxelMap, ref rightVoxelMap,
+            ref backVoxelMap, ref forwardVoxelMap,
+
+            ref backLeftVoxelMap, ref backRightVoxelMap,
+            ref frontLeftVoxelMap, ref frontRightVoxelMap
+        );
+
+        ChunkVoxelBuildData newChunkVoxelBuildData = new ChunkVoxelBuildData(
+            ref chunkVoxelBuildData.chunkPos, ref voxelMap, ref lightMap,
+            ref chunkVoxelBuildData.frequencies, ref chunkVoxelBuildData.amplitudes,
+            ref chunkVoxelBuildData.noiseOffset
+        );
+
+        NativeArray<byte> newLightMap = new NativeArray<byte>(
+            lightMap, Allocator.Persistent);
+
+        StaticCoroutineAccess access = StaticCoroutineAccess.Instance;
+        access.StartCoroutine(BuildChunkMesh(chunkCoord, chunkBuildData, newChunkVoxelBuildData, builtChunkData, chunkNeighborData, chunkBuildLightMapJobHandle));
     }
 
     [Obsolete]
-    private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData) {
+    private IEnumerator BuildChunkMesh(long chunkCoord, ChunkBuildData chunkBuildData, ChunkVoxelBuildData chunkVoxelBuildData, BuiltChunkData builtChunkData, ChunkNeighborData chunkNeighborData, JobHandle jobHandle) {
         NativeArray<ushort> voxelMap = new NativeArray<ushort>(chunkVoxelBuildData.voxelMap, Allocator.Persistent);
         NativeArray<byte> lightMap = new NativeArray<byte>(chunkVoxelBuildData.lightMap, Allocator.Persistent);
-        NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkBuildData.forwardVoxelMap, Allocator.Persistent);
-        NativeArray<ushort> backVoxelMap = new NativeArray<ushort>(chunkBuildData.backVoxelMap, Allocator.Persistent);
-        NativeArray<ushort> rightVoxelMap = new NativeArray<ushort>(chunkBuildData.rightVoxelMap, Allocator.Persistent);
-        NativeArray<ushort> leftVoxelMap = new NativeArray<ushort>(chunkBuildData.leftVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> forwardVoxelMap = new NativeArray<ushort>(chunkNeighborData.forwardVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> backVoxelMap = new NativeArray<ushort>(chunkNeighborData.backVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> rightVoxelMap = new NativeArray<ushort>(chunkNeighborData.rightVoxelMap, Allocator.Persistent);
+        NativeArray<ushort> leftVoxelMap = new NativeArray<ushort>(chunkNeighborData.leftVoxelMap, Allocator.Persistent);
 
         NativeArray<float3> voxelVerts = new NativeArray<float3>(chunkBuildData.modelData.voxelVerts, Allocator.Persistent);
         NativeArray<uint> voxelTris = new NativeArray<uint>(chunkBuildData.modelData.voxelTris, Allocator.Persistent);
@@ -189,7 +267,8 @@ public class ChunkBuilder : MonoBehaviour
         NativeParallelHashMap<byte, BlockStateModel> blockModelDictionary = new NativeParallelHashMap<byte, BlockStateModel>(1, Allocator.Persistent);
         foreach(var pair in BlockModelRegistry.BlockModelDictionary) blockModelDictionary.Add(pair.Key, pair.Value);
 
-        var chunkMeshJob = new ChunkMeshBuilderJob() {
+        var chunkMeshJob = new ChunkMeshBuilderJob()
+        {
             voxelMap = voxelMap,
             lightMap = lightMap,
 
@@ -208,7 +287,7 @@ public class ChunkBuilder : MonoBehaviour
 
             voxelVerts = voxelVerts,
             voxelTris = voxelTris,
-            voxelUVs = voxelUVs,
+            voxelUVs = voxelUVs
         };
 
         JobHandle chunkMeshJobHandle = chunkMeshJob.Schedule();
@@ -217,7 +296,7 @@ public class ChunkBuilder : MonoBehaviour
             return chunkMeshJobHandle.IsCompleted;
         });
 
-        chunkMeshJobHandle.Complete();
+        JobHandle.CombineDependencies(chunkMeshJobHandle, jobHandle).Complete();
         worldEventSystem.InvokeChunkObjectBuild(builtChunkData);
 
         chunkBuildData.Dispose();

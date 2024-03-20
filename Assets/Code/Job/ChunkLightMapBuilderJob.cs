@@ -7,7 +7,24 @@ using Unity.Mathematics;
 public struct ChunkLightMapBuilderJob : IJob
 {
     public NativeArray<ushort> voxelMap;
+    public NativeArray<ushort> voxelMapForward;
+    public NativeArray<ushort> voxelMapBack;
+    public NativeArray<ushort> voxelMapLeft;
+    public NativeArray<ushort> voxelMapRight;
+    public NativeArray<ushort> voxelMapForwardLeft;
+    public NativeArray<ushort> voxelMapForwardRight;
+    public NativeArray<ushort> voxelMapBackLeft;
+    public NativeArray<ushort> voxelMapBackRight;
+
     public NativeArray<byte> lightMap;
+    public NativeArray<byte> lightMapForward;
+    public NativeArray<byte> lightMapBack;
+    public NativeArray<byte> lightMapLeft;
+    public NativeArray<byte> lightMapRight;
+    public NativeArray<byte> lightMapForwardLeft;
+    public NativeArray<byte> lightMapForwardRight;
+    public NativeArray<byte> lightMapBackLeft;
+    public NativeArray<byte> lightMapBackRight;
 
     public NativeParallelHashMap<ushort, BlockState> blockStates;
 
@@ -17,17 +34,12 @@ public struct ChunkLightMapBuilderJob : IJob
     }
 
     private void BuildIntialLightMap() {
-        for(int x = 0; x < VoxelProperties.chunkWidth * 3; x++) {
-            for(int z = 0; z < VoxelProperties.chunkWidth * 3; z++) {
-                int cx = x >= VoxelProperties.chunkWidth ? VoxelProperties.chunkWidth - 1 : x;
-                int cz = z >= VoxelProperties.chunkWidth ? VoxelProperties.chunkWidth - 1 : z;
-
+        for(int x = -VoxelProperties.chunkWidth; x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth; x++) {
+            for(int z = -VoxelProperties.chunkWidth; z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth; z++) {
                 byte lightLevel = 15;
-
+                
                 for(int y = VoxelProperties.chunkHeight - 1; y >= 0; y--) {
-                    int arrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(cx, y, cz);
-
-                    ushort block = voxelMap[arrayIndex];
+                    ushort block = GetVoxel(x, y, z);
                     byte blockID = BlockIDHelper.ID(block);
                     
                     if(blockID == 0 || blockID == 10) {
@@ -40,22 +52,23 @@ public struct ChunkLightMapBuilderJob : IJob
                         lightLevel = transparency;
                     }
 
-                    lightMap[arrayIndex] = LightIDHelper.Pack(lightLevel, 0);
+                    if(x < -VoxelProperties.chunkWidth || x >= VoxelProperties.chunkWidth + VoxelProperties.chunkWidth ||
+                        y < 0 || y >= VoxelProperties.chunkHeight ||
+                        z < -VoxelProperties.chunkWidth || z >= VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+                        continue;
+                    }
+
+                    SetLight(x, y, z, LightIDHelper.Pack(lightLevel, 0));
                 }
             }
         }
     }
 
     private void EnhanceLightMap() {
-        for(int x = 0; x < VoxelProperties.chunkWidth; x++) {
-            for(int z = 0; z < VoxelProperties.chunkWidth; z++) {
-                int cx = x >= VoxelProperties.chunkWidth ? VoxelProperties.chunkWidth - 1 : x;
-                int cz = z >= VoxelProperties.chunkWidth ? VoxelProperties.chunkWidth - 1: z;
-
+        for(int x = -VoxelProperties.chunkWidth; x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth; x++) {
+            for(int z = -VoxelProperties.chunkWidth; z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth; z++) {
                 for(int y = VoxelProperties.chunkHeight - 1; y >= 0; y--) {
-                    int arrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(cx, y, cz);
-
-                    ushort block = voxelMap[arrayIndex];
+                    ushort block = GetVoxel(x, y, z);
                     byte blockID = BlockIDHelper.ID(block);
 
                     if(blockID == 0 || blockID == 10) {
@@ -65,30 +78,199 @@ public struct ChunkLightMapBuilderJob : IJob
                     for(byte f = 0; f < 6; f++) {
                         int3 direction = GetDirection(f);
 
-                        int neighborX = cx + direction.x; 
+                        int neighborX = x + direction.x; 
                         int neighborY = y + direction.y;
-                        int neighborZ = cz + direction.z;
+                        int neighborZ = z + direction.z;
 
-                        if(neighborX < 0 || neighborX >= VoxelProperties.chunkWidth ||
+                        if(neighborX < -VoxelProperties.chunkWidth || neighborX >= VoxelProperties.chunkWidth + VoxelProperties.chunkWidth ||
                             neighborY < 0 || neighborY >= VoxelProperties.chunkHeight ||
-                            neighborZ < 0 || neighborZ >= VoxelProperties.chunkWidth) {
+                            neighborZ < -VoxelProperties.chunkWidth || neighborZ >= VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
                                 continue;
                             }  
 
-                        int currentIndex = ArrayIndexHelper.GetVoxelArrayIndex(cx, y, cz);
-                        int neighborIndex = ArrayIndexHelper.GetVoxelArrayIndex(neighborX, neighborY, neighborZ);
-
-                        byte currentLevel = LightIDHelper.Level(lightMap[currentIndex]);
-                        byte neighborLevel = LightIDHelper.Level(lightMap[neighborIndex]);
+                        byte currentLevel = LightIDHelper.Level(GetLight(x, y, z));
+                        byte neighborLevel = LightIDHelper.Level(GetLight(neighborX, neighborY, neighborZ));
 
                         byte calculatedLevel = (byte) (currentLevel - VoxelProperties.lightFalloff);
 
                         if(neighborLevel < calculatedLevel) {
-                            lightMap[neighborIndex] = LightIDHelper.Pack(calculatedLevel, 0);
+                            SetLight(neighborX, neighborY, neighborZ, LightIDHelper.Pack(calculatedLevel, 0));
                         }
                     }
                 }
             }
+        }
+    }
+
+    private ushort GetVoxel(int x, int y, int z) {
+        //Current
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
+            return voxelMap[voxelMapArrayIndex];
+        }
+
+        //Front
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z - VoxelProperties.chunkWidth);
+            return voxelMapForward[voxelMapArrayIndex];
+        }
+
+        //Back
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z + VoxelProperties.chunkWidth);
+            return voxelMapBack[voxelMapArrayIndex];
+        }
+
+        //Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z);
+            return voxelMapLeft[voxelMapArrayIndex];
+        }
+
+        //Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z);
+            return voxelMapRight[voxelMapArrayIndex];
+        }
+
+        //Back Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            return voxelMapBackLeft[voxelMapArrayIndex];
+        }
+
+        //Back Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            return voxelMapBackRight[voxelMapArrayIndex];
+        }
+
+        //Front Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            return voxelMapForwardLeft[voxelMapArrayIndex];
+        }
+
+        //Front Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int voxelMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            return voxelMapForwardRight[voxelMapArrayIndex];
+        }
+
+        return 0;
+    }
+
+    private byte GetLight(int x, int y, int z) {
+        //Current
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
+            return lightMap[lightMapArrayIndex];
+        }
+
+        //Front
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z - VoxelProperties.chunkWidth);
+            return lightMapForward[lightMapArrayIndex];
+        }
+
+        //Back
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z + VoxelProperties.chunkWidth);
+            return lightMapBack[lightMapArrayIndex];
+        }
+
+        //Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z);
+            return lightMapLeft[lightMapArrayIndex];
+        }
+
+        //Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z);
+            return lightMapRight[lightMapArrayIndex];
+        }
+
+        //Back Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            return lightMapBackLeft[lightMapArrayIndex];
+        }
+
+        //Back Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            return lightMapBackRight[lightMapArrayIndex];
+        }
+
+        //Front Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            return lightMapForwardLeft[lightMapArrayIndex];
+        }
+
+        //Front Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            return lightMapForwardRight[lightMapArrayIndex];
+        }
+
+        return 0;
+    }
+
+    private void SetLight(int x, int y, int z, byte value) {
+        //Current
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z);
+            lightMap[lightMapArrayIndex] = value;
+        }
+
+        //Front
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z - VoxelProperties.chunkWidth);
+            lightMapForward[lightMapArrayIndex] = value;
+        }
+
+        //Back
+        if(x >= 0 && x < VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x, y, z + VoxelProperties.chunkWidth);
+            lightMapBack[lightMapArrayIndex] = value;
+        }
+
+        //Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z);
+            lightMapLeft[lightMapArrayIndex] = value;
+        }
+
+        //Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= 0 && z < VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z);
+            lightMapRight[lightMapArrayIndex] = value;
+        }
+
+        //Back Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            lightMapBackLeft[lightMapArrayIndex] = value;
+        }
+
+        //Back Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= -VoxelProperties.chunkWidth && z < 0) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z + VoxelProperties.chunkWidth);
+            lightMapBackRight[lightMapArrayIndex] = value;
+        }
+
+        //Front Left
+        if(x >= -VoxelProperties.chunkWidth && x < 0 && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x + VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            lightMapForwardLeft[lightMapArrayIndex] = value;
+        }
+
+        //Front Right
+        if(x >= VoxelProperties.chunkWidth && x < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth && z >= VoxelProperties.chunkWidth && z < VoxelProperties.chunkWidth + VoxelProperties.chunkWidth) {
+            int lightMapArrayIndex = ArrayIndexHelper.GetVoxelArrayIndex(x - VoxelProperties.chunkWidth, y, z - VoxelProperties.chunkWidth);
+            lightMapForwardRight[lightMapArrayIndex] = value;
         }
     }
 
